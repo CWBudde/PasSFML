@@ -76,21 +76,21 @@ type
     X, Y, Z: Single;
   end;
 
-  TSfmlTime_Zero = function: TSfmlTime; cdecl;
-  TSfmlTime_asSeconds = function (Time: TSfmlTime): Single; cdecl;
-  TSfmlTime_asMilliseconds = function (Time: TSfmlTime): sfInt32; cdecl;
-  TSfmlTime_asMicroseconds = function (Time: TSfmlTime): Int64; cdecl;
+  TSfmlTimeZero = function: TSfmlTime; cdecl;
+  TSfmlTimeAsSeconds = function (Time: TSfmlTime): Single; cdecl;
+  TSfmlTimeAsMilliseconds = function (Time: TSfmlTime): sfInt32; cdecl;
+  TSfmlTimeAsMicroseconds = function (Time: TSfmlTime): Int64; cdecl;
   TSfmlSeconds = function (Amount: Single): TSfmlTime; cdecl;
 
   TSfmlMilliseconds = function (Amount: sfInt32): TSfmlTime; cdecl;
   TSfmlMicroseconds = function (Amount: sfInt64): TSfmlTime; cdecl;
 
-  TSfmlClock_create = function : PSfmlClock; cdecl;
-  TSfmlClock_copy = function (const clock: PSfmlClock): PSfmlClock; cdecl;
-  TSfmlClock_destroy = procedure (clock: PSfmlClock); cdecl;
+  TSfmlClockCreate = function : PSfmlClock; cdecl;
+  TSfmlClockCopy = function (const clock: PSfmlClock): PSfmlClock; cdecl;
+  TSfmlClockDestroy = procedure (clock: PSfmlClock); cdecl;
 
-  TSfmlClock_getElapsedTime = function (const clock: PSfmlClock): TSfmlTime; cdecl;
-  TSfmlClock_restart = function (clock: PSfmlClock): TSfmlTime; cdecl;
+  TSfmlClockGetElapsedTime = function (const clock: PSfmlClock): TSfmlTime; cdecl;
+  TSfmlClockRestart = function (clock: PSfmlClock): TSfmlTime; cdecl;
 
   TSfmlInputStreamReadFunc = function (data: pointer; size: sfInt64; userData: pointer): sfInt64; cdecl;
   TSfmlInputStreamSeekFunc = function (position: sfInt64; userData: pointer): sfInt64; cdecl;
@@ -105,47 +105,47 @@ type
     UserData: Pointer;
   end;
 
-  TSfmlMutex_create = function : PSfmlMutex; cdecl;
-  TSfmlMutex_destroy = procedure (Mutex: PSfmlMutex); cdecl;
+  TSfmlMutexCreate = function : PSfmlMutex; cdecl;
+  TSfmlMutexDestroy = procedure (Mutex: PSfmlMutex); cdecl;
 
-  TSfmlMutex_lock = procedure (Mutex: PSfmlMutex); cdecl;
-  TSfmlMutex_unlock = procedure (Mutex: PSfmlMutex); cdecl;
+  TSfmlMutexLock = procedure (Mutex: PSfmlMutex); cdecl;
+  TSfmlMutexUnlock = procedure (Mutex: PSfmlMutex); cdecl;
 
   TSfmlSleep = procedure (duration: TSfmlTime); cdecl;
 
-  TSfmlThread_create = function (FuncEntryPoint: Pointer; userData: Pointer): PSfmlThread; cdecl;
-  TSfmlThread_destroy = procedure (Thread: PSfmlThread); cdecl;
-  TSfmlThread_launch = procedure (Thread: PSfmlThread); cdecl;
-  TSfmlThread_wait = procedure (Thread: PSfmlThread); cdecl;
-  TSfmlThread_terminate = procedure (Thread: PSfmlThread); cdecl;
+  TSfmlThreadCreate = function (FuncEntryPoint: Pointer; userData: Pointer): PSfmlThread; cdecl;
+  TSfmlThreadDestroy = procedure (Thread: PSfmlThread); cdecl;
+  TSfmlThreadLaunch = procedure (Thread: PSfmlThread); cdecl;
+  TSfmlThreadWait = procedure (Thread: PSfmlThread); cdecl;
+  TSfmlThreadTerminate = procedure (Thread: PSfmlThread); cdecl;
 
 var
-  SfmlTime_Zero: TSfmlTime_Zero;
-  SfmlTime_asSeconds: TSfmlTime_asSeconds;
-  SfmlTime_asMilliseconds: TSfmlTime_asMilliseconds;
-  SfmlTime_asMicroseconds: TSfmlTime_asMicroseconds;
+  SfmlTimeZero: TSfmlTimeZero;
+  SfmlTimeAsSeconds: TSfmlTimeAsSeconds;
+  SfmlTimeAsMilliseconds: TSfmlTimeAsMilliseconds;
+  SfmlTimeAsMicroseconds: TSfmlTimeAsMicroseconds;
   SfmlSeconds: TSfmlSeconds;
   SfmlMilliseconds: TSfmlMilliseconds;
   SfmlMicroseconds: TSfmlMicroseconds;
 
-  SfmlClock_create: TSfmlClock_create;
-  SfmlClock_copy: TSfmlClock_copy;
-  SfmlClock_destroy: TSfmlClock_destroy;
-  SfmlClock_getElapsedTime: TSfmlClock_getElapsedTime;
-  SfmlClock_restart: TSfmlClock_restart;
+  SfmlClockCreate: TSfmlClockCreate;
+  SfmlClockCopy: TSfmlClockCopy;
+  SfmlClockDestroy: TSfmlClockDestroy;
+  SfmlClockGetElapsedTime: TSfmlClockGetElapsedTime;
+  SfmlClockRestart: TSfmlClockRestart;
 
-  SfmlMutex_create: TSfmlMutex_create;
-  SfmlMutex_destroy: TSfmlMutex_destroy;
-  SfmlMutex_lock: TSfmlMutex_lock;
-  SfmlMutex_unlock: TSfmlMutex_unlock;
+  SfmlMutexCreate: TSfmlMutexCreate;
+  SfmlMutexDestroy: TSfmlMutexDestroy;
+  SfmlMutexLock: TSfmlMutexLock;
+  SfmlMutexUnlock: TSfmlMutexUnlock;
 
   SfmlSleep: TSfmlSleep;
 
-  SfmlThread_create: TSfmlThread_create;
-  SfmlThread_destroy: TSfmlThread_destroy;
-  SfmlThread_launch: TSfmlThread_launch;
-  SfmlThread_wait: TSfmlThread_wait;
-  SfmlThread_terminate: TSfmlThread_terminate;
+  SfmlThreadCreate: TSfmlThreadCreate;
+  SfmlThreadDestroy: TSfmlThreadDestroy;
+  SfmlThreadLaunch: TSfmlThreadLaunch;
+  SfmlThreadWait: TSfmlThreadWait;
+  SfmlThreadTerminate: TSfmlThreadTerminate;
 
 implementation
 
@@ -164,17 +164,17 @@ begin
   CSfmlSystemHandle := LoadLibraryA(CSfmlSystemLibrary);
   if CSfmlSystemHandle <> 0 then
     try
-      SfmlTime_Zero := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfTime_Zero'));
-      Assert(Assigned(SfmlTime_Zero));
+      SfmlTimeZero := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfTime_Zero'));
+      Assert(Assigned(SfmlTimeZero));
 
-      SfmlTime_asSeconds := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfTime_asSeconds'));
-      Assert(Assigned(SfmlTime_asSeconds));
+      SfmlTimeAsSeconds := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfTime_asSeconds'));
+      Assert(Assigned(SfmlTimeAsSeconds));
 
-      SfmlTime_asMilliseconds := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfTime_asMilliseconds'));
-      Assert(Assigned(SfmlTime_asMilliseconds));
+      SfmlTimeAsMilliseconds := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfTime_asMilliseconds'));
+      Assert(Assigned(SfmlTimeAsMilliseconds));
 
-      SfmlTime_asMicroseconds := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfTime_asMicroseconds'));
-      Assert(Assigned(SfmlTime_asMicroseconds));
+      SfmlTimeAsMicroseconds := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfTime_asMicroseconds'));
+      Assert(Assigned(SfmlTimeAsMicroseconds));
 
       SfmlSeconds := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfSeconds'));
       Assert(Assigned(SfmlSeconds));
@@ -185,50 +185,50 @@ begin
       SfmlMicroseconds := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMicroseconds'));
       Assert(Assigned(SfmlMicroseconds));
 
-      SfmlClock_create := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_create'));
-      Assert(Assigned(SfmlClock_create));
+      SfmlClockCreate := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_create'));
+      Assert(Assigned(SfmlClockCreate));
 
-      SfmlClock_copy := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_copy'));
-      Assert(Assigned(SfmlClock_copy));
+      SfmlClockCopy := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_copy'));
+      Assert(Assigned(SfmlClockCopy));
 
-      SfmlClock_destroy := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_destroy'));
-      Assert(Assigned(SfmlClock_destroy));
+      SfmlClockDestroy := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_destroy'));
+      Assert(Assigned(SfmlClockDestroy));
 
-      SfmlClock_getElapsedTime := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_getElapsedTime'));
-      Assert(Assigned(SfmlClock_getElapsedTime));
+      SfmlClockGetElapsedTime := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_getElapsedTime'));
+      Assert(Assigned(SfmlClockGetElapsedTime));
 
-      SfmlClock_restart := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_restart'));
-      Assert(Assigned(SfmlClock_restart));
+      SfmlClockRestart := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_restart'));
+      Assert(Assigned(SfmlClockRestart));
 
-      SfmlMutex_create := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMutex_create'));
-      Assert(Assigned(SfmlMutex_create));
+      SfmlMutexCreate := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMutex_create'));
+      Assert(Assigned(SfmlMutexCreate));
 
-      SfmlMutex_destroy := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMutex_destroy'));
-      Assert(Assigned(SfmlMutex_destroy));
+      SfmlMutexDestroy := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMutex_destroy'));
+      Assert(Assigned(SfmlMutexDestroy));
 
-      SfmlMutex_lock := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMutex_lock'));
-      Assert(Assigned(SfmlMutex_lock));
+      SfmlMutexLock := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMutex_lock'));
+      Assert(Assigned(SfmlMutexLock));
 
-      SfmlMutex_unlock := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMutex_unlock'));
-      Assert(Assigned(SfmlMutex_unlock));
+      SfmlMutexUnlock := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMutex_unlock'));
+      Assert(Assigned(SfmlMutexUnlock));
 
       SfmlSleep := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfSleep'));
       Assert(Assigned(SfmlSleep));
 
-      SfmlThread_create := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_create'));
-      Assert(Assigned(SfmlThread_create));
+      SfmlThreadCreate := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_create'));
+      Assert(Assigned(SfmlThreadCreate));
 
-      SfmlThread_destroy := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_destroy'));
-      Assert(Assigned(SfmlThread_destroy));
+      SfmlThreadDestroy := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_destroy'));
+      Assert(Assigned(SfmlThreadDestroy));
 
-      SfmlThread_launch := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_launch'));
-      Assert(Assigned(SfmlThread_launch));
+      SfmlThreadLaunch := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_launch'));
+      Assert(Assigned(SfmlThreadLaunch));
 
-      SfmlThread_wait := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_wait'));
-      Assert(Assigned(SfmlThread_wait));
+      SfmlThreadWait := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_wait'));
+      Assert(Assigned(SfmlThreadWait));
 
-      SfmlThread_terminate := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_terminate'));
-      Assert(Assigned(SfmlThread_terminate));
+      SfmlThreadTerminate := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_terminate'));
+      Assert(Assigned(SfmlThreadTerminate));
     except
       FreeLibrary(CSfmlSystemHandle);
       CSfmlSystemHandle := 0;
