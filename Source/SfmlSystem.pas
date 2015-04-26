@@ -104,6 +104,7 @@ type
     GetSize: TSfmlInputStreamGetSizeFunc;
     UserData: Pointer;
   end;
+  PSfmlInputStream = ^TSfmlInputStream;
 
   TSfmlMutexCreate = function : PSfmlMutex; cdecl;
   TSfmlMutexDestroy = procedure (Mutex: PSfmlMutex); cdecl;

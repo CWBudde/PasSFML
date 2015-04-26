@@ -47,7 +47,7 @@ type
 
   TSfmlWindowHandle = ^HWND; // Cardinal in linux, Pointer in OSX
 
-  TSfmlWindowStyle = (sfNone, sfTitlebar, sfResize, sfClose, sfFullscreen);
+  TSfmlWindowStyle = (sfTitleBar, sfResize, sfClose, sfFullscreen);
   TSfmlWindowStyles = set of TSfmlWindowStyle;
 
   TSfmlContextSettings = record
@@ -181,6 +181,7 @@ type
       10 : ( Touch : TSfmlTouchEvent );
       11 : ( Sensor : TSfmlSensorEvent );
     end;
+  PSfmlEvent = ^TSfmlEvent;
 
 
   TSfmlContextCreate = function : PSfmlContext; cdecl;
@@ -213,7 +214,7 @@ type
   TSfmlVideoModeIsValid = function (Mode: TSfmlVideoMode): sfBool; cdecl;
 
   TSfmlWindowCreate = function (Mode: TSfmlVideoMode; const Title: PAnsiChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
-  TSfmlWindowCreateUnicode = function (Mode: TSfmlVideoMode; const Title: PCardinal; style: sfUint32; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
+  TSfmlWindowCreateUnicode = function (Mode: TSfmlVideoMode; const Title: PWideChar; style: sfUint32; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
   TSfmlWindowCreateFromHandle = function (Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
   TSfmlWindowDestroy = procedure (Window: PSfmlWindow); cdecl;
   TSfmlWindowClose = procedure (Window: PSfmlWindow); cdecl;
@@ -226,7 +227,7 @@ type
   TSfmlWindowGetSize = function (const Window: PSfmlWindow): TSfmlVector2u; cdecl;
   TSfmlWindowSetSize = procedure (Window: PSfmlWindow; Size: TSfmlVector2u); cdecl;
   TSfmlWindowSetTitle = procedure (Window: PSfmlWindow; const Title: PAnsiChar); cdecl;
-  TSfmlWindowSetUnicodeTitle = procedure (Window: PSfmlWindow; const Title: PCardinal); cdecl;
+  TSfmlWindowSetUnicodeTitle = procedure (Window: PSfmlWindow; const Title: PWideChar); cdecl;
   TSfmlWindowSetIcon = procedure (Window: PSfmlWindow; Width, Height: Cardinal; const pixels: PByte); cdecl;
   TSfmlWindowSetVisible = procedure (Window: PSfmlWindow; Visible: sfBool); cdecl;
   TSfmlWindowSetMouseCursorVisible = procedure (Window: PSfmlWindow; Visible: sfBool); cdecl;
@@ -299,7 +300,6 @@ var
   SfmlWindowGetSystemHandle: TSfmlWindowGetSystemHandle;
 
 implementation
-
 
 var
   CSfmlWindowHandle: HINST;
