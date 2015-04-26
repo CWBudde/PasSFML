@@ -4,6 +4,7 @@ program Basic;
 
 uses
   SysUtils,
+  SfmlAudio in '..\..\Source\SfmlAudio.pas',
   SfmlGraphics in '..\..\Source\SfmlGraphics.pas',
   SfmlSystem in '..\..\Source\SfmlSystem.pas',
   SfmlWindow in '..\..\Source\SfmlWindow.pas';
@@ -16,10 +17,9 @@ var
   Sprite: PSfmlSprite;
   Font: PSfmlFont;
   Text: PSfmlText;
-{$IFDEF Music}
   Music: PSfmlMusic;
-{$ENDIF}
   Event: TSfmlEvent;
+  TextPos: TSfmlVector2f;
 
 begin
   Mode.Width := 800;
@@ -33,30 +33,32 @@ begin
     raise Exception.Create('Window error');
 
   // Load a Sprite to display
-  Texture := SfmlTextureCreateFromFile('example.jpg', nil);
+  Texture := SfmlTextureCreateFromFile('OncaPintada.jpg', nil);
   if not Assigned(Texture) then
     raise Exception.Create('Texture error');
   Sprite := SfmlSpriteCreate;
   SfmlSpriteSetTexture(Sprite, texture, sfTrue);
 
   // Create a graphical Text to display
-  Font := SfmlFontCreateFromFile('arial.ttf');
-  if not assigned(Font) then
+  Font := SfmlFontCreateFromFile('AdmirationPains.ttf');
+  if not Assigned(Font) then
     raise Exception.Create('Font error');
   Text := SfmlTextCreate;
-  SfmlTextSetString(Text, 'Hello SFML');
-  SfmlTextSetFont(Text, font);
+  SfmlTextSetString(Text, 'Hello World');
+  SfmlTextSetFont(Text, Font);
   SfmlTextSetCharacterSize(Text, 50);
+  SfmlTextSetColor(Text, SfmlBlack);
+  TextPos.X := 200;
+  TextPos.Y := 20;
+  SfmlTextSetPosition(Text, TextPos);
 
-{$IFDEF Music}
   // Load a music to play
-  music = sfMusic_createFromFile('nice_music.ogg');
-  if (!music)
+  Music := SfmlMusicCreateFromFile('OncaPintada.ogg');
+  if not Assigned(Music) then
     raise Exception.Create('Music error');
 
   // Play the music
-  sfMusic_play(music);
-{$ENDIF}
+  SfmlMusicPlay(Music);
 
   // Start the game loop
   while SfmlRenderWindowIsOpen(Window) = sfTrue do
@@ -70,7 +72,7 @@ begin
     end;
 
     // Clear the screen
-    SfmlRenderWindowClear(Window, SfmlBlack);
+    SfmlRenderWindowClear(Window, SfmlWhite);
 
     // Draw the sprite
     SfmlRenderWindowDrawSprite(Window, Sprite, nil);
@@ -83,9 +85,7 @@ begin
   end;
 
   // Cleanup resources
-{$IFDEF Music}
-  SfmlMusicDestroy(music);
-{$ENDIF}
+  SfmlMusicDestroy(Music);
   SfmlTextDestroy(Text);
   SfmlFontDestroy(Font);
   SfmlSpriteDestroy(Sprite);
