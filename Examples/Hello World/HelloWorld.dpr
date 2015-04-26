@@ -1,4 +1,4 @@
-program Basic;
+program HelloWorld;
 
 {$R *.res}
 
@@ -9,7 +9,6 @@ uses
   SfmlSystem in '..\..\Source\SfmlSystem.pas',
   SfmlWindow in '..\..\Source\SfmlWindow.pas';
 
-procedure RunApp;
 var
   Mode: TSfmlVideoMode;
   Window: PSfmlRenderWindow;
@@ -20,7 +19,6 @@ var
   Music: PSfmlMusic;
   Event: TSfmlEvent;
   TextPos: TSfmlVector2f;
-
 begin
   Mode.Width := 800;
   Mode.Height := 600;
@@ -91,9 +89,5 @@ begin
   SfmlSpriteDestroy(Sprite);
   SfmlTextureDestroy(Texture);
   SfmlRenderWindowDestroy(Window);
-end;
-
-begin
-  RunApp;
 end.
 
