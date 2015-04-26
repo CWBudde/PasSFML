@@ -152,7 +152,6 @@ var
   SfmlThreadWait: TSfmlThreadWait;
   SfmlThreadTerminate: TSfmlThreadTerminate;
 {$ELSE}
-
   // static linking
   function SfmlTimeZero: TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfTime_Zero';
   function SfmlTimeAsSeconds(Time: TSfmlTime): Single; cdecl; external CSfmlSystemLibrary name 'sfTime_asSeconds';
