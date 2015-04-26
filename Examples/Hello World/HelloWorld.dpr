@@ -32,14 +32,14 @@ begin
     raise Exception.Create('Window error');
 
   // Load a sprite to display
-  Texture := SfmlTextureCreateFromFile('OncaPintada.jpg', nil);
+  Texture := SfmlTextureCreateFromFile('../Resources/OncaPintada.jpg', nil);
   if not Assigned(Texture) then
     raise Exception.Create('Texture error');
   Sprite := SfmlSpriteCreate;
   SfmlSpriteSetTexture(Sprite, texture, sfTrue);
 
   // Create a graphical text to display
-  Font := SfmlFontCreateFromFile('AdmirationPains.ttf');
+  Font := SfmlFontCreateFromFile('../Resources/AdmirationPains.ttf');
   if not Assigned(Font) then
     raise Exception.Create('Font error');
   Text := SfmlTextCreate;
@@ -52,7 +52,7 @@ begin
   SfmlTextSetPosition(Text, TextPos);
 
   // Load a music to play
-  Music := SfmlMusicCreateFromFile('OncaPintada.ogg');
+  Music := SfmlMusicCreateFromFile('../Resources/OncaPintada.ogg');
   if not Assigned(Music) then
     raise Exception.Create('Music error');
 
