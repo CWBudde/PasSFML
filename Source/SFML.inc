@@ -1,5 +1,6 @@
 {$IFDEF FPC}
-{$PACKRECORDS C}
+  {$MODE Delphi}
+  {$PACKRECORDS C}
 {$ENDIF}
 
 {-$DEFINE DynLink}
