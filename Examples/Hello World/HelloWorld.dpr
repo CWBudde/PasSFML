@@ -6,6 +6,7 @@ uses
   SysUtils,
   SfmlAudio in '..\..\Source\SfmlAudio.pas',
   SfmlGraphics in '..\..\Source\SfmlGraphics.pas',
+  SfmlNetwork in '..\..\Source\SfmlNetwork.pas',
   SfmlSystem in '..\..\Source\SfmlSystem.pas',
   SfmlWindow in '..\..\Source\SfmlWindow.pas';
 
@@ -30,14 +31,14 @@ begin
   if not Assigned(Window) then
     raise Exception.Create('Window error');
 
-  // Load a Sprite to display
+  // Load a sprite to display
   Texture := SfmlTextureCreateFromFile('OncaPintada.jpg', nil);
   if not Assigned(Texture) then
     raise Exception.Create('Texture error');
   Sprite := SfmlSpriteCreate;
   SfmlSpriteSetTexture(Sprite, texture, sfTrue);
 
-  // Create a graphical Text to display
+  // Create a graphical text to display
   Font := SfmlFontCreateFromFile('AdmirationPains.ttf');
   if not Assigned(Font) then
     raise Exception.Create('Font error');
@@ -46,7 +47,7 @@ begin
   SfmlTextSetFont(Text, Font);
   SfmlTextSetCharacterSize(Text, 50);
   SfmlTextSetColor(Text, SfmlBlack);
-  TextPos.X := 200;
+  TextPos.X := 300;
   TextPos.Y := 20;
   SfmlTextSetPosition(Text, TextPos);
 
@@ -64,7 +65,7 @@ begin
     // Process events
     while SfmlRenderWindowPollEvent(Window, @Event) = sfTrue do
     begin
-      // Close Window : exit
+      // Close window : exit
       if Event.EventType = sfEvtClosed then
         SfmlRenderWindowClose(Window);
     end;
@@ -83,6 +84,7 @@ begin
   end;
 
   // Cleanup resources
+  SfmlMusicStop(Music);
   SfmlMusicDestroy(Music);
   SfmlTextDestroy(Text);
   SfmlFontDestroy(Font);
@@ -90,4 +92,3 @@ begin
   SfmlTextureDestroy(Texture);
   SfmlRenderWindowDestroy(Window);
 end.
-

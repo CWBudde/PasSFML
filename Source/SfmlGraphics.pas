@@ -26,10 +26,10 @@ unit SfmlGraphics;
 
 interface
 
-{$I SFML.inc}
+{$I Sfml.inc}
 
 uses
-  Windows, SfmlWindow, SfmlSystem;
+  {$IFDEF MSWindows}Windows, {$ENDIF} SfmlWindow, SfmlSystem;
 
 type
   PSfmlCircleShape = Pointer;
@@ -971,21 +971,21 @@ var
 {$IFEND}
 
 procedure InitDLL;
+
+  function BindFunction(Name: AnsiString): Pointer;
+  begin
+    Result := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar(Name));
+    Assert(Assigned(Result));
+  end;
+
 begin
   CSfmlGraphicsHandle := LoadLibraryA(CSfmlGraphicsLibrary);
   if CSfmlGraphicsHandle <> 0 then
     try
-      SfmlBlendAlpha := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlendAlpha'));
-      Assert(Assigned(SfmlBlendAlpha));
-
-      SfmlBlendAdd := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlendAdd'));
-      Assert(Assigned(SfmlBlendAdd));
-
-      SfmlBlendMultiply := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlendMultiply'));
-      Assert(Assigned(SfmlBlendMultiply));
-
-      SfmlBlendNone := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlendNone'));
-      Assert(Assigned(SfmlBlendNone));
+      SfmlBlendAlpha := BindFunction('sfBlendAlpha');
+      SfmlBlendAdd := BindFunction('sfBlendAdd');
+      SfmlBlendMultiply := BindFunction('sfBlendMultiply');
+      SfmlBlendNone := BindFunction('sfBlendNone');
 
       Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlack'))^, SfmlBlack, 4);
       Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfWhite'))^, SfmlWhite, 4);
@@ -997,1163 +997,392 @@ begin
       Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCyan'))^, SfmlCyan, 4);
       Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransparent'))^, SfmlTransparent, 4);
 
-      SfmlColorFromRGB := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfColor_fromRGB'));
-      Assert(Assigned(SfmlColorFromRGB));
-
-      SfmlColorFromRGBA := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfColor_fromRGBA'));
-      Assert(Assigned(SfmlColorFromRGBA));
-
-      SfmlColorAdd := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfColor_add'));
-      Assert(Assigned(SfmlColorAdd));
-
-      SfmlColorModulate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfColor_modulate'));
-      Assert(Assigned(SfmlColorModulate));
-
-      SfmlCircleShapeCreate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_create'));
-      Assert(Assigned(SfmlCircleShapeCreate));
-
-      SfmlCircleShapeCopy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_copy'));
-      Assert(Assigned(SfmlCircleShapeCopy));
-
-      SfmlCircleShapeDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_destroy'));
-      Assert(Assigned(SfmlCircleShapeDestroy));
-
-      SfmlCircleShapeSetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_setPosition'));
-      Assert(Assigned(SfmlCircleShapeSetPosition));
-
-      SfmlCircleShapeSetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_setRotation'));
-      Assert(Assigned(SfmlCircleShapeSetRotation));
-
-      SfmlCircleShapeSetScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_setScale'));
-      Assert(Assigned(SfmlCircleShapeSetScale));
-
-      SfmlCircleShapeSetOrigin := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_setOrigin'));
-      Assert(Assigned(SfmlCircleShapeSetOrigin));
-
-      SfmlCircleShapeGetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getPosition'));
-      Assert(Assigned(SfmlCircleShapeGetPosition));
-
-      SfmlCircleShapeGetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getRotation'));
-      Assert(Assigned(SfmlCircleShapeGetRotation));
-
-      SfmlCircleShapeGetScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getScale'));
-      Assert(Assigned(SfmlCircleShapeGetScale));
-
-      SfmlCircleShapeGetOrigin := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getOrigin'));
-      Assert(Assigned(SfmlCircleShapeGetOrigin));
-
-      SfmlCircleShapeMove := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_move'));
-      Assert(Assigned(SfmlCircleShapeMove));
-
-      SfmlCircleShapeRotate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_rotate'));
-      Assert(Assigned(SfmlCircleShapeRotate));
-
-      SfmlCircleShapeScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_scale'));
-      Assert(Assigned(SfmlCircleShapeScale));
-
-      SfmlCircleShapeGetTransform := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getTransform'));
-      Assert(Assigned(SfmlCircleShapeGetTransform));
-
-      SfmlCircleShapeGetInverseTransform := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getInverseTransform'));
-      Assert(Assigned(SfmlCircleShapeGetInverseTransform));
-
-      SfmlCircleShapeSetTexture := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_setTexture'));
-      Assert(Assigned(SfmlCircleShapeSetTexture));
-
-      SfmlCircleShapeSetTextureRect := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_setTextureRect'));
-      Assert(Assigned(SfmlCircleShapeSetTextureRect));
-
-      SfmlCircleShapeSetFillColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_setFillColor'));
-      Assert(Assigned(SfmlCircleShapeSetFillColor));
-
-      SfmlCircleShapeSetOutlineColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_setOutlineColor'));
-      Assert(Assigned(SfmlCircleShapeSetOutlineColor));
-
-      SfmlCircleShapeSetOutlineThickness := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_setOutlineThickness'));
-      Assert(Assigned(SfmlCircleShapeSetOutlineThickness));
-
-      SfmlCircleShapeGetTexture := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getTexture'));
-      Assert(Assigned(SfmlCircleShapeGetTexture));
-
-      SfmlCircleShapeGetTextureRect := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getTextureRect'));
-      Assert(Assigned(SfmlCircleShapeGetTextureRect));
-
-      SfmlCircleShapeGetFillColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getFillColor'));
-      Assert(Assigned(SfmlCircleShapeGetFillColor));
-
-      SfmlCircleShapeGetOutlineColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getOutlineColor'));
-      Assert(Assigned(SfmlCircleShapeGetOutlineColor));
-
-      SfmlCircleShapeGetOutlineThickness := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getOutlineThickness'));
-      Assert(Assigned(SfmlCircleShapeGetOutlineThickness));
-
-      SfmlCircleShapeGetPointCount := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getPointCount'));
-      Assert(Assigned(SfmlCircleShapeGetPointCount));
-
-      SfmlCircleShapeGetPoint := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getPoint'));
-      Assert(Assigned(SfmlCircleShapeGetPoint));
-
-      SfmlCircleShapeSetRadius := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_setRadius'));
-      Assert(Assigned(SfmlCircleShapeSetRadius));
-
-      SfmlCircleShapeGetRadius := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getRadius'));
-      Assert(Assigned(SfmlCircleShapeGetRadius));
-
-      SfmlCircleShapeSetPointCount := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_setPointCount'));
-      Assert(Assigned(SfmlCircleShapeSetPointCount));
-
-      SfmlCircleShapeGetLocalBounds := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getLocalBounds'));
-      Assert(Assigned(SfmlCircleShapeGetLocalBounds));
-
-      SfmlCircleShapeGetGlobalBounds := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCircleShape_getGlobalBounds'));
-      Assert(Assigned(SfmlCircleShapeGetGlobalBounds));
-
-      SfmlConvexShapeCreate:= GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_create'));
-      Assert(Assigned(SfmlConvexShapeCreate));
-
-      SfmlConvexShapeCopy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_copy'));
-      Assert(Assigned(SfmlConvexShapeCopy));
-
-      SfmlConvexShapeDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_destroy'));
-      Assert(Assigned(SfmlConvexShapeDestroy));
-
-      SfmlConvexShapeSetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_setPosition'));
-      Assert(Assigned(SfmlConvexShapeSetPosition));
-
-      SfmlConvexShapeSetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_setRotation'));
-      Assert(Assigned(SfmlConvexShapeSetRotation));
-
-      SfmlConvexShapeSetScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_setScale'));
-      Assert(Assigned(SfmlConvexShapeSetScale));
-
-      SfmlConvexShapeSetOrigin := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_setOrigin'));
-      Assert(Assigned(SfmlConvexShapeSetOrigin));
-
-      SfmlConvexShapeGetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getPosition'));
-      Assert(Assigned(SfmlConvexShapeGetPosition));
-
-      SfmlConvexShapeGetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getRotation'));
-      Assert(Assigned(SfmlConvexShapeGetRotation));
-
-      SfmlConvexShapeGetScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getScale'));
-      Assert(Assigned(SfmlConvexShapeGetScale));
-
-      SfmlConvexShapeGetOrigin := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getOrigin'));
-      Assert(Assigned(SfmlConvexShapeGetOrigin));
-
-      SfmlConvexShapeMove := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_move'));
-      Assert(Assigned(SfmlConvexShapeMove));
-
-      SfmlConvexShapeRotate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_rotate'));
-      Assert(Assigned(SfmlConvexShapeRotate));
-
-      SfmlConvexShapeScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_scale'));
-      Assert(Assigned(SfmlConvexShapeScale));
-
-      SfmlConvexShapeGetTransform := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getTransform'));
-      Assert(Assigned(SfmlConvexShapeGetTransform));
-
-      SfmlConvexShapeGetInverseTransform := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getInverseTransform'));
-      Assert(Assigned(SfmlConvexShapeGetInverseTransform));
-
-      SfmlConvexShapeSetTexture := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_setTexture'));
-      Assert(Assigned(SfmlConvexShapeSetTexture));
-
-      SfmlConvexShapeSetTextureRect := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_setTextureRect'));
-      Assert(Assigned(SfmlConvexShapeSetTextureRect));
-
-      SfmlConvexShapeSetFillColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_setFillColor'));
-      Assert(Assigned(SfmlConvexShapeSetFillColor));
-
-      SfmlConvexShapeSetOutlineColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_setOutlineColor'));
-      Assert(Assigned(SfmlConvexShapeSetOutlineColor));
-
-      SfmlConvexShapeSetOutlineThickness := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_setOutlineThickness'));
-      Assert(Assigned(SfmlConvexShapeSetOutlineThickness));
-
-      SfmlConvexShapeGetTexture := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getTexture'));
-      Assert(Assigned(SfmlConvexShapeGetTexture));
-
-      SfmlConvexShapeGetTextureRect := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getTextureRect'));
-      Assert(Assigned(SfmlConvexShapeGetTextureRect));
-
-      SfmlConvexShapeGetFillColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getFillColor'));
-      Assert(Assigned(SfmlConvexShapeGetFillColor));
-
-      SfmlConvexShapeGetOutlineColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getOutlineColor'));
-      Assert(Assigned(SfmlConvexShapeGetOutlineColor));
-
-      SfmlConvexShapeGetOutlineThickness := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getOutlineThickness'));
-      Assert(Assigned(SfmlConvexShapeGetOutlineThickness));
-
-      SfmlConvexShapeGetPointCount := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getPointCount'));
-      Assert(Assigned(SfmlConvexShapeGetPointCount));
-
-      SfmlConvexShapeGetPoint := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getPoint'));
-      Assert(Assigned(SfmlConvexShapeGetPoint));
-
-      SfmlConvexShapeSetPointCount := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_setPointCount'));
-      Assert(Assigned(SfmlConvexShapeSetPointCount));
-
-      SfmlConvexShapeSetPoint := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_setPoint'));
-      Assert(Assigned(SfmlConvexShapeSetPoint));
-
-      SfmlConvexShapeGetLocalBounds := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getLocalBounds'));
-      Assert(Assigned(SfmlConvexShapeGetLocalBounds));
-
-      SfmlConvexShapeGetGlobalBounds := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfConvexShape_getGlobalBounds'));
-      Assert(Assigned(SfmlConvexShapeGetGlobalBounds));
-
-      SfmlFontCreateFromFile := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfFont_createFromFile'));
-      Assert(Assigned(SfmlFontCreateFromFile));
-
-      SfmlFontCreateFromMemory := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfFont_createFromMemory'));
-      Assert(Assigned(SfmlFontCreateFromMemory));
-
-      SfmlFontCreateFromStream := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfFont_createFromStream'));
-      Assert(Assigned(SfmlFontCreateFromStream));
-
-      SfmlFontCopy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfFont_copy'));
-      Assert(Assigned(SfmlFontCopy));
-
-      SfmlFontDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfFont_destroy'));
-      Assert(Assigned(SfmlFontDestroy));
-
-      SfmlFontGetGlyph := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfFont_getGlyph'));
-      Assert(Assigned(SfmlFontGetGlyph));
-
-      SfmlFontGetKerning := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfFont_getKerning'));
-      Assert(Assigned(SfmlFontGetKerning));
-
-      SfmlFontGetLineSpacing := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfFont_getLineSpacing'));
-      Assert(Assigned(SfmlFontGetLineSpacing));
-
-      SfmlFontGetUnderlinePosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfFont_getUnderlinePosition'));
-      Assert(Assigned(SfmlFontGetUnderlinePosition));
-
-      SfmlFontGetUnderlineThickness := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfFont_getUnderlineThickness'));
-      Assert(Assigned(SfmlFontGetUnderlineThickness));
-
-      SfmlFontGetTexture := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfFont_getTexture'));
-      Assert(Assigned(SfmlFontGetTexture));
-
-      SfmlFontGetInfo := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfFont_getInfo'));
-      Assert(Assigned(SfmlFontGetInfo));
-
-      SfmlImageCreate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_create'));
-      Assert(Assigned(SfmlImageCreate));
-
-      SfmlImageCreateFromColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_createFromColor'));
-      Assert(Assigned(SfmlImageCreateFromColor));
-
-      SfmlImageCreateFromPixels := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_createFromPixels'));
-      Assert(Assigned(SfmlImageCreateFromPixels));
-
-      SfmlImageCreateFromFile := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_createFromFile'));
-      Assert(Assigned(SfmlImageCreateFromFile));
-
-      SfmlImageCreateFromMemory := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_createFromMemory'));
-      Assert(Assigned(SfmlImageCreateFromMemory));
-
-      SfmlImageCreateFromStream := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_createFromStream'));
-      Assert(Assigned(SfmlImageCreateFromStream));
-
-      SfmlImageCopy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_copy'));
-      Assert(Assigned(SfmlImageCopy));
-
-      SfmlImageDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_destroy'));
-      Assert(Assigned(SfmlImageDestroy));
-
-      SfmlImageSaveToFile := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_saveToFile'));
-      Assert(Assigned(SfmlImageSaveToFile));
-
-      SfmlImageGetSize := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_getSize'));
-      Assert(Assigned(SfmlImageGetSize));
-
-      SfmlImageCreateMaskFromColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_createMaskFromColor'));
-      Assert(Assigned(SfmlImageCreateMaskFromColor));
-
-      SfmlImageCopyImage := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_copyImage'));
-      Assert(Assigned(SfmlImageCopyImage));
-
-      SfmlImageSetPixel := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_setPixel'));
-      Assert(Assigned(SfmlImageSetPixel));
-
-      SfmlImageGetPixel := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_getPixel'));
-      Assert(Assigned(SfmlImageGetPixel));
-
-      SfmlImageGetPixelsPtr := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_getPixelsPtr'));
-      Assert(Assigned(SfmlImageGetPixelsPtr));
-
-      SfmlImageFlipHorizontally := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_flipHorizontally'));
-      Assert(Assigned(SfmlImageFlipHorizontally));
-
-      SfmlImageFlipVertically := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfImage_flipVertically'));
-      Assert(Assigned(SfmlImageFlipVertically));
-
-      SfmlFloatRectContains := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfFloatRect_contains'));
-      Assert(Assigned(SfmlFloatRectContains));
-
-      SfmlIntRectContains := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfIntRect_contains'));
-      Assert(Assigned(SfmlIntRectContains));
-
-      SfmlFloatRectIntersects := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfFloatRect_intersects'));
-      Assert(Assigned(SfmlFloatRectIntersects));
-
-      SfmlIntRectIntersects := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfIntRect_intersects'));
-      Assert(Assigned(SfmlIntRectIntersects));
-
-      SfmlRectangleShapeCreate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_create'));
-      Assert(Assigned(SfmlRectangleShapeCreate));
-
-      SfmlRectangleShapeCopy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_copy'));
-      Assert(Assigned(SfmlRectangleShapeCopy));
-
-      SfmlRectangleShapeDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_destroy'));
-      Assert(Assigned(SfmlRectangleShapeDestroy));
-
-      SfmlRectangleShapeSetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_setPosition'));
-      Assert(Assigned(SfmlRectangleShapeSetPosition));
-
-      SfmlRectangleShapeSetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_setRotation'));
-      Assert(Assigned(SfmlRectangleShapeSetRotation));
-
-      SfmlRectangleShapeSetScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_setScale'));
-      Assert(Assigned(SfmlRectangleShapeSetScale));
-
-      SfmlRectangleShapeSetOrigin := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_setOrigin'));
-      Assert(Assigned(SfmlRectangleShapeSetOrigin));
-
-      SfmlRectangleShapeGetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getPosition'));
-      Assert(Assigned(SfmlRectangleShapeGetPosition));
-
-      SfmlRectangleShapeGetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getRotation'));
-      Assert(Assigned(SfmlRectangleShapeGetRotation));
-
-      SfmlRectangleShapeGetScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getScale'));
-      Assert(Assigned(SfmlRectangleShapeGetScale));
-
-      SfmlRectangleShapeGetOrigin := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getOrigin'));
-      Assert(Assigned(SfmlRectangleShapeGetOrigin));
-
-      SfmlRectangleShapeMove := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_move'));
-      Assert(Assigned(SfmlRectangleShapeMove));
-
-      SfmlRectangleShapeRotate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_rotate'));
-      Assert(Assigned(SfmlRectangleShapeRotate));
-
-      SfmlRectangleShapeScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_scale'));
-      Assert(Assigned(SfmlRectangleShapeScale));
-
-      SfmlRectangleShapeGetTransform := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getTransform'));
-      Assert(Assigned(SfmlRectangleShapeGetTransform));
-
-      SfmlRectangleShapeGetInverseTransform := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getInverseTransform'));
-      Assert(Assigned(SfmlRectangleShapeGetInverseTransform));
-
-      SfmlRectangleShapeSetTexture := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_setTexture'));
-      Assert(Assigned(SfmlRectangleShapeSetTexture));
-
-      SfmlRectangleShapeSetTextureRect := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_setTextureRect'));
-      Assert(Assigned(SfmlRectangleShapeSetTextureRect));
-
-      SfmlRectangleShapeSetFillColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_setFillColor'));
-      Assert(Assigned(SfmlRectangleShapeSetFillColor));
-
-      SfmlRectangleShapeSetOutlineColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_setOutlineColor'));
-      Assert(Assigned(SfmlRectangleShapeSetOutlineColor));
-
-      SfmlRectangleShapeSetOutlineThickness := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_setOutlineThickness'));
-      Assert(Assigned(SfmlRectangleShapeSetOutlineThickness));
-
-      SfmlRectangleShapeGetTexture := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getTexture'));
-      Assert(Assigned(SfmlRectangleShapeGetTexture));
-
-      SfmlRectangleShapeGetTextureRect := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getTextureRect'));
-      Assert(Assigned(SfmlRectangleShapeGetTextureRect));
-
-      SfmlRectangleShapeGetFillColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getFillColor'));
-      Assert(Assigned(SfmlRectangleShapeGetFillColor));
-
-      SfmlRectangleShapeGetOutlineColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getOutlineColor'));
-      Assert(Assigned(SfmlRectangleShapeGetOutlineColor));
-
-      SfmlRectangleShapeGetOutlineThickness := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getOutlineThickness'));
-      Assert(Assigned(SfmlRectangleShapeGetOutlineThickness));
-
-      SfmlRectangleShapeGetPointCount := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getPointCount'));
-      Assert(Assigned(SfmlRectangleShapeGetPointCount));
-
-      SfmlRectangleShapeGetPoint := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getPoint'));
-      Assert(Assigned(SfmlRectangleShapeGetPoint));
-
-      SfmlRectangleShapeSetSize := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_setSize'));
-      Assert(Assigned(SfmlRectangleShapeSetSize));
-
-      SfmlRectangleShapeGetSize := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getSize'));
-      Assert(Assigned(SfmlRectangleShapeGetSize));
-
-      SfmlRectangleShapeGetLocalBounds := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getLocalBounds'));
-      Assert(Assigned(SfmlRectangleShapeGetLocalBounds));
-
-      SfmlRectangleShapeGetGlobalBounds := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRectangleShape_getGlobalBounds'));
-      Assert(Assigned(SfmlRectangleShapeGetGlobalBounds));
-
-      SfmlRenderTextureCreate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_create'));
-      Assert(Assigned(SfmlRenderTextureCreate));
-
-      SfmlRenderTextureDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_destroy'));
-      Assert(Assigned(SfmlRenderTextureDestroy));
-
-      SfmlRenderTextureGetSize := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_getSize'));
-      Assert(Assigned(SfmlRenderTextureGetSize));
-
-      SfmlRenderTextureSetActive := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_setActive'));
-      Assert(Assigned(SfmlRenderTextureSetActive));
-
-      SfmlRenderTextureDisplay := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_display'));
-      Assert(Assigned(SfmlRenderTextureDisplay));
-
-      SfmlRenderTextureClear := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_clear'));
-      Assert(Assigned(SfmlRenderTextureClear));
-
-      SfmlRenderTextureSetView := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_setView'));
-      Assert(Assigned(SfmlRenderTextureSetView));
-
-      SfmlRenderTextureGetView := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_getView'));
-      Assert(Assigned(SfmlRenderTextureGetView));
-
-      SfmlRenderTextureGetDefaultView := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_getDefaultView'));
-      Assert(Assigned(SfmlRenderTextureGetDefaultView));
-
-      SfmlRenderTextureGetViewport := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_getViewport'));
-      Assert(Assigned(SfmlRenderTextureGetViewport));
-
-      SfmlRenderTextureMapPixelToCoords := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_mapPixelToCoords'));
-      Assert(Assigned(SfmlRenderTextureMapPixelToCoords));
-
-      SfmlRenderTextureMapCoordsToPixel := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_mapCoordsToPixel'));
-      Assert(Assigned(SfmlRenderTextureMapCoordsToPixel));
-
-      SfmlRenderTextureDrawSprite := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_drawSprite'));
-      Assert(Assigned(SfmlRenderTextureDrawSprite));
-
-      SfmlRenderTextureDrawText := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_drawText'));
-      Assert(Assigned(SfmlRenderTextureDrawText));
-
-      SfmlRenderTextureDrawShape := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_drawShape'));
-      Assert(Assigned(SfmlRenderTextureDrawShape));
-
-      SfmlRenderTextureDrawCircleShape := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_drawCircleShape'));
-      Assert(Assigned(SfmlRenderTextureDrawCircleShape));
-
-      SfmlRenderTextureDrawConvexShape := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_drawConvexShape'));
-      Assert(Assigned(SfmlRenderTextureDrawConvexShape));
-
-      SfmlRenderTextureDrawRectangleShape := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_drawRectangleShape'));
-      Assert(Assigned(SfmlRenderTextureDrawRectangleShape));
-
-      SfmlRenderTextureDrawVertexArray := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_drawVertexArray'));
-      Assert(Assigned(SfmlRenderTextureDrawVertexArray));
-
-      SfmlRenderTextureDrawPrimitives := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_drawPrimitives'));
-      Assert(Assigned(SfmlRenderTextureDrawPrimitives));
-
-      SfmlRenderTexturePushGLStates := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_pushGLStates'));
-      Assert(Assigned(SfmlRenderTexturePushGLStates));
-
-      SfmlRenderTexturePopGLStates := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_popGLStates'));
-      Assert(Assigned(SfmlRenderTexturePopGLStates));
-
-      SfmlRenderTextureResetGLStates := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_resetGLStates'));
-      Assert(Assigned(SfmlRenderTextureResetGLStates));
-
-      SfmlRenderTextureGetTexture := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_getTexture'));
-      Assert(Assigned(SfmlRenderTextureGetTexture));
-
-      SfmlRenderTextureSetSmooth := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_setSmooth'));
-      Assert(Assigned(SfmlRenderTextureSetSmooth));
-
-      SfmlRenderTextureIsSmooth := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_isSmooth'));
-      Assert(Assigned(SfmlRenderTextureIsSmooth));
-
-      SfmlRenderTextureSetRepeated := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_setRepeated'));
-      Assert(Assigned(SfmlRenderTextureSetRepeated));
-
-      SfmlRenderTextureIsRepeated := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderTexture_isRepeated'));
-      Assert(Assigned(SfmlRenderTextureIsRepeated));
-
-      SfmlRenderWindowCreate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_create'));
-      Assert(Assigned(SfmlRenderWindowCreate));
-
-      SfmlRenderWindowCreateUnicode := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_createUnicode'));
-      Assert(Assigned(SfmlRenderWindowCreateUnicode));
-
-      SfmlRenderWindowCreateFromHandle := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_createFromHandle'));
-      Assert(Assigned(SfmlRenderWindowCreateFromHandle));
-
-      SfmlRenderWindowDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_destroy'));
-      Assert(Assigned(SfmlRenderWindowDestroy));
-
-      SfmlRenderWindowClose := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_close'));
-      Assert(Assigned(SfmlRenderWindowClose));
-
-      SfmlRenderWindowIsOpen := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_isOpen'));
-      Assert(Assigned(SfmlRenderWindowIsOpen));
-
-      SfmlRenderWindowGetSettings := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_getSettings'));
-      Assert(Assigned(SfmlRenderWindowGetSettings));
-
-      SfmlRenderWindowPollEvent := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_pollEvent'));
-      Assert(Assigned(SfmlRenderWindowPollEvent));
-
-      SfmlRenderWindowWaitEvent := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_waitEvent'));
-      Assert(Assigned(SfmlRenderWindowWaitEvent));
-
-      SfmlRenderWindowGetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_getPosition'));
-      Assert(Assigned(SfmlRenderWindowGetPosition));
-
-      SfmlRenderWindowSetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_setPosition'));
-      Assert(Assigned(SfmlRenderWindowSetPosition));
-
-      SfmlRenderWindowGetSize := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_getSize'));
-      Assert(Assigned(SfmlRenderWindowGetSize));
-
-      SfmlRenderWindowSetSize := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_setSize'));
-      Assert(Assigned(SfmlRenderWindowSetSize));
-
-      SfmlRenderWindowSetTitle := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_setTitle'));
-      Assert(Assigned(SfmlRenderWindowSetTitle));
-
-      SfmlRenderWindowSetUnicodeTitle := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_setUnicodeTitle'));
-      Assert(Assigned(SfmlRenderWindowSetUnicodeTitle));
-
-      SfmlRenderWindowSetIcon := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_setIcon'));
-      Assert(Assigned(SfmlRenderWindowSetIcon));
-
-      SfmlRenderWindowSetVisible := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_setVisible'));
-      Assert(Assigned(SfmlRenderWindowSetVisible));
-
-      SfmlRenderWindowSetMouseCursorVisible := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_setMouseCursorVisible'));
-      Assert(Assigned(SfmlRenderWindowSetMouseCursorVisible));
-
-      SfmlRenderWindowSetVerticalSyncEnabled := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_setVerticalSyncEnabled'));
-      Assert(Assigned(SfmlRenderWindowSetVerticalSyncEnabled));
-
-      SfmlRenderWindowSetKeyRepeatEnabled := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_setKeyRepeatEnabled'));
-      Assert(Assigned(SfmlRenderWindowSetKeyRepeatEnabled));
-
-      SfmlRenderWindowSetActive := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_setActive'));
-      Assert(Assigned(SfmlRenderWindowSetActive));
-
-      SfmlRenderWindowRequestFocus := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_requestFocus'));
-      Assert(Assigned(SfmlRenderWindowRequestFocus));
-
-      SfmlRenderWindowHasFocus := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_hasFocus'));
-      Assert(Assigned(SfmlRenderWindowHasFocus));
-
-      SfmlRenderWindowDisplay := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_display'));
-      Assert(Assigned(SfmlRenderWindowDisplay));
-
-      SfmlRenderWindowSetFramerateLimit := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_setFramerateLimit'));
-      Assert(Assigned(SfmlRenderWindowSetFramerateLimit));
-
-      SfmlRenderWindowSetJoystickThreshold := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_setJoystickThreshold'));
-      Assert(Assigned(SfmlRenderWindowSetJoystickThreshold));
-
-      SfmlRenderWindowGetSystemHandle := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_getSystemHandle'));
-      Assert(Assigned(SfmlRenderWindowGetSystemHandle));
-
-      SfmlRenderWindowClear := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_clear'));
-      Assert(Assigned(SfmlRenderWindowClear));
-
-      SfmlRenderWindowSetView := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_setView'));
-      Assert(Assigned(SfmlRenderWindowSetView));
-
-      SfmlRenderWindowGetView := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_getView'));
-      Assert(Assigned(SfmlRenderWindowGetView));
-
-      SfmlRenderWindowGetDefaultView := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_getDefaultView'));
-      Assert(Assigned(SfmlRenderWindowGetDefaultView));
-
-      SfmlRenderWindowGetViewport := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_getViewport'));
-      Assert(Assigned(SfmlRenderWindowGetViewport));
-
-      SfmlRenderWindowMapPixelToCoords := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_mapPixelToCoords'));
-      Assert(Assigned(SfmlRenderWindowMapPixelToCoords));
-
-      SfmlRenderWindowMapCoordsToPixel := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_mapCoordsToPixel'));
-      Assert(Assigned(SfmlRenderWindowMapCoordsToPixel));
-
-      SfmlRenderWindowDrawSprite := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_drawSprite'));
-      Assert(Assigned(SfmlRenderWindowDrawSprite));
-
-      SfmlRenderWindowDrawText := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_drawText'));
-      Assert(Assigned(SfmlRenderWindowDrawText));
-
-      SfmlRenderWindowDrawShape := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_drawShape'));
-      Assert(Assigned(SfmlRenderWindowDrawShape));
-
-      SfmlRenderWindowDrawCircleShape := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_drawCircleShape'));
-      Assert(Assigned(SfmlRenderWindowDrawCircleShape));
-
-      SfmlRenderWindowDrawConvexShape := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_drawConvexShape'));
-      Assert(Assigned(SfmlRenderWindowDrawConvexShape));
-
-      SfmlRenderWindowDrawRectangleShape := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_drawRectangleShape'));
-      Assert(Assigned(SfmlRenderWindowDrawRectangleShape));
-
-      SfmlRenderWindowDrawVertexArray := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_drawVertexArray'));
-      Assert(Assigned(SfmlRenderWindowDrawVertexArray));
-
-      SfmlRenderWindowDrawPrimitives := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_drawPrimitives'));
-      Assert(Assigned(SfmlRenderWindowDrawPrimitives));
-
-      SfmlRenderWindowPushGLStates := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_pushGLStates'));
-      Assert(Assigned(SfmlRenderWindowPushGLStates));
-
-      SfmlRenderWindowPopGLStates := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_popGLStates'));
-      Assert(Assigned(SfmlRenderWindowPopGLStates));
-
-      SfmlRenderWindowResetGLStates := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_resetGLStates'));
-      Assert(Assigned(SfmlRenderWindowResetGLStates));
-
-      SfmlRenderWindowCapture := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRenderWindow_capture'));
-      Assert(Assigned(SfmlRenderWindowCapture));
-
-      SfmlMouseGetPositionRenderWindow := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfMouse_getPositionRenderWindow'));
-      Assert(Assigned(SfmlMouseGetPositionRenderWindow));
-
-      SfmlMouseSetPositionRenderWindow := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfMouse_setPositionRenderWindow'));
-      Assert(Assigned(SfmlMouseSetPositionRenderWindow));
-
-      SfmlTouchGetPositionRenderWindow := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTouch_getPositionRenderWindow'));
-      Assert(Assigned(SfmlTouchGetPositionRenderWindow));
-
-      SfmlShaderCreateFromFile := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_createFromFile'));
-      Assert(Assigned(SfmlShaderCreateFromFile));
-
-      SfmlShaderCreateFromMemory := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_createFromMemory'));
-      Assert(Assigned(SfmlShaderCreateFromMemory));
-
-      SfmlShaderCreateFromStream := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_createFromStream'));
-      Assert(Assigned(SfmlShaderCreateFromStream));
-
-      SfmlShaderDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_destroy'));
-      Assert(Assigned(SfmlShaderDestroy));
-
-      SfmlShadersetFloatParameter := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_setFloatParameter'));
-      Assert(Assigned(SfmlShadersetFloatParameter));
-
-      SfmlShaderSetFloat2Parameter := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_setFloat2Parameter'));
-      Assert(Assigned(SfmlShaderSetFloat2Parameter));
-
-      SfmlShaderSetFloat3Parameter := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_setFloat3Parameter'));
-      Assert(Assigned(SfmlShaderSetFloat3Parameter));
-
-      SfmlShaderSetFloat4Parameter := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_setFloat4Parameter'));
-      Assert(Assigned(SfmlShaderSetFloat4Parameter));
-
-      SfmlShaderSetVector2Parameter := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_setVector2Parameter'));
-      Assert(Assigned(SfmlShaderSetVector2Parameter));
-
-      SfmlShaderSetVector3Parameter := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_setVector3Parameter'));
-      Assert(Assigned(SfmlShaderSetVector3Parameter));
-
-      SfmlShaderSetColorParameter := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_setColorParameter'));
-      Assert(Assigned(SfmlShaderSetColorParameter));
-
-      SfmlShaderSetTransformParameter := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_setTransformParameter'));
-      Assert(Assigned(SfmlShaderSetTransformParameter));
-
-      SfmlShaderSetTextureParameter := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_setTextureParameter'));
-      Assert(Assigned(SfmlShaderSetTextureParameter));
-
-      SfmlShaderSetCurrentTextureParameter := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_setCurrentTextureParameter'));
-      Assert(Assigned(SfmlShaderSetCurrentTextureParameter));
-
-      SfmlShaderBind := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_bind'));
-      Assert(Assigned(SfmlShaderBind));
-
-      SfmlShaderIsAvailable := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShader_isAvailable'));
-      Assert(Assigned(SfmlShaderIsAvailable));
-
-      SfmlShapeCreate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_create'));
-      Assert(Assigned(SfmlShapeCreate));
-
-      SfmlShapeDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_destroy'));
-      Assert(Assigned(SfmlShapeDestroy));
-
-      SfmlShapeSetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_setPosition'));
-      Assert(Assigned(SfmlShapeSetPosition));
-
-      SfmlShapeSetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_setRotation'));
-      Assert(Assigned(SfmlShapeSetRotation));
-
-      SfmlShapeSetScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_setScale'));
-      Assert(Assigned(SfmlShapeSetScale));
-
-      SfmlShapeSetOrigin := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_setOrigin'));
-      Assert(Assigned(SfmlShapeSetOrigin));
-
-      SfmlShapeGetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getPosition'));
-      Assert(Assigned(SfmlShapeGetPosition));
-
-      SfmlShapeGetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getRotation'));
-      Assert(Assigned(SfmlShapeGetRotation));
-
-      SfmlShapeGetScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getScale'));
-      Assert(Assigned(SfmlShapeGetScale));
-
-      SfmlShapeGetOrigin := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getOrigin'));
-      Assert(Assigned(SfmlShapeGetOrigin));
-
-      SfmlShapeMove := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_move'));
-      Assert(Assigned(SfmlShapeMove));
-
-      SfmlShapeRotate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_rotate'));
-      Assert(Assigned(SfmlShapeRotate));
-
-      SfmlShapeScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_scale'));
-      Assert(Assigned(SfmlShapeScale));
-
-      SfmlShapeGetTransform := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getTransform'));
-      Assert(Assigned(SfmlShapeGetTransform));
-
-      SfmlShapeGetInverseTransform := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getInverseTransform'));
-      Assert(Assigned(SfmlShapeGetInverseTransform));
-
-      SfmlShapeSetTexture := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_setTexture'));
-      Assert(Assigned(SfmlShapeSetTexture));
-
-      SfmlShapeSetTextureRect := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_setTextureRect'));
-      Assert(Assigned(SfmlShapeSetTextureRect));
-
-      SfmlShapeSetFillColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_setFillColor'));
-      Assert(Assigned(SfmlShapeSetFillColor));
-
-      SfmlShapeSetOutlineColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_setOutlineColor'));
-      Assert(Assigned(SfmlShapeSetOutlineColor));
-
-      SfmlShapeSetOutlineThickness := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_setOutlineThickness'));
-      Assert(Assigned(SfmlShapeSetOutlineThickness));
-
-      SfmlShapeGetTexture := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getTexture'));
-      Assert(Assigned(SfmlShapeGetTexture));
-
-      SfmlShapeGetTextureRect := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getTextureRect'));
-      Assert(Assigned(SfmlShapeGetTextureRect));
-
-      SfmlShapeGetFillColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getFillColor'));
-      Assert(Assigned(SfmlShapeGetFillColor));
-
-      SfmlShapeGetOutlineColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getOutlineColor'));
-      Assert(Assigned(SfmlShapeGetOutlineColor));
-
-      SfmlShapeGetOutlineThickness := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getOutlineThickness'));
-      Assert(Assigned(SfmlShapeGetOutlineThickness));
-
-      SfmlShapeGetPointCount := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getPointCount'));
-      Assert(Assigned(SfmlShapeGetPointCount));
-
-      SfmlShapeGetPoint := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getPoint'));
-      Assert(Assigned(SfmlShapeGetPoint));
-
-      SfmlShapeGetLocalBounds := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getLocalBounds'));
-      Assert(Assigned(SfmlShapeGetLocalBounds));
-
-      SfmlShapeGetGlobalBounds := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_getGlobalBounds'));
-      Assert(Assigned(SfmlShapeGetGlobalBounds));
-
-      SfmlShapeUpdate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfShape_update'));
-      Assert(Assigned(SfmlShapeUpdate));
-
-      SfmlSpriteCreate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_create'));
-      Assert(Assigned(SfmlSpriteCreate));
-
-      SfmlSpriteCopy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_copy'));
-      Assert(Assigned(SfmlSpriteCopy));
-
-      SfmlSpriteDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_destroy'));
-      Assert(Assigned(SfmlSpriteDestroy));
-
-      SfmlSpriteSetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_setPosition'));
-      Assert(Assigned(SfmlSpriteSetPosition));
-
-      SfmlSpriteSetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_setRotation'));
-      Assert(Assigned(SfmlSpriteSetRotation));
-
-      SfmlSpriteSetScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_setScale'));
-      Assert(Assigned(SfmlSpriteSetScale));
-
-      SfmlSpriteSetOrigin := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_setOrigin'));
-      Assert(Assigned(SfmlSpriteSetOrigin));
-
-      SfmlSpriteGetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_getPosition'));
-      Assert(Assigned(SfmlSpriteGetPosition));
-
-      SfmlSpriteGetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_getRotation'));
-      Assert(Assigned(SfmlSpriteGetRotation));
-
-      SfmlSpriteGetScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_getScale'));
-      Assert(Assigned(SfmlSpriteGetScale));
-
-      SfmlSpriteGetOrigin := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_getOrigin'));
-      Assert(Assigned(SfmlSpriteGetOrigin));
-
-      SfmlSpriteMove := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_move'));
-      Assert(Assigned(SfmlSpriteMove));
-
-      SfmlSpriteRotate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_rotate'));
-      Assert(Assigned(SfmlSpriteRotate));
-
-      SfmlSpriteScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_scale'));
-      Assert(Assigned(SfmlSpriteScale));
-
-      SfmlSpriteGetTransform := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_getTransform'));
-      Assert(Assigned(SfmlSpriteGetTransform));
-
-      SfmlSpriteGetInverseTransform := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_getInverseTransform'));
-      Assert(Assigned(SfmlSpriteGetInverseTransform));
-
-      SfmlSpriteSetTexture := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_setTexture'));
-      Assert(Assigned(SfmlSpriteSetTexture));
-
-      SfmlSpriteSetTextureRect := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_setTextureRect'));
-      Assert(Assigned(SfmlSpriteSetTextureRect));
-
-      SfmlSpriteSetColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_setColor'));
-      Assert(Assigned(SfmlSpriteSetColor));
-
-      SfmlSpriteGetTexture := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_getTexture'));
-      Assert(Assigned(SfmlSpriteGetTexture));
-
-      SfmlSpriteGetTextureRect := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_getTextureRect'));
-      Assert(Assigned(SfmlSpriteGetTextureRect));
-
-      SfmlSpriteGetColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_getColor'));
-      Assert(Assigned(SfmlSpriteGetColor));
-
-      SfmlSpriteGetLocalBounds := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_getLocalBounds'));
-      Assert(Assigned(SfmlSpriteGetLocalBounds));
-
-      SfmlSpriteGetGlobalBounds := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfSprite_getGlobalBounds'));
-      Assert(Assigned(SfmlSpriteGetGlobalBounds));
-
-      SfmlTextCreate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_create'));
-      Assert(Assigned(SfmlTextCreate));
-
-      SfmlTextCopy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_copy'));
-      Assert(Assigned(SfmlTextCopy));
-
-      SfmlTextDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_destroy'));
-      Assert(Assigned(SfmlTextDestroy));
-
-      SfmlTextSetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_setPosition'));
-      Assert(Assigned(SfmlTextSetPosition));
-
-      SfmlTextSetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_setRotation'));
-      Assert(Assigned(SfmlTextSetRotation));
-
-      SfmlTextSetScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_setScale'));
-      Assert(Assigned(SfmlTextSetScale));
-
-      SfmlTextSetOrigin := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_setOrigin'));
-      Assert(Assigned(SfmlTextSetOrigin));
-
-      SfmlTextGetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_getPosition'));
-      Assert(Assigned(SfmlTextGetPosition));
-
-      SfmlTextGetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_getRotation'));
-      Assert(Assigned(SfmlTextGetRotation));
-
-      SfmlTextGetScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_getScale'));
-      Assert(Assigned(SfmlTextGetScale));
-
-      SfmlTextGetOrigin := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_getOrigin'));
-      Assert(Assigned(SfmlTextGetOrigin));
-
-      SfmlTextMove := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_move'));
-      Assert(Assigned(SfmlTextMove));
-
-      SfmlTextRotate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_rotate'));
-      Assert(Assigned(SfmlTextRotate));
-
-      SfmlTextScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_scale'));
-      Assert(Assigned(SfmlTextScale));
-
-      SfmlTextGetTransform := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_getTransform'));
-      Assert(Assigned(SfmlTextGetTransform));
-
-      SfmlTextGetInverseTransform := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_getInverseTransform'));
-      Assert(Assigned(SfmlTextGetInverseTransform));
-
-      SfmlTextSetString := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_setString'));
-      Assert(Assigned(SfmlTextSetString));
-
-      SfmlTextSetUnicodeString := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_setUnicodeString'));
-      Assert(Assigned(SfmlTextSetUnicodeString));
-
-      SfmlTextSetFont := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_setFont'));
-      Assert(Assigned(SfmlTextSetFont));
-
-      SfmlTextSetCharacterSize := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_setCharacterSize'));
-      Assert(Assigned(SfmlTextSetCharacterSize));
-
-      SfmlTextSetStyle := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_setStyle'));
-      Assert(Assigned(SfmlTextSetStyle));
-
-      SfmlTextSetColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_setColor'));
-      Assert(Assigned(SfmlTextSetColor));
-
-      SfmlTextGetString := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_getString'));
-      Assert(Assigned(SfmlTextGetString));
-
-      SfmlTextGetUnicodeString := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_getUnicodeString'));
-      Assert(Assigned(SfmlTextGetUnicodeString));
-
-      SfmlTextGetFont := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_getFont'));
-      Assert(Assigned(SfmlTextGetFont));
-
-      SfmlTextGetCharacterSize := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_getCharacterSize'));
-      Assert(Assigned(SfmlTextGetCharacterSize));
-
-      SfmlTextGetStyle := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_getStyle'));
-      Assert(Assigned(SfmlTextGetStyle));
-
-      SfmlTextGetColor := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_getColor'));
-      Assert(Assigned(SfmlTextGetColor));
-
-      SfmlTextFindCharacterPos := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_findCharacterPos'));
-      Assert(Assigned(SfmlTextFindCharacterPos));
-
-      SfmlTextGetLocalBounds := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_getLocalBounds'));
-      Assert(Assigned(SfmlTextGetLocalBounds));
-
-      SfmlTextGetGlobalBounds := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfText_getGlobalBounds'));
-      Assert(Assigned(SfmlTextGetGlobalBounds));
-
-      SfmlTextureCreate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_create'));
-      Assert(Assigned(SfmlTextureCreate));
-
-      SfmlTextureCreateFromFile := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_createFromFile'));
-      Assert(Assigned(SfmlTextureCreateFromFile));
-
-      SfmlTextureCreateFromMemory := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_createFromMemory'));
-      Assert(Assigned(SfmlTextureCreateFromMemory));
-
-      SfmlTextureCreateFromStream := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_createFromStream'));
-      Assert(Assigned(SfmlTextureCreateFromStream));
-
-      SfmlTextureCreateFromImage := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_createFromImage'));
-      Assert(Assigned(SfmlTextureCreateFromImage));
-
-      SfmlTextureCopy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_copy'));
-      Assert(Assigned(SfmlTextureCopy));
-
-      SfmlTextureDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_destroy'));
-      Assert(Assigned(SfmlTextureDestroy));
-
-      SfmlTextureGetSize := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_getSize'));
-      Assert(Assigned(SfmlTextureGetSize));
-
-      SfmlTextureCopyToImage := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_copyToImage'));
-      Assert(Assigned(SfmlTextureCopyToImage));
-
-      SfmlTextureUpdateFromPixels := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_updateFromPixels'));
-      Assert(Assigned(SfmlTextureUpdateFromPixels));
-
-      SfmlTextureUpdateFromImage := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_updateFromImage'));
-      Assert(Assigned(SfmlTextureUpdateFromImage));
-
-      SfmlTextureUpdateFromWindow := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_updateFromWindow'));
-      Assert(Assigned(SfmlTextureUpdateFromWindow));
-
-      SfmlTextureUpdateFromRenderWindow := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_updateFromRenderWindow'));
-      Assert(Assigned(SfmlTextureUpdateFromRenderWindow));
-
-      SfmlTextureSetSmooth := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_setSmooth'));
-      Assert(Assigned(SfmlTextureSetSmooth));
-
-      SfmlTextureIsSmooth := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_isSmooth'));
-      Assert(Assigned(SfmlTextureIsSmooth));
-
-      SfmlTextureSetRepeated := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_setRepeated'));
-      Assert(Assigned(SfmlTextureSetRepeated));
-
-      SfmlTextureIsRepeated := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_isRepeated'));
-      Assert(Assigned(SfmlTextureIsRepeated));
-
-      SfmlTextureBind := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_bind'));
-      Assert(Assigned(SfmlTextureBind));
-
-      SfmlTextureGetMaximumSize := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTexture_getMaximumSize'));
-      Assert(Assigned(SfmlTextureGetMaximumSize));
-
-      SfmlTransformidentity := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransform_Identity'));
-      Assert(Assigned(SfmlTransformidentity));
-
-      SfmlTransformFromMatrix := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransform_fromMatrix'));
-      Assert(Assigned(SfmlTransformFromMatrix));
-
-      SfmlTransformGetMatrix := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransform_getMatrix'));
-      Assert(Assigned(SfmlTransformGetMatrix));
-
-      SfmlTransformGetInverse := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransform_getInverse'));
-      Assert(Assigned(SfmlTransformGetInverse));
-
-      SfmlTransformTransformPoint := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransform_transformPoint'));
-      Assert(Assigned(SfmlTransformTransformPoint));
-
-      SfmlTransformTransformRect := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransform_transformRect'));
-      Assert(Assigned(SfmlTransformTransformRect));
-
-      SfmlTransformCombine := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransform_combine'));
-      Assert(Assigned(SfmlTransformCombine));
-
-      SfmlTransformTranslate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransform_translate'));
-      Assert(Assigned(SfmlTransformTranslate));
-
-      SfmlTransformRotate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransform_rotate'));
-      Assert(Assigned(SfmlTransformRotate));
-
-      SfmlTransformRotateWithCenter := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransform_rotateWithCenter'));
-      Assert(Assigned(SfmlTransformRotateWithCenter));
-
-      SfmlTransformScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransform_scale'));
-      Assert(Assigned(SfmlTransformScale));
-
-      SfmlTransformScaleWithCenter := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransform_scaleWithCenter'));
-      Assert(Assigned(SfmlTransformScaleWithCenter));
-
-      SfmlTransformableCreate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_create'));
-      Assert(Assigned(SfmlTransformableCreate));
-
-      SfmlTransformableCopy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_copy'));
-      Assert(Assigned(SfmlTransformableCopy));
-
-      SfmlTransformableDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_destroy'));
-      Assert(Assigned(SfmlTransformableDestroy));
-
-      SfmlTransformableSetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_setPosition'));
-      Assert(Assigned(SfmlTransformableSetPosition));
-
-      SfmlTransformableSetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_setRotation'));
-      Assert(Assigned(SfmlTransformableSetRotation));
-
-      SfmlTransformableSetScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_setScale'));
-      Assert(Assigned(SfmlTransformableSetScale));
-
-      SfmlTransformableSetOrigin := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_setOrigin'));
-      Assert(Assigned(SfmlTransformableSetOrigin));
-
-      SfmlTransformableGetPosition := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_getPosition'));
-      Assert(Assigned(SfmlTransformableGetPosition));
-
-      SfmlTransformableGetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_getRotation'));
-      Assert(Assigned(SfmlTransformableGetRotation));
-
-      SfmlTransformableGetScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_getScale'));
-      Assert(Assigned(SfmlTransformableGetScale));
-
-      SfmlTransformableGetOrigin := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_getOrigin'));
-      Assert(Assigned(SfmlTransformableGetOrigin));
-
-      SfmlTransformableMove := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_move'));
-      Assert(Assigned(SfmlTransformableMove));
-
-      SfmlTransformableRotate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_rotate'));
-      Assert(Assigned(SfmlTransformableRotate));
-
-      SfmlTransformableScale := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_scale'));
-      Assert(Assigned(SfmlTransformableScale));
-
-      SfmlTransformableGetTransform := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_getTransform'));
-      Assert(Assigned(SfmlTransformableGetTransform));
-
-      SfmlTransformableGetInverseTransform := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransformable_getInverseTransform'));
-      Assert(Assigned(SfmlTransformableGetInverseTransform));
-
-      SfmlVertexArrayCreate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfVertexArray_create'));
-      Assert(Assigned(SfmlVertexArrayCreate));
-
-      SfmlVertexArrayCopy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfVertexArray_copy'));
-      Assert(Assigned(SfmlVertexArrayCopy));
-
-      SfmlVertexArrayDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfVertexArray_destroy'));
-      Assert(Assigned(SfmlVertexArrayDestroy));
-
-      SfmlVertexArrayGetVertexCount := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfVertexArray_getVertexCount'));
-      Assert(Assigned(SfmlVertexArrayGetVertexCount));
-
-      SfmlVertexArrayGetVertex := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfVertexArray_getVertex'));
-      Assert(Assigned(SfmlVertexArrayGetVertex));
-
-      SfmlVertexArrayClear := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfVertexArray_clear'));
-      Assert(Assigned(SfmlVertexArrayClear));
-
-      SfmlVertexArrayResize := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfVertexArray_resize'));
-      Assert(Assigned(SfmlVertexArrayResize));
-
-      SfmlVertexArrayAppend := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfVertexArray_append'));
-      Assert(Assigned(SfmlVertexArrayAppend));
-
-      SfmlVertexArraySetPrimitiveType := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfVertexArray_setPrimitiveType'));
-      Assert(Assigned(SfmlVertexArraySetPrimitiveType));
-
-      SfmlVertexArrayGetPrimitiveType := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfVertexArray_getPrimitiveType'));
-      Assert(Assigned(SfmlVertexArrayGetPrimitiveType));
-
-      SfmlVertexArrayGetBounds := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfVertexArray_getBounds'));
-      Assert(Assigned(SfmlVertexArrayGetBounds));
-
-      SfmlViewCreate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_create'));
-      Assert(Assigned(SfmlViewCreate));
-
-      SfmlViewCreateFromRect := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_createFromRect'));
-      Assert(Assigned(SfmlViewCreateFromRect));
-
-      SfmlViewCopy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_copy'));
-      Assert(Assigned(SfmlViewCopy));
-
-      SfmlViewDestroy := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_destroy'));
-      Assert(Assigned(SfmlViewDestroy));
-
-      SfmlViewSetCenter := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_setCenter'));
-      Assert(Assigned(SfmlViewSetCenter));
-
-      SfmlViewSetSize := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_setSize'));
-      Assert(Assigned(SfmlViewSetSize));
-
-      SfmlViewSetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_setRotation'));
-      Assert(Assigned(SfmlViewSetRotation));
-
-      SfmlViewSetViewport := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_setViewport'));
-      Assert(Assigned(SfmlViewSetViewport));
-
-      SfmlViewReset := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_reset'));
-      Assert(Assigned(SfmlViewReset));
-
-      SfmlViewGetCenter := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_getCenter'));
-      Assert(Assigned(SfmlViewGetCenter));
-
-      SfmlViewGetSize := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_getSize'));
-      Assert(Assigned(SfmlViewGetSize));
-
-      SfmlViewGetRotation := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_getRotation'));
-      Assert(Assigned(SfmlViewGetRotation));
-
-      SfmlViewGetViewport := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_getViewport'));
-      Assert(Assigned(SfmlViewGetViewport));
-
-      SfmlViewMove := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_move'));
-      Assert(Assigned(SfmlViewMove));
-
-      SfmlViewRotate := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_rotate'));
-      Assert(Assigned(SfmlViewRotate));
-
-      SfmlViewZoom := GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfView_zoom'));
-      Assert(Assigned(SfmlViewZoom));
+      SfmlColorFromRGB := BindFunction('sfColor_fromRGB');
+      SfmlColorFromRGBA := BindFunction('sfColor_fromRGBA');
+      SfmlColorAdd := BindFunction('sfColor_add');
+      SfmlColorModulate := BindFunction('sfColor_modulate');
+      SfmlCircleShapeCreate := BindFunction('sfCircleShape_create');
+      SfmlCircleShapeCopy := BindFunction('sfCircleShape_copy');
+      SfmlCircleShapeDestroy := BindFunction('sfCircleShape_destroy');
+      SfmlCircleShapeSetPosition := BindFunction('sfCircleShape_setPosition');
+      SfmlCircleShapeSetRotation := BindFunction('sfCircleShape_setRotation');
+      SfmlCircleShapeSetScale := BindFunction('sfCircleShape_setScale');
+      SfmlCircleShapeSetOrigin := BindFunction('sfCircleShape_setOrigin');
+      SfmlCircleShapeGetPosition := BindFunction('sfCircleShape_getPosition');
+      SfmlCircleShapeGetRotation := BindFunction('sfCircleShape_getRotation');
+      SfmlCircleShapeGetScale := BindFunction('sfCircleShape_getScale');
+      SfmlCircleShapeGetOrigin := BindFunction('sfCircleShape_getOrigin');
+      SfmlCircleShapeMove := BindFunction('sfCircleShape_move');
+      SfmlCircleShapeRotate := BindFunction('sfCircleShape_rotate');
+      SfmlCircleShapeScale := BindFunction('sfCircleShape_scale');
+      SfmlCircleShapeGetTransform := BindFunction('sfCircleShape_getTransform');
+      SfmlCircleShapeGetInverseTransform := BindFunction('sfCircleShape_getInverseTransform');
+      SfmlCircleShapeSetTexture := BindFunction('sfCircleShape_setTexture');
+      SfmlCircleShapeSetTextureRect := BindFunction('sfCircleShape_setTextureRect');
+      SfmlCircleShapeSetFillColor := BindFunction('sfCircleShape_setFillColor');
+      SfmlCircleShapeSetOutlineColor := BindFunction('sfCircleShape_setOutlineColor');
+      SfmlCircleShapeSetOutlineThickness := BindFunction('sfCircleShape_setOutlineThickness');
+      SfmlCircleShapeGetTexture := BindFunction('sfCircleShape_getTexture');
+      SfmlCircleShapeGetTextureRect := BindFunction('sfCircleShape_getTextureRect');
+      SfmlCircleShapeGetFillColor := BindFunction('sfCircleShape_getFillColor');
+      SfmlCircleShapeGetOutlineColor := BindFunction('sfCircleShape_getOutlineColor');
+      SfmlCircleShapeGetOutlineThickness := BindFunction('sfCircleShape_getOutlineThickness');
+      SfmlCircleShapeGetPointCount := BindFunction('sfCircleShape_getPointCount');
+      SfmlCircleShapeGetPoint := BindFunction('sfCircleShape_getPoint');
+      SfmlCircleShapeSetRadius := BindFunction('sfCircleShape_setRadius');
+      SfmlCircleShapeGetRadius := BindFunction('sfCircleShape_getRadius');
+      SfmlCircleShapeSetPointCount := BindFunction('sfCircleShape_setPointCount');
+      SfmlCircleShapeGetLocalBounds := BindFunction('sfCircleShape_getLocalBounds');
+      SfmlCircleShapeGetGlobalBounds := BindFunction('sfCircleShape_getGlobalBounds');
+      SfmlConvexShapeCreate:= BindFunction('sfConvexShape_create');
+      SfmlConvexShapeCopy := BindFunction('sfConvexShape_copy');
+      SfmlConvexShapeDestroy := BindFunction('sfConvexShape_destroy');
+      SfmlConvexShapeSetPosition := BindFunction('sfConvexShape_setPosition');
+      SfmlConvexShapeSetRotation := BindFunction('sfConvexShape_setRotation');
+      SfmlConvexShapeSetScale := BindFunction('sfConvexShape_setScale');
+      SfmlConvexShapeSetOrigin := BindFunction('sfConvexShape_setOrigin');
+      SfmlConvexShapeGetPosition := BindFunction('sfConvexShape_getPosition');
+      SfmlConvexShapeGetRotation := BindFunction('sfConvexShape_getRotation');
+      SfmlConvexShapeGetScale := BindFunction('sfConvexShape_getScale');
+      SfmlConvexShapeGetOrigin := BindFunction('sfConvexShape_getOrigin');
+      SfmlConvexShapeMove := BindFunction('sfConvexShape_move');
+      SfmlConvexShapeRotate := BindFunction('sfConvexShape_rotate');
+      SfmlConvexShapeScale := BindFunction('sfConvexShape_scale');
+      SfmlConvexShapeGetTransform := BindFunction('sfConvexShape_getTransform');
+      SfmlConvexShapeGetInverseTransform := BindFunction('sfConvexShape_getInverseTransform');
+      SfmlConvexShapeSetTexture := BindFunction('sfConvexShape_setTexture');
+      SfmlConvexShapeSetTextureRect := BindFunction('sfConvexShape_setTextureRect');
+      SfmlConvexShapeSetFillColor := BindFunction('sfConvexShape_setFillColor');
+      SfmlConvexShapeSetOutlineColor := BindFunction('sfConvexShape_setOutlineColor');
+      SfmlConvexShapeSetOutlineThickness := BindFunction('sfConvexShape_setOutlineThickness');
+      SfmlConvexShapeGetTexture := BindFunction('sfConvexShape_getTexture');
+      SfmlConvexShapeGetTextureRect := BindFunction('sfConvexShape_getTextureRect');
+      SfmlConvexShapeGetFillColor := BindFunction('sfConvexShape_getFillColor');
+      SfmlConvexShapeGetOutlineColor := BindFunction('sfConvexShape_getOutlineColor');
+      SfmlConvexShapeGetOutlineThickness := BindFunction('sfConvexShape_getOutlineThickness');
+      SfmlConvexShapeGetPointCount := BindFunction('sfConvexShape_getPointCount');
+      SfmlConvexShapeGetPoint := BindFunction('sfConvexShape_getPoint');
+      SfmlConvexShapeSetPointCount := BindFunction('sfConvexShape_setPointCount');
+      SfmlConvexShapeSetPoint := BindFunction('sfConvexShape_setPoint');
+      SfmlConvexShapeGetLocalBounds := BindFunction('sfConvexShape_getLocalBounds');
+      SfmlConvexShapeGetGlobalBounds := BindFunction('sfConvexShape_getGlobalBounds');
+      SfmlFontCreateFromFile := BindFunction('sfFont_createFromFile');
+      SfmlFontCreateFromMemory := BindFunction('sfFont_createFromMemory');
+      SfmlFontCreateFromStream := BindFunction('sfFont_createFromStream');
+      SfmlFontCopy := BindFunction('sfFont_copy');
+      SfmlFontDestroy := BindFunction('sfFont_destroy');
+      SfmlFontGetGlyph := BindFunction('sfFont_getGlyph');
+      SfmlFontGetKerning := BindFunction('sfFont_getKerning');
+      SfmlFontGetLineSpacing := BindFunction('sfFont_getLineSpacing');
+      SfmlFontGetUnderlinePosition := BindFunction('sfFont_getUnderlinePosition');
+      SfmlFontGetUnderlineThickness := BindFunction('sfFont_getUnderlineThickness');
+      SfmlFontGetTexture := BindFunction('sfFont_getTexture');
+      SfmlFontGetInfo := BindFunction('sfFont_getInfo');
+      SfmlImageCreate := BindFunction('sfImage_create');
+      SfmlImageCreateFromColor := BindFunction('sfImage_createFromColor');
+      SfmlImageCreateFromPixels := BindFunction('sfImage_createFromPixels');
+      SfmlImageCreateFromFile := BindFunction('sfImage_createFromFile');
+      SfmlImageCreateFromMemory := BindFunction('sfImage_createFromMemory');
+      SfmlImageCreateFromStream := BindFunction('sfImage_createFromStream');
+      SfmlImageCopy := BindFunction('sfImage_copy');
+      SfmlImageDestroy := BindFunction('sfImage_destroy');
+      SfmlImageSaveToFile := BindFunction('sfImage_saveToFile');
+      SfmlImageGetSize := BindFunction('sfImage_getSize');
+      SfmlImageCreateMaskFromColor := BindFunction('sfImage_createMaskFromColor');
+      SfmlImageCopyImage := BindFunction('sfImage_copyImage');
+      SfmlImageSetPixel := BindFunction('sfImage_setPixel');
+      SfmlImageGetPixel := BindFunction('sfImage_getPixel');
+      SfmlImageGetPixelsPtr := BindFunction('sfImage_getPixelsPtr');
+      SfmlImageFlipHorizontally := BindFunction('sfImage_flipHorizontally');
+      SfmlImageFlipVertically := BindFunction('sfImage_flipVertically');
+      SfmlFloatRectContains := BindFunction('sfFloatRect_contains');
+      SfmlIntRectContains := BindFunction('sfIntRect_contains');
+      SfmlFloatRectIntersects := BindFunction('sfFloatRect_intersects');
+      SfmlIntRectIntersects := BindFunction('sfIntRect_intersects');
+      SfmlRectangleShapeCreate := BindFunction('sfRectangleShape_create');
+      SfmlRectangleShapeCopy := BindFunction('sfRectangleShape_copy');
+      SfmlRectangleShapeDestroy := BindFunction('sfRectangleShape_destroy');
+      SfmlRectangleShapeSetPosition := BindFunction('sfRectangleShape_setPosition');
+      SfmlRectangleShapeSetRotation := BindFunction('sfRectangleShape_setRotation');
+      SfmlRectangleShapeSetScale := BindFunction('sfRectangleShape_setScale');
+      SfmlRectangleShapeSetOrigin := BindFunction('sfRectangleShape_setOrigin');
+      SfmlRectangleShapeGetPosition := BindFunction('sfRectangleShape_getPosition');
+      SfmlRectangleShapeGetRotation := BindFunction('sfRectangleShape_getRotation');
+      SfmlRectangleShapeGetScale := BindFunction('sfRectangleShape_getScale');
+      SfmlRectangleShapeGetOrigin := BindFunction('sfRectangleShape_getOrigin');
+      SfmlRectangleShapeMove := BindFunction('sfRectangleShape_move');
+      SfmlRectangleShapeRotate := BindFunction('sfRectangleShape_rotate');
+      SfmlRectangleShapeScale := BindFunction('sfRectangleShape_scale');
+      SfmlRectangleShapeGetTransform := BindFunction('sfRectangleShape_getTransform');
+      SfmlRectangleShapeGetInverseTransform := BindFunction('sfRectangleShape_getInverseTransform');
+      SfmlRectangleShapeSetTexture := BindFunction('sfRectangleShape_setTexture');
+      SfmlRectangleShapeSetTextureRect := BindFunction('sfRectangleShape_setTextureRect');
+      SfmlRectangleShapeSetFillColor := BindFunction('sfRectangleShape_setFillColor');
+      SfmlRectangleShapeSetOutlineColor := BindFunction('sfRectangleShape_setOutlineColor');
+      SfmlRectangleShapeSetOutlineThickness := BindFunction('sfRectangleShape_setOutlineThickness');
+      SfmlRectangleShapeGetTexture := BindFunction('sfRectangleShape_getTexture');
+      SfmlRectangleShapeGetTextureRect := BindFunction('sfRectangleShape_getTextureRect');
+      SfmlRectangleShapeGetFillColor := BindFunction('sfRectangleShape_getFillColor');
+      SfmlRectangleShapeGetOutlineColor := BindFunction('sfRectangleShape_getOutlineColor');
+      SfmlRectangleShapeGetOutlineThickness := BindFunction('sfRectangleShape_getOutlineThickness');
+      SfmlRectangleShapeGetPointCount := BindFunction('sfRectangleShape_getPointCount');
+      SfmlRectangleShapeGetPoint := BindFunction('sfRectangleShape_getPoint');
+      SfmlRectangleShapeSetSize := BindFunction('sfRectangleShape_setSize');
+      SfmlRectangleShapeGetSize := BindFunction('sfRectangleShape_getSize');
+      SfmlRectangleShapeGetLocalBounds := BindFunction('sfRectangleShape_getLocalBounds');
+      SfmlRectangleShapeGetGlobalBounds := BindFunction('sfRectangleShape_getGlobalBounds');
+      SfmlRenderTextureCreate := BindFunction('sfRenderTexture_create');
+      SfmlRenderTextureDestroy := BindFunction('sfRenderTexture_destroy');
+      SfmlRenderTextureGetSize := BindFunction('sfRenderTexture_getSize');
+      SfmlRenderTextureSetActive := BindFunction('sfRenderTexture_setActive');
+      SfmlRenderTextureDisplay := BindFunction('sfRenderTexture_display');
+      SfmlRenderTextureClear := BindFunction('sfRenderTexture_clear');
+      SfmlRenderTextureSetView := BindFunction('sfRenderTexture_setView');
+      SfmlRenderTextureGetView := BindFunction('sfRenderTexture_getView');
+      SfmlRenderTextureGetDefaultView := BindFunction('sfRenderTexture_getDefaultView');
+      SfmlRenderTextureGetViewport := BindFunction('sfRenderTexture_getViewport');
+      SfmlRenderTextureMapPixelToCoords := BindFunction('sfRenderTexture_mapPixelToCoords');
+      SfmlRenderTextureMapCoordsToPixel := BindFunction('sfRenderTexture_mapCoordsToPixel');
+      SfmlRenderTextureDrawSprite := BindFunction('sfRenderTexture_drawSprite');
+      SfmlRenderTextureDrawText := BindFunction('sfRenderTexture_drawText');
+      SfmlRenderTextureDrawShape := BindFunction('sfRenderTexture_drawShape');
+      SfmlRenderTextureDrawCircleShape := BindFunction('sfRenderTexture_drawCircleShape');
+      SfmlRenderTextureDrawConvexShape := BindFunction('sfRenderTexture_drawConvexShape');
+      SfmlRenderTextureDrawRectangleShape := BindFunction('sfRenderTexture_drawRectangleShape');
+      SfmlRenderTextureDrawVertexArray := BindFunction('sfRenderTexture_drawVertexArray');
+      SfmlRenderTextureDrawPrimitives := BindFunction('sfRenderTexture_drawPrimitives');
+      SfmlRenderTexturePushGLStates := BindFunction('sfRenderTexture_pushGLStates');
+      SfmlRenderTexturePopGLStates := BindFunction('sfRenderTexture_popGLStates');
+      SfmlRenderTextureResetGLStates := BindFunction('sfRenderTexture_resetGLStates');
+      SfmlRenderTextureGetTexture := BindFunction('sfRenderTexture_getTexture');
+      SfmlRenderTextureSetSmooth := BindFunction('sfRenderTexture_setSmooth');
+      SfmlRenderTextureIsSmooth := BindFunction('sfRenderTexture_isSmooth');
+      SfmlRenderTextureSetRepeated := BindFunction('sfRenderTexture_setRepeated');
+      SfmlRenderTextureIsRepeated := BindFunction('sfRenderTexture_isRepeated');
+      SfmlRenderWindowCreate := BindFunction('sfRenderWindow_create');
+      SfmlRenderWindowCreateUnicode := BindFunction('sfRenderWindow_createUnicode');
+      SfmlRenderWindowCreateFromHandle := BindFunction('sfRenderWindow_createFromHandle');
+      SfmlRenderWindowDestroy := BindFunction('sfRenderWindow_destroy');
+      SfmlRenderWindowClose := BindFunction('sfRenderWindow_close');
+      SfmlRenderWindowIsOpen := BindFunction('sfRenderWindow_isOpen');
+      SfmlRenderWindowGetSettings := BindFunction('sfRenderWindow_getSettings');
+      SfmlRenderWindowPollEvent := BindFunction('sfRenderWindow_pollEvent');
+      SfmlRenderWindowWaitEvent := BindFunction('sfRenderWindow_waitEvent');
+      SfmlRenderWindowGetPosition := BindFunction('sfRenderWindow_getPosition');
+      SfmlRenderWindowSetPosition := BindFunction('sfRenderWindow_setPosition');
+      SfmlRenderWindowGetSize := BindFunction('sfRenderWindow_getSize');
+      SfmlRenderWindowSetSize := BindFunction('sfRenderWindow_setSize');
+      SfmlRenderWindowSetTitle := BindFunction('sfRenderWindow_setTitle');
+      SfmlRenderWindowSetUnicodeTitle := BindFunction('sfRenderWindow_setUnicodeTitle');
+      SfmlRenderWindowSetIcon := BindFunction('sfRenderWindow_setIcon');
+      SfmlRenderWindowSetVisible := BindFunction('sfRenderWindow_setVisible');
+      SfmlRenderWindowSetMouseCursorVisible := BindFunction('sfRenderWindow_setMouseCursorVisible');
+      SfmlRenderWindowSetVerticalSyncEnabled := BindFunction('sfRenderWindow_setVerticalSyncEnabled');
+      SfmlRenderWindowSetKeyRepeatEnabled := BindFunction('sfRenderWindow_setKeyRepeatEnabled');
+      SfmlRenderWindowSetActive := BindFunction('sfRenderWindow_setActive');
+      SfmlRenderWindowRequestFocus := BindFunction('sfRenderWindow_requestFocus');
+      SfmlRenderWindowHasFocus := BindFunction('sfRenderWindow_hasFocus');
+      SfmlRenderWindowDisplay := BindFunction('sfRenderWindow_display');
+      SfmlRenderWindowSetFramerateLimit := BindFunction('sfRenderWindow_setFramerateLimit');
+      SfmlRenderWindowSetJoystickThreshold := BindFunction('sfRenderWindow_setJoystickThreshold');
+      SfmlRenderWindowGetSystemHandle := BindFunction('sfRenderWindow_getSystemHandle');
+      SfmlRenderWindowClear := BindFunction('sfRenderWindow_clear');
+      SfmlRenderWindowSetView := BindFunction('sfRenderWindow_setView');
+      SfmlRenderWindowGetView := BindFunction('sfRenderWindow_getView');
+      SfmlRenderWindowGetDefaultView := BindFunction('sfRenderWindow_getDefaultView');
+      SfmlRenderWindowGetViewport := BindFunction('sfRenderWindow_getViewport');
+      SfmlRenderWindowMapPixelToCoords := BindFunction('sfRenderWindow_mapPixelToCoords');
+      SfmlRenderWindowMapCoordsToPixel := BindFunction('sfRenderWindow_mapCoordsToPixel');
+      SfmlRenderWindowDrawSprite := BindFunction('sfRenderWindow_drawSprite');
+      SfmlRenderWindowDrawText := BindFunction('sfRenderWindow_drawText');
+      SfmlRenderWindowDrawShape := BindFunction('sfRenderWindow_drawShape');
+      SfmlRenderWindowDrawCircleShape := BindFunction('sfRenderWindow_drawCircleShape');
+      SfmlRenderWindowDrawConvexShape := BindFunction('sfRenderWindow_drawConvexShape');
+      SfmlRenderWindowDrawRectangleShape := BindFunction('sfRenderWindow_drawRectangleShape');
+      SfmlRenderWindowDrawVertexArray := BindFunction('sfRenderWindow_drawVertexArray');
+      SfmlRenderWindowDrawPrimitives := BindFunction('sfRenderWindow_drawPrimitives');
+      SfmlRenderWindowPushGLStates := BindFunction('sfRenderWindow_pushGLStates');
+      SfmlRenderWindowPopGLStates := BindFunction('sfRenderWindow_popGLStates');
+      SfmlRenderWindowResetGLStates := BindFunction('sfRenderWindow_resetGLStates');
+      SfmlRenderWindowCapture := BindFunction('sfRenderWindow_capture');
+      SfmlMouseGetPositionRenderWindow := BindFunction('sfMouse_getPositionRenderWindow');
+      SfmlMouseSetPositionRenderWindow := BindFunction('sfMouse_setPositionRenderWindow');
+      SfmlTouchGetPositionRenderWindow := BindFunction('sfTouch_getPositionRenderWindow');
+      SfmlShaderCreateFromFile := BindFunction('sfShader_createFromFile');
+      SfmlShaderCreateFromMemory := BindFunction('sfShader_createFromMemory');
+      SfmlShaderCreateFromStream := BindFunction('sfShader_createFromStream');
+      SfmlShaderDestroy := BindFunction('sfShader_destroy');
+      SfmlShadersetFloatParameter := BindFunction('sfShader_setFloatParameter');
+      SfmlShaderSetFloat2Parameter := BindFunction('sfShader_setFloat2Parameter');
+      SfmlShaderSetFloat3Parameter := BindFunction('sfShader_setFloat3Parameter');
+      SfmlShaderSetFloat4Parameter := BindFunction('sfShader_setFloat4Parameter');
+      SfmlShaderSetVector2Parameter := BindFunction('sfShader_setVector2Parameter');
+      SfmlShaderSetVector3Parameter := BindFunction('sfShader_setVector3Parameter');
+      SfmlShaderSetColorParameter := BindFunction('sfShader_setColorParameter');
+      SfmlShaderSetTransformParameter := BindFunction('sfShader_setTransformParameter');
+      SfmlShaderSetTextureParameter := BindFunction('sfShader_setTextureParameter');
+      SfmlShaderSetCurrentTextureParameter := BindFunction('sfShader_setCurrentTextureParameter');
+      SfmlShaderBind := BindFunction('sfShader_bind');
+      SfmlShaderIsAvailable := BindFunction('sfShader_isAvailable');
+      SfmlShapeCreate := BindFunction('sfShape_create');
+      SfmlShapeDestroy := BindFunction('sfShape_destroy');
+      SfmlShapeSetPosition := BindFunction('sfShape_setPosition');
+      SfmlShapeSetRotation := BindFunction('sfShape_setRotation');
+      SfmlShapeSetScale := BindFunction('sfShape_setScale');
+      SfmlShapeSetOrigin := BindFunction('sfShape_setOrigin');
+      SfmlShapeGetPosition := BindFunction('sfShape_getPosition');
+      SfmlShapeGetRotation := BindFunction('sfShape_getRotation');
+      SfmlShapeGetScale := BindFunction('sfShape_getScale');
+      SfmlShapeGetOrigin := BindFunction('sfShape_getOrigin');
+      SfmlShapeMove := BindFunction('sfShape_move');
+      SfmlShapeRotate := BindFunction('sfShape_rotate');
+      SfmlShapeScale := BindFunction('sfShape_scale');
+      SfmlShapeGetTransform := BindFunction('sfShape_getTransform');
+      SfmlShapeGetInverseTransform := BindFunction('sfShape_getInverseTransform');
+      SfmlShapeSetTexture := BindFunction('sfShape_setTexture');
+      SfmlShapeSetTextureRect := BindFunction('sfShape_setTextureRect');
+      SfmlShapeSetFillColor := BindFunction('sfShape_setFillColor');
+      SfmlShapeSetOutlineColor := BindFunction('sfShape_setOutlineColor');
+      SfmlShapeSetOutlineThickness := BindFunction('sfShape_setOutlineThickness');
+      SfmlShapeGetTexture := BindFunction('sfShape_getTexture');
+      SfmlShapeGetTextureRect := BindFunction('sfShape_getTextureRect');
+      SfmlShapeGetFillColor := BindFunction('sfShape_getFillColor');
+      SfmlShapeGetOutlineColor := BindFunction('sfShape_getOutlineColor');
+      SfmlShapeGetOutlineThickness := BindFunction('sfShape_getOutlineThickness');
+      SfmlShapeGetPointCount := BindFunction('sfShape_getPointCount');
+      SfmlShapeGetPoint := BindFunction('sfShape_getPoint');
+      SfmlShapeGetLocalBounds := BindFunction('sfShape_getLocalBounds');
+      SfmlShapeGetGlobalBounds := BindFunction('sfShape_getGlobalBounds');
+      SfmlShapeUpdate := BindFunction('sfShape_update');
+      SfmlSpriteCreate := BindFunction('sfSprite_create');
+      SfmlSpriteCopy := BindFunction('sfSprite_copy');
+      SfmlSpriteDestroy := BindFunction('sfSprite_destroy');
+      SfmlSpriteSetPosition := BindFunction('sfSprite_setPosition');
+      SfmlSpriteSetRotation := BindFunction('sfSprite_setRotation');
+      SfmlSpriteSetScale := BindFunction('sfSprite_setScale');
+      SfmlSpriteSetOrigin := BindFunction('sfSprite_setOrigin');
+      SfmlSpriteGetPosition := BindFunction('sfSprite_getPosition');
+      SfmlSpriteGetRotation := BindFunction('sfSprite_getRotation');
+      SfmlSpriteGetScale := BindFunction('sfSprite_getScale');
+      SfmlSpriteGetOrigin := BindFunction('sfSprite_getOrigin');
+      SfmlSpriteMove := BindFunction('sfSprite_move');
+      SfmlSpriteRotate := BindFunction('sfSprite_rotate');
+      SfmlSpriteScale := BindFunction('sfSprite_scale');
+      SfmlSpriteGetTransform := BindFunction('sfSprite_getTransform');
+      SfmlSpriteGetInverseTransform := BindFunction('sfSprite_getInverseTransform');
+      SfmlSpriteSetTexture := BindFunction('sfSprite_setTexture');
+      SfmlSpriteSetTextureRect := BindFunction('sfSprite_setTextureRect');
+      SfmlSpriteSetColor := BindFunction('sfSprite_setColor');
+      SfmlSpriteGetTexture := BindFunction('sfSprite_getTexture');
+      SfmlSpriteGetTextureRect := BindFunction('sfSprite_getTextureRect');
+      SfmlSpriteGetColor := BindFunction('sfSprite_getColor');
+      SfmlSpriteGetLocalBounds := BindFunction('sfSprite_getLocalBounds');
+      SfmlSpriteGetGlobalBounds := BindFunction('sfSprite_getGlobalBounds');
+      SfmlTextCreate := BindFunction('sfText_create');
+      SfmlTextCopy := BindFunction('sfText_copy');
+      SfmlTextDestroy := BindFunction('sfText_destroy');
+      SfmlTextSetPosition := BindFunction('sfText_setPosition');
+      SfmlTextSetRotation := BindFunction('sfText_setRotation');
+      SfmlTextSetScale := BindFunction('sfText_setScale');
+      SfmlTextSetOrigin := BindFunction('sfText_setOrigin');
+      SfmlTextGetPosition := BindFunction('sfText_getPosition');
+      SfmlTextGetRotation := BindFunction('sfText_getRotation');
+      SfmlTextGetScale := BindFunction('sfText_getScale');
+      SfmlTextGetOrigin := BindFunction('sfText_getOrigin');
+      SfmlTextMove := BindFunction('sfText_move');
+      SfmlTextRotate := BindFunction('sfText_rotate');
+      SfmlTextScale := BindFunction('sfText_scale');
+      SfmlTextGetTransform := BindFunction('sfText_getTransform');
+      SfmlTextGetInverseTransform := BindFunction('sfText_getInverseTransform');
+      SfmlTextSetString := BindFunction('sfText_setString');
+      SfmlTextSetUnicodeString := BindFunction('sfText_setUnicodeString');
+      SfmlTextSetFont := BindFunction('sfText_setFont');
+      SfmlTextSetCharacterSize := BindFunction('sfText_setCharacterSize');
+      SfmlTextSetStyle := BindFunction('sfText_setStyle');
+      SfmlTextSetColor := BindFunction('sfText_setColor');
+      SfmlTextGetString := BindFunction('sfText_getString');
+      SfmlTextGetUnicodeString := BindFunction('sfText_getUnicodeString');
+      SfmlTextGetFont := BindFunction('sfText_getFont');
+      SfmlTextGetCharacterSize := BindFunction('sfText_getCharacterSize');
+      SfmlTextGetStyle := BindFunction('sfText_getStyle');
+      SfmlTextGetColor := BindFunction('sfText_getColor');
+      SfmlTextFindCharacterPos := BindFunction('sfText_findCharacterPos');
+      SfmlTextGetLocalBounds := BindFunction('sfText_getLocalBounds');
+      SfmlTextGetGlobalBounds := BindFunction('sfText_getGlobalBounds');
+      SfmlTextureCreate := BindFunction('sfTexture_create');
+      SfmlTextureCreateFromFile := BindFunction('sfTexture_createFromFile');
+      SfmlTextureCreateFromMemory := BindFunction('sfTexture_createFromMemory');
+      SfmlTextureCreateFromStream := BindFunction('sfTexture_createFromStream');
+      SfmlTextureCreateFromImage := BindFunction('sfTexture_createFromImage');
+      SfmlTextureCopy := BindFunction('sfTexture_copy');
+      SfmlTextureDestroy := BindFunction('sfTexture_destroy');
+      SfmlTextureGetSize := BindFunction('sfTexture_getSize');
+      SfmlTextureCopyToImage := BindFunction('sfTexture_copyToImage');
+      SfmlTextureUpdateFromPixels := BindFunction('sfTexture_updateFromPixels');
+      SfmlTextureUpdateFromImage := BindFunction('sfTexture_updateFromImage');
+      SfmlTextureUpdateFromWindow := BindFunction('sfTexture_updateFromWindow');
+      SfmlTextureUpdateFromRenderWindow := BindFunction('sfTexture_updateFromRenderWindow');
+      SfmlTextureSetSmooth := BindFunction('sfTexture_setSmooth');
+      SfmlTextureIsSmooth := BindFunction('sfTexture_isSmooth');
+      SfmlTextureSetRepeated := BindFunction('sfTexture_setRepeated');
+      SfmlTextureIsRepeated := BindFunction('sfTexture_isRepeated');
+      SfmlTextureBind := BindFunction('sfTexture_bind');
+      SfmlTextureGetMaximumSize := BindFunction('sfTexture_getMaximumSize');
+      SfmlTransformidentity := BindFunction('sfTransform_Identity');
+      SfmlTransformFromMatrix := BindFunction('sfTransform_fromMatrix');
+      SfmlTransformGetMatrix := BindFunction('sfTransform_getMatrix');
+      SfmlTransformGetInverse := BindFunction('sfTransform_getInverse');
+      SfmlTransformTransformPoint := BindFunction('sfTransform_transformPoint');
+      SfmlTransformTransformRect := BindFunction('sfTransform_transformRect');
+      SfmlTransformCombine := BindFunction('sfTransform_combine');
+      SfmlTransformTranslate := BindFunction('sfTransform_translate');
+      SfmlTransformRotate := BindFunction('sfTransform_rotate');
+      SfmlTransformRotateWithCenter := BindFunction('sfTransform_rotateWithCenter');
+      SfmlTransformScale := BindFunction('sfTransform_scale');
+      SfmlTransformScaleWithCenter := BindFunction('sfTransform_scaleWithCenter');
+      SfmlTransformableCreate := BindFunction('sfTransformable_create');
+      SfmlTransformableCopy := BindFunction('sfTransformable_copy');
+      SfmlTransformableDestroy := BindFunction('sfTransformable_destroy');
+      SfmlTransformableSetPosition := BindFunction('sfTransformable_setPosition');
+      SfmlTransformableSetRotation := BindFunction('sfTransformable_setRotation');
+      SfmlTransformableSetScale := BindFunction('sfTransformable_setScale');
+      SfmlTransformableSetOrigin := BindFunction('sfTransformable_setOrigin');
+      SfmlTransformableGetPosition := BindFunction('sfTransformable_getPosition');
+      SfmlTransformableGetRotation := BindFunction('sfTransformable_getRotation');
+      SfmlTransformableGetScale := BindFunction('sfTransformable_getScale');
+      SfmlTransformableGetOrigin := BindFunction('sfTransformable_getOrigin');
+      SfmlTransformableMove := BindFunction('sfTransformable_move');
+      SfmlTransformableRotate := BindFunction('sfTransformable_rotate');
+      SfmlTransformableScale := BindFunction('sfTransformable_scale');
+      SfmlTransformableGetTransform := BindFunction('sfTransformable_getTransform');
+      SfmlTransformableGetInverseTransform := BindFunction('sfTransformable_getInverseTransform');
+      SfmlVertexArrayCreate := BindFunction('sfVertexArray_create');
+      SfmlVertexArrayCopy := BindFunction('sfVertexArray_copy');
+      SfmlVertexArrayDestroy := BindFunction('sfVertexArray_destroy');
+      SfmlVertexArrayGetVertexCount := BindFunction('sfVertexArray_getVertexCount');
+      SfmlVertexArrayGetVertex := BindFunction('sfVertexArray_getVertex');
+      SfmlVertexArrayClear := BindFunction('sfVertexArray_clear');
+      SfmlVertexArrayResize := BindFunction('sfVertexArray_resize');
+      SfmlVertexArrayAppend := BindFunction('sfVertexArray_append');
+      SfmlVertexArraySetPrimitiveType := BindFunction('sfVertexArray_setPrimitiveType');
+      SfmlVertexArrayGetPrimitiveType := BindFunction('sfVertexArray_getPrimitiveType');
+      SfmlVertexArrayGetBounds := BindFunction('sfVertexArray_getBounds');
+      SfmlViewCreate := BindFunction('sfView_create');
+      SfmlViewCreateFromRect := BindFunction('sfView_createFromRect');
+      SfmlViewCopy := BindFunction('sfView_copy');
+      SfmlViewDestroy := BindFunction('sfView_destroy');
+      SfmlViewSetCenter := BindFunction('sfView_setCenter');
+      SfmlViewSetSize := BindFunction('sfView_setSize');
+      SfmlViewSetRotation := BindFunction('sfView_setRotation');
+      SfmlViewSetViewport := BindFunction('sfView_setViewport');
+      SfmlViewReset := BindFunction('sfView_reset');
+      SfmlViewGetCenter := BindFunction('sfView_getCenter');
+      SfmlViewGetSize := BindFunction('sfView_getSize');
+      SfmlViewGetRotation := BindFunction('sfView_getRotation');
+      SfmlViewGetViewport := BindFunction('sfView_getViewport');
+      SfmlViewMove := BindFunction('sfView_move');
+      SfmlViewRotate := BindFunction('sfView_rotate');
+      SfmlViewZoom := BindFunction('sfView_zoom');
     except
       FreeLibrary(CSfmlGraphicsHandle);
       CSfmlGraphicsHandle := 0;

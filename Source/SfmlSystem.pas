@@ -26,14 +26,17 @@ unit SfmlSystem;
 
 interface
 
-uses
-  Windows;
+{$I Sfml.inc}
 
-{$I SFML.inc}
-
-//{$include <SFML/Config.h>}
-  
 const
+{$IF Defined(MSWINDOWS)}
+  CSfmlSystemLibrary = 'csfml-system-2.dll';
+{$ELSEIF Defined(DARWIN)}
+  CSfmlSystemLibrary = 'csfml-system-2.dylib';
+{$ELSEIF Defined(UNIX)}
+  CSfmlSystemLibrary = 'csfml-system-2.so';
+{$IFEND}
+
   CSFML_VERSION_MAJOR = 2;
   CSFML_VERSION_MINOR = 2;
   CSFML_VERSION_PATCH = 0;
@@ -76,26 +79,10 @@ type
     X, Y, Z: Single;
   end;
 
-  TSfmlTimeZero = function: TSfmlTime; cdecl;
-  TSfmlTimeAsSeconds = function (Time: TSfmlTime): Single; cdecl;
-  TSfmlTimeAsMilliseconds = function (Time: TSfmlTime): sfInt32; cdecl;
-  TSfmlTimeAsMicroseconds = function (Time: TSfmlTime): Int64; cdecl;
-  TSfmlSeconds = function (Amount: Single): TSfmlTime; cdecl;
-
-  TSfmlMilliseconds = function (Amount: sfInt32): TSfmlTime; cdecl;
-  TSfmlMicroseconds = function (Amount: sfInt64): TSfmlTime; cdecl;
-
-  TSfmlClockCreate = function : PSfmlClock; cdecl;
-  TSfmlClockCopy = function (const clock: PSfmlClock): PSfmlClock; cdecl;
-  TSfmlClockDestroy = procedure (clock: PSfmlClock); cdecl;
-
-  TSfmlClockGetElapsedTime = function (const clock: PSfmlClock): TSfmlTime; cdecl;
-  TSfmlClockRestart = function (clock: PSfmlClock): TSfmlTime; cdecl;
-
-  TSfmlInputStreamReadFunc = function (data: pointer; size: sfInt64; userData: pointer): sfInt64; cdecl;
-  TSfmlInputStreamSeekFunc = function (position: sfInt64; userData: pointer): sfInt64; cdecl;
-  TSfmlInputStreamTellFunc = function (userData: pointer): sfInt64; cdecl;
-  TSfmlInputStreamGetSizeFunc = function (userData: pointer): sfInt64; cdecl;
+  TSfmlInputStreamReadFunc = function (Data: Pointer; Size: sfInt64; UserData: Pointer): sfInt64; cdecl;
+  TSfmlInputStreamSeekFunc = function (Position: sfInt64; UserData: Pointer): sfInt64; cdecl;
+  TSfmlInputStreamTellFunc = function (UserData: Pointer): sfInt64; cdecl;
+  TSfmlInputStreamGetSizeFunc = function (UserData: Pointer): sfInt64; cdecl;
 
   TSfmlInputStream = record
     Read: TSfmlInputStreamReadFunc;
@@ -106,15 +93,32 @@ type
   end;
   PSfmlInputStream = ^TSfmlInputStream;
 
+{$IFDEF DynLink}
+  TSfmlTimeZero = function: TSfmlTime; cdecl;
+  TSfmlTimeAsSeconds = function (Time: TSfmlTime): Single; cdecl;
+  TSfmlTimeAsMilliseconds = function (Time: TSfmlTime): sfInt32; cdecl;
+  TSfmlTimeAsMicroseconds = function (Time: TSfmlTime): Int64; cdecl;
+
+  TSfmlSeconds = function (Amount: Single): TSfmlTime; cdecl;
+  TSfmlMilliseconds = function (Amount: sfInt32): TSfmlTime; cdecl;
+  TSfmlMicroseconds = function (Amount: sfInt64): TSfmlTime; cdecl;
+
+  TSfmlClockCreate = function : PSfmlClock; cdecl;
+  TSfmlClockCopy = function (const Clock: PSfmlClock): PSfmlClock; cdecl;
+  TSfmlClockDestroy = procedure (Clock: PSfmlClock); cdecl;
+
+  TSfmlClockGetElapsedTime = function (const Clock: PSfmlClock): TSfmlTime; cdecl;
+  TSfmlClockRestart = function (Clock: PSfmlClock): TSfmlTime; cdecl;
+
   TSfmlMutexCreate = function : PSfmlMutex; cdecl;
   TSfmlMutexDestroy = procedure (Mutex: PSfmlMutex); cdecl;
 
   TSfmlMutexLock = procedure (Mutex: PSfmlMutex); cdecl;
   TSfmlMutexUnlock = procedure (Mutex: PSfmlMutex); cdecl;
 
-  TSfmlSleep = procedure (duration: TSfmlTime); cdecl;
+  TSfmlSleep = procedure (Duration: TSfmlTime); cdecl;
 
-  TSfmlThreadCreate = function (FuncEntryPoint: Pointer; userData: Pointer): PSfmlThread; cdecl;
+  TSfmlThreadCreate = function (FuncEntryPoint: Pointer; UserData: Pointer): PSfmlThread; cdecl;
   TSfmlThreadDestroy = procedure (Thread: PSfmlThread); cdecl;
   TSfmlThreadLaunch = procedure (Thread: PSfmlThread); cdecl;
   TSfmlThreadWait = procedure (Thread: PSfmlThread); cdecl;
@@ -147,89 +151,86 @@ var
   SfmlThreadLaunch: TSfmlThreadLaunch;
   SfmlThreadWait: TSfmlThreadWait;
   SfmlThreadTerminate: TSfmlThreadTerminate;
+{$ELSE}
+
+  // static linking
+  function SfmlTimeZero: TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfTime_Zero';
+  function SfmlTimeAsSeconds(Time: TSfmlTime): Single; cdecl; external CSfmlSystemLibrary name 'sfTime_asSeconds';
+  function SfmlTimeAsMilliseconds(Time: TSfmlTime): sfInt32; cdecl; external CSfmlSystemLibrary name 'sfTime_asMilliseconds';
+  function SfmlTimeAsMicroseconds(Time: TSfmlTime): Int64; cdecl; external CSfmlSystemLibrary name 'sfTime_asMicroseconds';
+
+  function SfmlSeconds(Amount: Single): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfSeconds';
+  function SfmlMilliseconds(Amount: sfInt32): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfMilliseconds';
+  function SfmlMicroseconds(Amount: sfInt64): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfMicroseconds';
+
+  function SfmlClockCreate: PSfmlClock; cdecl; external CSfmlSystemLibrary name 'sfClock_create:';
+  function SfmlClockCopy(const Clock: PSfmlClock): PSfmlClock; cdecl; external CSfmlSystemLibrary name 'sfClock_copy';
+  procedure SfmlClockDestroy(Clock: PSfmlClock); cdecl; external CSfmlSystemLibrary name 'sfClock_destroy';
+
+  function SfmlClockGetElapsedTime(const Clock: PSfmlClock): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfClock_getElapsedTime';
+  function SfmlClockRestart(Clock: PSfmlClock): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfClock_restart';
+
+  function SfmlMutexCreate: PSfmlMutex; cdecl; external CSfmlSystemLibrary name 'sfMutex_create';
+  procedure SfmlMutexDestroy(Mutex: PSfmlMutex); cdecl; external CSfmlSystemLibrary name 'sfMutex_destroy';
+
+  procedure SfmlMutexLock(Mutex: PSfmlMutex); cdecl; external CSfmlSystemLibrary name 'sfMutex_lock';
+  procedure SfmlMutexUnlock(Mutex: PSfmlMutex); cdecl; external CSfmlSystemLibrary name 'sfMutex_unlock';
+
+  procedure SfmlSleep(Duration: TSfmlTime); cdecl; external CSfmlSystemLibrary name 'sfSleep';
+
+  function SfmlThreadCreate(FuncEntryPoint: Pointer; UserData: Pointer): PSfmlThread; cdecl; external CSfmlSystemLibrary name 'sfThread_create';
+  procedure SfmlThreadDestroy(Thread: PSfmlThread); cdecl; external CSfmlSystemLibrary name 'sfThread_destroy';
+  procedure SfmlThreadLaunch(Thread: PSfmlThread); cdecl; external CSfmlSystemLibrary name 'sfThread_launch';
+  procedure SfmlThreadWait(Thread: PSfmlThread); cdecl; external CSfmlSystemLibrary name 'sfThread_wait';
+  procedure SfmlThreadTerminate(Thread: PSfmlThread); cdecl; external CSfmlSystemLibrary name 'sfThread_terminate';
+{$ENDIF}
 
 implementation
 
+{$IFDEF DynLink}
+
+{$IFDEF MSWindows}
+uses
+  Windows;
+{$ENDIF}
+
 var
   CSfmlSystemHandle: HINST;
-{$IF Defined(MSWINDOWS)}
-  CSfmlSystemLibrary: PAnsiChar = 'csfml-system-2.dll';
-{$ELSEIF Defined(DARWIN)}
-  error, not yet defined
-{$ELSEIF Defined(UNIX)}
-  error, not yet defined
-{$IFEND}
 
 procedure InitDLL;
+
+  function BindFunction(Name: AnsiString): Pointer;
+  begin
+    Result := GetProcAddress(CSfmlSystemHandle, PAnsiChar(Name));
+    Assert(Assigned(Result));
+  end;
+
 begin
   CSfmlSystemHandle := LoadLibraryA(CSfmlSystemLibrary);
   if CSfmlSystemHandle <> 0 then
     try
-      SfmlTimeZero := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfTime_Zero'));
-      Assert(Assigned(SfmlTimeZero));
-
-      SfmlTimeAsSeconds := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfTime_asSeconds'));
-      Assert(Assigned(SfmlTimeAsSeconds));
-
-      SfmlTimeAsMilliseconds := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfTime_asMilliseconds'));
-      Assert(Assigned(SfmlTimeAsMilliseconds));
-
-      SfmlTimeAsMicroseconds := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfTime_asMicroseconds'));
-      Assert(Assigned(SfmlTimeAsMicroseconds));
-
-      SfmlSeconds := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfSeconds'));
-      Assert(Assigned(SfmlSeconds));
-
-      SfmlMilliseconds := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMilliseconds'));
-      Assert(Assigned(SfmlMilliseconds));
-
-      SfmlMicroseconds := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMicroseconds'));
-      Assert(Assigned(SfmlMicroseconds));
-
-      SfmlClockCreate := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_create'));
-      Assert(Assigned(SfmlClockCreate));
-
-      SfmlClockCopy := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_copy'));
-      Assert(Assigned(SfmlClockCopy));
-
-      SfmlClockDestroy := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_destroy'));
-      Assert(Assigned(SfmlClockDestroy));
-
-      SfmlClockGetElapsedTime := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_getElapsedTime'));
-      Assert(Assigned(SfmlClockGetElapsedTime));
-
-      SfmlClockRestart := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfClock_restart'));
-      Assert(Assigned(SfmlClockRestart));
-
-      SfmlMutexCreate := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMutex_create'));
-      Assert(Assigned(SfmlMutexCreate));
-
-      SfmlMutexDestroy := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMutex_destroy'));
-      Assert(Assigned(SfmlMutexDestroy));
-
-      SfmlMutexLock := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMutex_lock'));
-      Assert(Assigned(SfmlMutexLock));
-
-      SfmlMutexUnlock := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfMutex_unlock'));
-      Assert(Assigned(SfmlMutexUnlock));
-
-      SfmlSleep := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfSleep'));
-      Assert(Assigned(SfmlSleep));
-
-      SfmlThreadCreate := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_create'));
-      Assert(Assigned(SfmlThreadCreate));
-
-      SfmlThreadDestroy := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_destroy'));
-      Assert(Assigned(SfmlThreadDestroy));
-
-      SfmlThreadLaunch := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_launch'));
-      Assert(Assigned(SfmlThreadLaunch));
-
-      SfmlThreadWait := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_wait'));
-      Assert(Assigned(SfmlThreadWait));
-
-      SfmlThreadTerminate := GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfThread_terminate'));
-      Assert(Assigned(SfmlThreadTerminate));
+      SfmlTimeZero := BindFunction('sfTime_Zero');
+      SfmlTimeAsSeconds := BindFunction('sfTime_asSeconds');
+      SfmlTimeAsMilliseconds := BindFunction('sfTime_asMilliseconds');
+      SfmlTimeAsMicroseconds := BindFunction('sfTime_asMicroseconds');
+      SfmlSeconds := BindFunction('sfSeconds');
+      SfmlMilliseconds := BindFunction('sfMilliseconds');
+      SfmlMicroseconds := BindFunction('sfMicroseconds');
+      SfmlClockCreate := BindFunction('sfClock_create');
+      SfmlClockCopy := BindFunction('sfClock_copy');
+      SfmlClockDestroy := BindFunction('sfClock_destroy');
+      SfmlClockGetElapsedTime := BindFunction('sfClock_getElapsedTime');
+      SfmlClockRestart := BindFunction('sfClock_restart');
+      SfmlMutexCreate := BindFunction('sfMutex_create');
+      SfmlMutexDestroy := BindFunction('sfMutex_destroy');
+      SfmlMutexLock := BindFunction('sfMutex_lock');
+      SfmlMutexUnlock := BindFunction('sfMutex_unlock');
+      SfmlSleep := BindFunction('sfSleep');
+      SfmlThreadCreate := BindFunction('sfThread_create');
+      SfmlThreadDestroy := BindFunction('sfThread_destroy');
+      SfmlThreadLaunch := BindFunction('sfThread_launch');
+      SfmlThreadWait := BindFunction('sfThread_wait');
+      SfmlThreadTerminate := BindFunction('sfThread_terminate');
     except
       FreeLibrary(CSfmlSystemHandle);
       CSfmlSystemHandle := 0;
@@ -249,5 +250,7 @@ InitDLL;
 finalization
 
 FreeDLL;
+
+{$ENDIF}
 
 end.

@@ -26,10 +26,10 @@ unit SfmlAudio;
 
 interface
 
-{$I SFML.inc}
+{$I Sfml.inc}
 
 uses
-  Windows, SfmlSystem;
+  {$IFDEF MSWindows}Windows, {$ENDIF} SfmlSystem;
 
 type
   PSfmlMusic = Pointer;
@@ -310,348 +310,130 @@ var
 {$IFEND}
 
 procedure InitDLL;
+
+  function BindFunction(Name: AnsiString): Pointer;
+  begin
+    Result := GetProcAddress(CSfmlAudioHandle, PAnsiChar(Name));
+    Assert(Assigned(Result));
+  end;
+
 begin
   CSfmlAudioHandle := LoadLibraryA(CSfmlAudioLibrary);
   if CSfmlAudioHandle <> 0 then
     try
-      SfmlListenerSetGlobalVolume := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfListener_setGlobalVolume'));
-      Assert(Assigned(SfmlListenerSetGlobalVolume));
-
-      SfmlListenerGetGlobalVolume := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfListener_getGlobalVolume'));
-      Assert(Assigned(SfmlListenerGetGlobalVolume));
-
-      SfmlListenerSetPosition := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfListener_setPosition'));
-      Assert(Assigned(SfmlListenerSetPosition));
-
-      SfmlListenerGetPosition := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfListener_getPosition'));
-      Assert(Assigned(SfmlListenerGetPosition));
-
-      SfmlListenerSetDirection := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfListener_setDirection'));
-      Assert(Assigned(SfmlListenerSetDirection));
-
-      SfmlListenerGetDirection := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfListener_getDirection'));
-      Assert(Assigned(SfmlListenerGetDirection));
-
-      SfmlListenerSetUpVector := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfListener_setUpVector'));
-      Assert(Assigned(SfmlListenerSetUpVector));
-
-      SfmlListenerGetUpVector := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfListener_getUpVector'));
-      Assert(Assigned(SfmlListenerGetUpVector));
-
-      SfmlMusicCreateFromFile := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_createFromFile'));
-      Assert(Assigned(SfmlMusicCreateFromFile));
-
-      SfmlMusicCreateFromMemory := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_createFromMemory'));
-      Assert(Assigned(SfmlMusicCreateFromMemory));
-
-      SfmlMusicCreateFromStream := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_createFromStream'));
-      Assert(Assigned(SfmlMusicCreateFromStream));
-
-      SfmlMusicDestroy := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_destroy'));
-      Assert(Assigned(SfmlMusicDestroy));
-
-      SfmlMusicSetLoop := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_setLoop'));
-      Assert(Assigned(SfmlMusicSetLoop));
-
-      SfmlMusicGetLoop := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_getLoop'));
-      Assert(Assigned(SfmlMusicGetLoop));
-
-      SfmlMusicGetDuration := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_getDuration'));
-      Assert(Assigned(SfmlMusicGetDuration));
-
-      SfmlMusicPlay := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_play'));
-      Assert(Assigned(SfmlMusicPlay));
-
-      SfmlMusicPause := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_pause'));
-      Assert(Assigned(SfmlMusicPause));
-
-      SfmlMusicStop := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_stop'));
-      Assert(Assigned(SfmlMusicStop));
-
-      SfmlMusicGetChannelCount := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_getChannelCount'));
-      Assert(Assigned(SfmlMusicGetChannelCount));
-
-      SfmlMusicGetSampleRate := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_getSampleRate'));
-      Assert(Assigned(SfmlMusicGetSampleRate));
-
-      SfmlMusicGetStatus := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_getStatus'));
-      Assert(Assigned(SfmlMusicGetStatus));
-
-      SfmlMusicGetPlayingOffset := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_getPlayingOffset'));
-      Assert(Assigned(SfmlMusicGetPlayingOffset));
-
-      SfmlMusicSetPitch := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_setPitch'));
-      Assert(Assigned(SfmlMusicSetPitch));
-
-      SfmlMusicSetVolume := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_setVolume'));
-      Assert(Assigned(SfmlMusicSetVolume));
-
-      SfmlMusicSetPosition := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_setPosition'));
-      Assert(Assigned(SfmlMusicSetPosition));
-
-      SfmlMusicSetRelativeToListener := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_setRelativeToListener'));
-      Assert(Assigned(SfmlMusicSetRelativeToListener));
-
-      SfmlMusicSetMinDistance := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_setMinDistance'));
-      Assert(Assigned(SfmlMusicSetMinDistance));
-
-      SfmlMusicSetAttenuation := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_setAttenuation'));
-      Assert(Assigned(SfmlMusicSetAttenuation));
-
-      SfmlMusicSetPlayingOffset := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_setPlayingOffset'));
-      Assert(Assigned(SfmlMusicSetPlayingOffset));
-
-      SfmlMusicGetPitch := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_getPitch'));
-      Assert(Assigned(SfmlMusicGetPitch));
-
-      SfmlMusicGetVolume := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_getVolume'));
-      Assert(Assigned(SfmlMusicGetVolume));
-
-      SfmlMusicGetPosition := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_getPosition'));
-      Assert(Assigned(SfmlMusicGetPosition));
-
-      SfmlMusicIsRelativeToListener := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_isRelativeToListener'));
-      Assert(Assigned(SfmlMusicIsRelativeToListener));
-
-      SfmlMusicGetMinDistance := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_getMinDistance'));
-      Assert(Assigned(SfmlMusicGetMinDistance));
-
-      SfmlMusicGetAttenuation := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfMusic_getAttenuation'));
-      Assert(Assigned(SfmlMusicGetAttenuation));
-
-      SfmlSoundStreamCreate := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_create'));
-      Assert(Assigned(SfmlSoundStreamCreate));
-
-      SfmlSoundStreamDestroy := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_destroy'));
-      Assert(Assigned(SfmlSoundStreamDestroy));
-
-      SfmlSoundStreamPlay := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_play'));
-      Assert(Assigned(SfmlSoundStreamPlay));
-
-      SfmlSoundStreamPause := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_pause'));
-      Assert(Assigned(SfmlSoundStreamPause));
-
-      SfmlSoundStreamStop := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_stop'));
-      Assert(Assigned(SfmlSoundStreamStop));
-
-      SfmlSoundStreamGetStatus := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_getStatus'));
-      Assert(Assigned(SfmlSoundStreamGetStatus));
-
-      SfmlSoundStreamGetChannelCount := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_getChannelCount'));
-      Assert(Assigned(SfmlSoundStreamGetChannelCount));
-
-      SfmlSoundStreamGetSampleRate := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_getSampleRate'));
-      Assert(Assigned(SfmlSoundStreamGetSampleRate));
-
-      SfmlSoundStreamSetPitch := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_setPitch'));
-      Assert(Assigned(SfmlSoundStreamSetPitch));
-
-      SfmlSoundStreamSetVolume := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_setVolume'));
-      Assert(Assigned(SfmlSoundStreamSetVolume));
-
-      SfmlSoundStreamSetPosition := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_setPosition'));
-      Assert(Assigned(SfmlSoundStreamSetPosition));
-
-      SfmlSoundStreamSetRelativeToListener := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_setRelativeToListener'));
-      Assert(Assigned(SfmlSoundStreamSetRelativeToListener));
-
-      SfmlSoundStreamSetMinDistance := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_setMinDistance'));
-      Assert(Assigned(SfmlSoundStreamSetMinDistance));
-
-      SfmlSoundStreamSetAttenuation := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_setAttenuation'));
-      Assert(Assigned(SfmlSoundStreamSetAttenuation));
-
-      SfmlSoundStreamSetPlayingOffset := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_setPlayingOffset'));
-      Assert(Assigned(SfmlSoundStreamSetPlayingOffset));
-
-      SfmlSoundStreamSetLoop := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_setLoop'));
-      Assert(Assigned(SfmlSoundStreamSetLoop));
-
-      SfmlSoundStreamGetPitch := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_getPitch'));
-      Assert(Assigned(SfmlSoundStreamGetPitch));
-
-      SfmlSoundStreamGetVolume := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_getVolume'));
-      Assert(Assigned(SfmlSoundStreamGetVolume));
-
-      SfmlSoundStreamGetPosition := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_getPosition'));
-      Assert(Assigned(SfmlSoundStreamGetPosition));
-
-      SfmlSoundStreamIsRelativeToListener := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_isRelativeToListener'));
-      Assert(Assigned(SfmlSoundStreamIsRelativeToListener));
-
-      SfmlSoundStreamGetMinDistance := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_getMinDistance'));
-      Assert(Assigned(SfmlSoundStreamGetMinDistance));
-
-      SfmlSoundStreamGetAttenuation := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_getAttenuation'));
-      Assert(Assigned(SfmlSoundStreamGetAttenuation));
-
-      SfmlSoundStreamGetLoop := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_getLoop'));
-      Assert(Assigned(SfmlSoundStreamGetLoop));
-
-      SfmlSoundStreamGetPlayingOffset := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundStream_getPlayingOffset'));
-      Assert(Assigned(SfmlSoundStreamGetPlayingOffset));
-
-      SfmlSoundCreate := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_create'));
-      Assert(Assigned(SfmlSoundCreate));
-
-      SfmlSoundCopy := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_copy'));
-      Assert(Assigned(SfmlSoundCopy));
-
-      SfmlSoundDestroy := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_destroy'));
-      Assert(Assigned(SfmlSoundDestroy));
-
-      SfmlSoundPlay := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_play'));
-      Assert(Assigned(SfmlSoundPlay));
-
-      SfmlSoundPause := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_pause'));
-      Assert(Assigned(SfmlSoundPause));
-
-      SfmlSoundStop := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_stop'));
-      Assert(Assigned(SfmlSoundStop));
-
-      SfmlSoundSetBuffer := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_setBuffer'));
-      Assert(Assigned(SfmlSoundSetBuffer));
-
-      SfmlSoundGetBuffer := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_getBuffer'));
-      Assert(Assigned(SfmlSoundGetBuffer));
-
-      SfmlSoundSetLoop := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_setLoop'));
-      Assert(Assigned(SfmlSoundSetLoop));
-
-      SfmlSoundGetLoop := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_getLoop'));
-      Assert(Assigned(SfmlSoundGetLoop));
-
-      SfmlSoundGetStatus := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_getStatus'));
-      Assert(Assigned(SfmlSoundGetStatus));
-
-      SfmlSoundSetPitch := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_setPitch'));
-      Assert(Assigned(SfmlSoundSetPitch));
-
-      SfmlSoundSetVolume := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_setVolume'));
-      Assert(Assigned(SfmlSoundSetVolume));
-
-      SfmlSoundSetPosition := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_setPosition'));
-      Assert(Assigned(SfmlSoundSetPosition));
-
-      SfmlSoundSetRelativeToListener := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_setRelativeToListener'));
-      Assert(Assigned(SfmlSoundSetRelativeToListener));
-
-      SfmlSoundSetMinDistance := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_setMinDistance'));
-      Assert(Assigned(SfmlSoundSetMinDistance));
-
-      SfmlSoundSetAttenuation := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_setAttenuation'));
-      Assert(Assigned(SfmlSoundSetAttenuation));
-
-      SfmlSoundSetPlayingOffset := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_setPlayingOffset'));
-      Assert(Assigned(SfmlSoundSetPlayingOffset));
-
-      SfmlSoundGetPitch := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_getPitch'));
-      Assert(Assigned(SfmlSoundGetPitch));
-
-      SfmlSoundGetVolume := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_getVolume'));
-      Assert(Assigned(SfmlSoundGetVolume));
-
-      SfmlSoundGetPosition := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_getPosition'));
-      Assert(Assigned(SfmlSoundGetPosition));
-
-      SfmlSoundIsRelativeToListener := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_isRelativeToListener'));
-      Assert(Assigned(SfmlSoundIsRelativeToListener));
-
-      SfmlSoundGetMinDistance := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_isRelativeToListener'));
-      Assert(Assigned(SfmlSoundGetMinDistance));
-
-      SfmlSoundGetAttenuation := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_getAttenuation'));
-      Assert(Assigned(SfmlSoundGetAttenuation));
-
-      SfmlSoundGetPlayingOffset := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSound_getPlayingOffset'));
-      Assert(Assigned(SfmlSoundGetPlayingOffset));
-
-      SfmlSoundBufferCreateFromFile := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBuffer_createFromFile'));
-      Assert(Assigned(SfmlSoundBufferCreateFromFile));
-
-      SfmlSoundBufferCreateFromMemory := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBuffer_createFromMemory'));
-      Assert(Assigned(SfmlSoundBufferCreateFromMemory));
-
-      SfmlSoundBufferCreateFromStream := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBuffer_createFromStream'));
-      Assert(Assigned(SfmlSoundBufferCreateFromStream));
-
-      SfmlSoundBufferCreateFromSamples := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBuffer_createFromSamples'));
-      Assert(Assigned(SfmlSoundBufferCreateFromSamples));
-
-      SfmlSoundBufferCopy := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBuffer_copy'));
-      Assert(Assigned(SfmlSoundBufferCopy));
-
-      SfmlSoundBufferDestroy := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBuffer_destroy'));
-      Assert(Assigned(SfmlSoundBufferDestroy));
-
-      SfmlSoundBufferSaveToFile := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBuffer_saveToFile'));
-      Assert(Assigned(SfmlSoundBufferSaveToFile));
-
-      SfmlSoundBufferGetSamples := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBuffer_getSamples'));
-      Assert(Assigned(SfmlSoundBufferGetSamples));
-
-      SfmlSoundBufferGetSampleCount := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBuffer_getSampleCount'));
-      Assert(Assigned(SfmlSoundBufferGetSampleCount));
-
-      SfmlSoundBufferGetSampleRate := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBuffer_getSampleRate'));
-      Assert(Assigned(SfmlSoundBufferGetSampleRate));
-
-      SfmlSoundBufferGetChannelCount := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBuffer_getChannelCount'));
-      Assert(Assigned(SfmlSoundBufferGetChannelCount));
-
-      SfmlSoundBufferGetDuration := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBuffer_getDuration'));
-      Assert(Assigned(SfmlSoundBufferGetDuration));
-
-      SfmlSoundBufferRecorderCreate := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBufferRecorder_create'));
-      Assert(Assigned(SfmlSoundBufferRecorderCreate));
-
-      SfmlSoundBufferRecorderDestroy := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBufferRecorder_destroy'));
-      Assert(Assigned(SfmlSoundBufferRecorderDestroy));
-
-      SfmlSoundBufferRecorderStart := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBufferRecorder_start'));
-      Assert(Assigned(SfmlSoundBufferRecorderStart));
-
-      SfmlSoundBufferRecorderStop := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBufferRecorder_stop'));
-      Assert(Assigned(SfmlSoundBufferRecorderStop));
-
-      SfmlSoundBufferRecorderGetSampleRate := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBufferRecorder_getSampleRate'));
-      Assert(Assigned(SfmlSoundBufferRecorderGetSampleRate));
-
-      SfmlSoundBufferRecorderGetBuffer := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundBufferRecorder_getBuffer'));
-      Assert(Assigned(SfmlSoundBufferRecorderGetBuffer));
-
-      SfmlSoundRecorderCreate := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundRecorder_create'));
-      Assert(Assigned(SfmlSoundRecorderCreate));
-
-      SfmlSoundRecorderDestroy := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundRecorder_destroy'));
-      Assert(Assigned(SfmlSoundRecorderDestroy));
-
-      SfmlSoundRecorderStart := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundRecorder_start'));
-      Assert(Assigned(SfmlSoundRecorderStart));
-
-      SfmlSoundRecorderStop := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundRecorder_stop'));
-      Assert(Assigned(SfmlSoundRecorderStop));
-
-      SfmlSoundRecorderGetSampleRate := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundRecorder_getSampleRate'));
-      Assert(Assigned(SfmlSoundRecorderGetSampleRate));
-
-      SfmlSoundRecorderIsAvailable := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundRecorder_isAvailable'));
-      Assert(Assigned(SfmlSoundRecorderIsAvailable));
-
-      SfmlSoundRecorderSetProcessingInterval := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundRecorder_setProcessingInterval'));
-      Assert(Assigned(SfmlSoundRecorderSetProcessingInterval));
-
-      SfmlSoundRecorderGetAvailableDevices := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundRecorder_getAvailableDevices'));
-      Assert(Assigned(SfmlSoundRecorderGetAvailableDevices));
-
-      SfmlSoundRecorderGetDefaultDevice := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundRecorder_getDefaultDevice'));
-      Assert(Assigned(SfmlSoundRecorderGetDefaultDevice));
-
-      SfmlSoundRecorderSetDevice := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundRecorder_setDevice'));
-      Assert(Assigned(SfmlSoundRecorderSetDevice));
-
-      SfmlSoundRecorderGetDevice := GetProcAddress(CSfmlAudioHandle, PAnsiChar('sfSoundRecorder_getDevice'));
-      Assert(Assigned(SfmlSoundRecorderGetDevice));
+      SfmlListenerSetGlobalVolume := BindFunction('sfListener_setGlobalVolume');
+      SfmlListenerGetGlobalVolume := BindFunction('sfListener_getGlobalVolume');
+      SfmlListenerSetPosition := BindFunction('sfListener_setPosition');
+      SfmlListenerGetPosition := BindFunction('sfListener_getPosition');
+      SfmlListenerSetDirection := BindFunction('sfListener_setDirection');
+      SfmlListenerGetDirection := BindFunction('sfListener_getDirection');
+      SfmlListenerSetUpVector := BindFunction('sfListener_setUpVector');
+      SfmlListenerGetUpVector := BindFunction('sfListener_getUpVector');
+      SfmlMusicCreateFromFile := BindFunction('sfMusic_createFromFile');
+      SfmlMusicCreateFromMemory := BindFunction('sfMusic_createFromMemory');
+      SfmlMusicCreateFromStream := BindFunction('sfMusic_createFromStream');
+      SfmlMusicDestroy := BindFunction('sfMusic_destroy');
+      SfmlMusicSetLoop := BindFunction('sfMusic_setLoop');
+      SfmlMusicGetLoop := BindFunction('sfMusic_getLoop');
+      SfmlMusicGetDuration := BindFunction('sfMusic_getDuration');
+      SfmlMusicPlay := BindFunction('sfMusic_play');
+      SfmlMusicPause := BindFunction('sfMusic_pause');
+      SfmlMusicStop := BindFunction('sfMusic_stop');
+      SfmlMusicGetChannelCount := BindFunction('sfMusic_getChannelCount');
+      SfmlMusicGetSampleRate := BindFunction('sfMusic_getSampleRate');
+      SfmlMusicGetStatus := BindFunction('sfMusic_getStatus');
+      SfmlMusicGetPlayingOffset := BindFunction('sfMusic_getPlayingOffset');
+      SfmlMusicSetPitch := BindFunction('sfMusic_setPitch');
+      SfmlMusicSetVolume := BindFunction('sfMusic_setVolume');
+      SfmlMusicSetPosition := BindFunction('sfMusic_setPosition');
+      SfmlMusicSetRelativeToListener := BindFunction('sfMusic_setRelativeToListener');
+      SfmlMusicSetMinDistance := BindFunction('sfMusic_setMinDistance');
+      SfmlMusicSetAttenuation := BindFunction('sfMusic_setAttenuation');
+      SfmlMusicSetPlayingOffset := BindFunction('sfMusic_setPlayingOffset');
+      SfmlMusicGetPitch := BindFunction('sfMusic_getPitch');
+      SfmlMusicGetVolume := BindFunction('sfMusic_getVolume');
+      SfmlMusicGetPosition := BindFunction('sfMusic_getPosition');
+      SfmlMusicIsRelativeToListener := BindFunction('sfMusic_isRelativeToListener');
+      SfmlMusicGetMinDistance := BindFunction('sfMusic_getMinDistance');
+      SfmlMusicGetAttenuation := BindFunction('sfMusic_getAttenuation');
+      SfmlSoundStreamCreate := BindFunction('sfSoundStream_create');
+      SfmlSoundStreamDestroy := BindFunction('sfSoundStream_destroy');
+      SfmlSoundStreamPlay := BindFunction('sfSoundStream_play');
+      SfmlSoundStreamPause := BindFunction('sfSoundStream_pause');
+      SfmlSoundStreamStop := BindFunction('sfSoundStream_stop');
+      SfmlSoundStreamGetStatus := BindFunction('sfSoundStream_getStatus');
+      SfmlSoundStreamGetChannelCount := BindFunction('sfSoundStream_getChannelCount');
+      SfmlSoundStreamGetSampleRate := BindFunction('sfSoundStream_getSampleRate');
+      SfmlSoundStreamSetPitch := BindFunction('sfSoundStream_setPitch');
+      SfmlSoundStreamSetVolume := BindFunction('sfSoundStream_setVolume');
+      SfmlSoundStreamSetPosition := BindFunction('sfSoundStream_setPosition');
+      SfmlSoundStreamSetRelativeToListener := BindFunction('sfSoundStream_setRelativeToListener');
+      SfmlSoundStreamSetMinDistance := BindFunction('sfSoundStream_setMinDistance');
+      SfmlSoundStreamSetAttenuation := BindFunction('sfSoundStream_setAttenuation');
+      SfmlSoundStreamSetPlayingOffset := BindFunction('sfSoundStream_setPlayingOffset');
+      SfmlSoundStreamSetLoop := BindFunction('sfSoundStream_setLoop');
+      SfmlSoundStreamGetPitch := BindFunction('sfSoundStream_getPitch');
+      SfmlSoundStreamGetVolume := BindFunction('sfSoundStream_getVolume');
+      SfmlSoundStreamGetPosition := BindFunction('sfSoundStream_getPosition');
+      SfmlSoundStreamIsRelativeToListener := BindFunction('sfSoundStream_isRelativeToListener');
+      SfmlSoundStreamGetMinDistance := BindFunction('sfSoundStream_getMinDistance');
+      SfmlSoundStreamGetAttenuation := BindFunction('sfSoundStream_getAttenuation');
+      SfmlSoundStreamGetLoop := BindFunction('sfSoundStream_getLoop');
+      SfmlSoundStreamGetPlayingOffset := BindFunction('sfSoundStream_getPlayingOffset');
+      SfmlSoundCreate := BindFunction('sfSound_create');
+      SfmlSoundCopy := BindFunction('sfSound_copy');
+      SfmlSoundDestroy := BindFunction('sfSound_destroy');
+      SfmlSoundPlay := BindFunction('sfSound_play');
+      SfmlSoundPause := BindFunction('sfSound_pause');
+      SfmlSoundStop := BindFunction('sfSound_stop');
+      SfmlSoundSetBuffer := BindFunction('sfSound_setBuffer');
+      SfmlSoundGetBuffer := BindFunction('sfSound_getBuffer');
+      SfmlSoundSetLoop := BindFunction('sfSound_setLoop');
+      SfmlSoundGetLoop := BindFunction('sfSound_getLoop');
+      SfmlSoundGetStatus := BindFunction('sfSound_getStatus');
+      SfmlSoundSetPitch := BindFunction('sfSound_setPitch');
+      SfmlSoundSetVolume := BindFunction('sfSound_setVolume');
+      SfmlSoundSetPosition := BindFunction('sfSound_setPosition');
+      SfmlSoundSetRelativeToListener := BindFunction('sfSound_setRelativeToListener');
+      SfmlSoundSetMinDistance := BindFunction('sfSound_setMinDistance');
+      SfmlSoundSetAttenuation := BindFunction('sfSound_setAttenuation');
+      SfmlSoundSetPlayingOffset := BindFunction('sfSound_setPlayingOffset');
+      SfmlSoundGetPitch := BindFunction('sfSound_getPitch');
+      SfmlSoundGetVolume := BindFunction('sfSound_getVolume');
+      SfmlSoundGetPosition := BindFunction('sfSound_getPosition');
+      SfmlSoundIsRelativeToListener := BindFunction('sfSound_isRelativeToListener');
+      SfmlSoundGetMinDistance := BindFunction('sfSound_isRelativeToListener');
+      SfmlSoundGetAttenuation := BindFunction('sfSound_getAttenuation');
+      SfmlSoundGetPlayingOffset := BindFunction('sfSound_getPlayingOffset');
+      SfmlSoundBufferCreateFromFile := BindFunction('sfSoundBuffer_createFromFile');
+      SfmlSoundBufferCreateFromMemory := BindFunction('sfSoundBuffer_createFromMemory');
+      SfmlSoundBufferCreateFromStream := BindFunction('sfSoundBuffer_createFromStream');
+      SfmlSoundBufferCreateFromSamples := BindFunction('sfSoundBuffer_createFromSamples');
+      SfmlSoundBufferCopy := BindFunction('sfSoundBuffer_copy');
+      SfmlSoundBufferDestroy := BindFunction('sfSoundBuffer_destroy');
+      SfmlSoundBufferSaveToFile := BindFunction('sfSoundBuffer_saveToFile');
+      SfmlSoundBufferGetSamples := BindFunction('sfSoundBuffer_getSamples');
+      SfmlSoundBufferGetSampleCount := BindFunction('sfSoundBuffer_getSampleCount');
+      SfmlSoundBufferGetSampleRate := BindFunction('sfSoundBuffer_getSampleRate');
+      SfmlSoundBufferGetChannelCount := BindFunction('sfSoundBuffer_getChannelCount');
+      SfmlSoundBufferGetDuration := BindFunction('sfSoundBuffer_getDuration');
+      SfmlSoundBufferRecorderCreate := BindFunction('sfSoundBufferRecorder_create');
+      SfmlSoundBufferRecorderDestroy := BindFunction('sfSoundBufferRecorder_destroy');
+      SfmlSoundBufferRecorderStart := BindFunction('sfSoundBufferRecorder_start');
+      SfmlSoundBufferRecorderStop := BindFunction('sfSoundBufferRecorder_stop');
+      SfmlSoundBufferRecorderGetSampleRate := BindFunction('sfSoundBufferRecorder_getSampleRate');
+      SfmlSoundBufferRecorderGetBuffer := BindFunction('sfSoundBufferRecorder_getBuffer');
+      SfmlSoundRecorderCreate := BindFunction('sfSoundRecorder_create');
+      SfmlSoundRecorderDestroy := BindFunction('sfSoundRecorder_destroy');
+      SfmlSoundRecorderStart := BindFunction('sfSoundRecorder_start');
+      SfmlSoundRecorderStop := BindFunction('sfSoundRecorder_stop');
+      SfmlSoundRecorderGetSampleRate := BindFunction('sfSoundRecorder_getSampleRate');
+      SfmlSoundRecorderIsAvailable := BindFunction('sfSoundRecorder_isAvailable');
+      SfmlSoundRecorderSetProcessingInterval := BindFunction('sfSoundRecorder_setProcessingInterval');
+      SfmlSoundRecorderGetAvailableDevices := BindFunction('sfSoundRecorder_getAvailableDevices');
+      SfmlSoundRecorderGetDefaultDevice := BindFunction('sfSoundRecorder_getDefaultDevice');
+      SfmlSoundRecorderSetDevice := BindFunction('sfSoundRecorder_setDevice');
+      SfmlSoundRecorderGetDevice := BindFunction('sfSoundRecorder_getDevice');
     except
       FreeLibrary(CSfmlAudioHandle);
       CSfmlAudioHandle := 0;

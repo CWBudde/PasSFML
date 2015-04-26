@@ -26,12 +26,20 @@ unit SfmlWindow;
 
 interface
 
-{$I SFML.inc}
+{$I Sfml.inc}
 
 uses
-  Windows, SfmlSystem;
+  {$IFDEF MSWindows} Windows, {$ENDIF} SfmlSystem;
 
 const
+{$IF Defined(MSWINDOWS)}
+  CSfmlWindowLibrary = 'csfml-window-2.dll';
+{$ELSEIF Defined(DARWIN)}
+  CSfmlWindowLibrary = 'csfml-window-2.dylib';
+{$ELSEIF Defined(UNIX)}
+  CSfmlWindowLibrary = 'csfml-window-2.so';
+{$IFEND}
+
   CSflmJoystickCount       = 8;
   CSflmJoystickButtonCount = 32;
   CSflmJoystickAxisCount   = 8;
@@ -183,7 +191,7 @@ type
     end;
   PSfmlEvent = ^TSfmlEvent;
 
-
+{$IFDEF DynLink}
   TSfmlContextCreate = function : PSfmlContext; cdecl;
   TSfmlContextDestroy = procedure (Context: PSfmlContext); cdecl;
   TSfmlContextSetActive = procedure (Context: PSfmlContext; Active: sfBool); cdecl;
@@ -298,170 +306,133 @@ var
   SfmlWindowSetFramerateLimit: TSfmlWindowSetFramerateLimit;
   SfmlWindowSetJoystickThreshold: TSfmlWindowSetJoystickThreshold;
   SfmlWindowGetSystemHandle: TSfmlWindowGetSystemHandle;
+{$ELSE}
+  function SfmlContextCreate: PSfmlContext; cdecl; external CSfmlWindowLibrary name 'sfContext_create';
+  procedure SfmlContextDestroy(Context: PSfmlContext); cdecl; external CSfmlWindowLibrary name 'sfContext_destroy';
+  procedure SfmlContextSetActive(Context: PSfmlContext; Active: sfBool); cdecl; external CSfmlWindowLibrary name 'sfContext_setActive';
+
+  function SfmlKeyboardIsKeyPressed(Key: TSfmlKeyCode): sfBool; cdecl; external CSfmlWindowLibrary name 'sfKeyboard_isKeyPressed';
+
+  function SfmlJoystickIsConnected(Joystick: Cardinal): sfBool; cdecl; external CSfmlWindowLibrary name 'sfJoystick_isConnected';
+  function SfmlJoystickGetButtonCount(Joystick: Cardinal): Cardinal; cdecl; external CSfmlWindowLibrary name 'sfJoystick_getButtonCount';
+  function SfmlJoystickHasAxis(Joystick: Cardinal; Axis: TSfmlJoystickAxis): sfBool; cdecl; external CSfmlWindowLibrary name 'sfJoystick_hasAxis';
+  function SfmlJoystickIsButtonPressed(Joystick, button: Cardinal): sfBool; cdecl; external CSfmlWindowLibrary name 'sfJoystick_isButtonPressed';
+  function SfmlJoystickGetAxisPosition(Joystick: Cardinal; Axis: TSfmlJoystickAxis): Single; cdecl; external CSfmlWindowLibrary name 'sfJoystick_getAxisPosition';
+  function SfmlJoystickGetIdentification(Joystick: Cardinal): TSfmlJoystickIdentification; cdecl; external CSfmlWindowLibrary name 'sfJoystick_getIdentification';
+  procedure SfmlJoystickUpdate; cdecl; external CSfmlWindowLibrary name 'sfJoystickUpdate';
+
+  function SfmlMouseIsButtonPressed(Button: TSfmlMouseButton): sfBool; cdecl; external CSfmlWindowLibrary name 'sfMouse_isButtonPressed';
+  function SfmlMouseGetPosition(const RelativeTo: PSfmlWindow): TSfmlVector2i; cdecl; external CSfmlWindowLibrary name 'sfMouse_getPosition';
+  procedure SfmlMouseSetPosition(Position: TSfmlVector2i; const RelativeTo: PSfmlWindow); cdecl; external CSfmlWindowLibrary name 'sfMouse_setPosition';
+
+  function SfmlSensorIsAvailable(Sensor: TSfmlSensorType): sfBool; cdecl; external CSfmlWindowLibrary name 'sfSensor_isAvailable';
+  procedure SfmlSensorSetEnabled(Sensor: TSfmlSensorType; Enabled: sfBool); cdecl; external CSfmlWindowLibrary name 'sfSensor_setEnabled';
+  function SfmlSensorGetValue(Sensor: TSfmlSensorType): TSfmlVector3f; cdecl; external CSfmlWindowLibrary name 'sfSensor_getValue';
+
+  function SfmlTouchIsDown(Finger: Cardinal): sfBool; cdecl; external CSfmlWindowLibrary name 'sfTouch_isDown';
+  function SfmlTouchGetPosition(Finger: Cardinal; const RelativeTo: PSfmlWindow): TSfmlVector2i; cdecl; external CSfmlWindowLibrary name 'sfTouch_getPosition';
+
+  function SfmlVideoModeGetDesktopMode: TSfmlVideoMode; cdecl; external CSfmlWindowLibrary name 'sfVideoMode_getDesktopMode';
+  function SfmlVideoModeGetFullscreenModes(var Count: NativeUInt): PSfmlVideoMode; cdecl; external CSfmlWindowLibrary name 'sfVideoMode_getFullscreenModes';
+  function SfmlVideoModeIsValid(Mode: TSfmlVideoMode): sfBool; cdecl; external CSfmlWindowLibrary name 'sfVideoMode_isValid';
+
+  function SfmlWindowCreate(Mode: TSfmlVideoMode; const Title: PAnsiChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl; external CSfmlWindowLibrary name 'sfWindow_create';
+  function SfmlWindowCreateUnicode(Mode: TSfmlVideoMode; const Title: PWideChar; style: sfUint32; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl; external CSfmlWindowLibrary name 'sfWindow_createUnicode';
+  function SfmlWindowCreateFromHandle(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl; external CSfmlWindowLibrary name 'sfWindow_createFromHandle';
+  procedure SfmlWindowDestroy(Window: PSfmlWindow); cdecl; external CSfmlWindowLibrary name 'sfWindow_destroy';
+  procedure SfmlWindowClose(Window: PSfmlWindow); cdecl; external CSfmlWindowLibrary name 'sfWindow_close';
+  function SfmlWindowIsOpen(const Window: PSfmlWindow): sfBool; cdecl; external CSfmlWindowLibrary name 'sfWindow_isOpen';
+  function SfmlWindowGetSettings(const Window: PSfmlWindow): TSfmlContextSettings; cdecl; external CSfmlWindowLibrary name 'sfWindow_getSettings';
+  function SfmlWindowPollEvent(Window: PSfmlWindow; var Event: TSfmlEvent): sfBool; cdecl; external CSfmlWindowLibrary name 'sfWindow_pollEvent';
+  function SfmlWindowWaitEvent(Window: PSfmlWindow; var Event: TSfmlEvent): sfBool; cdecl; external CSfmlWindowLibrary name 'sfWindow_waitEvent';
+  function SfmlWindowGetPosition(const Window: PSfmlWindow): TSfmlVector2i; cdecl; external CSfmlWindowLibrary name 'sfWindow_getPosition';
+  procedure SfmlWindowSetPosition(Window: PSfmlWindow; Position: TSfmlVector2i); cdecl; external CSfmlWindowLibrary name 'sfWindow_setPosition';
+  function SfmlWindowGetSize(const Window: PSfmlWindow): TSfmlVector2u; cdecl; external CSfmlWindowLibrary name 'sfWindow_getSize';
+  procedure SfmlWindowSetSize(Window: PSfmlWindow; Size: TSfmlVector2u); cdecl; external CSfmlWindowLibrary name 'sfWindow_setSize';
+  procedure SfmlWindowSetTitle(Window: PSfmlWindow; const Title: PAnsiChar); cdecl; external CSfmlWindowLibrary name 'sfWindow_setTitle';
+  procedure SfmlWindowSetUnicodeTitle(Window: PSfmlWindow; const Title: PWideChar); cdecl; external CSfmlWindowLibrary name 'sfWindow_setUnicodeTitle';
+  procedure SfmlWindowSetIcon(Window: PSfmlWindow; Width, Height: Cardinal; const pixels: PByte); cdecl; external CSfmlWindowLibrary name 'sfWindow_setIcon';
+  procedure SfmlWindowSetVisible(Window: PSfmlWindow; Visible: sfBool); cdecl; external CSfmlWindowLibrary name 'sfWindow_setVisible';
+  procedure SfmlWindowSetMouseCursorVisible(Window: PSfmlWindow; Visible: sfBool); cdecl; external CSfmlWindowLibrary name 'sfWindow_setMouseCursorVisible';
+  procedure SfmlWindowSetVerticalSyncEnabled(Window: PSfmlWindow; Enabled: sfBool); cdecl; external CSfmlWindowLibrary name 'sfWindow_setVerticalSyncEnabled';
+  procedure SfmlWindowSetKeyRepeatEnabled(Window: PSfmlWindow; Enabled: sfBool); cdecl; external CSfmlWindowLibrary name 'sfWindow_setKeyRepeatEnabled';
+  function SfmlWindowSetActive(Window: PSfmlWindow; Active: sfBool): sfBool; cdecl; external CSfmlWindowLibrary name 'sfWindow_setActive';
+  procedure SfmlWindowRequestFocus(Window: PSfmlWindow); cdecl; external CSfmlWindowLibrary name 'sfWindow_requestFocus';
+  function SfmlWindowHasFocus(const Window: PSfmlWindow): sfBool; cdecl; external CSfmlWindowLibrary name 'sfWindow_hasFocus';
+  procedure SfmlWindowDisplay(Window: PSfmlWindow); cdecl; external CSfmlWindowLibrary name 'sfWindow_display';
+  procedure SfmlWindowSetFramerateLimit(Window: PSfmlWindow; limit: Cardinal); cdecl; external CSfmlWindowLibrary name 'sfWindow_setFramerateLimit';
+  procedure SfmlWindowSetJoystickThreshold(Window: PSfmlWindow; Threshold: Single); cdecl; external CSfmlWindowLibrary name 'sfWindow_setJoystickThreshold';
+  function SfmlWindowGetSystemHandle(const Window: PSfmlWindow): TSfmlWindowHandle; cdecl; external CSfmlWindowLibrary name 'sfWindow_getSystemHandle';
+{$ENDIF}
 
 implementation
 
+{$IFDEF DynLink}
+
 var
   CSfmlWindowHandle: HINST;
-{$IF Defined(MSWINDOWS)}
-  CSfmlWindowLibrary: PAnsiChar = 'csfml-window-2.dll';
-{$ELSEIF Defined(DARWIN)}
-  error, not yet defined
-{$ELSEIF Defined(UNIX)}
-  error, not yet defined
-{$IFEND}
 
 procedure InitDLL;
+
+  function BindFunction(Name: AnsiString): Pointer;
+  begin
+    Result := GetProcAddress(CSfmlWindowHandle, PAnsiChar(Name));
+    Assert(Assigned(Result));
+  end;
+
 begin
   CSfmlWindowHandle := LoadLibraryA(CSfmlWindowLibrary);
   if CSfmlWindowHandle <> 0 then
     try
-      SfmlContextCreate := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfContext_create'));
-      Assert(Assigned(SfmlContextCreate));
-
-      SfmlContextDestroy := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfContext_destroy'));
-      Assert(Assigned(SfmlContextDestroy));
-
-      SfmlContextSetActive := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfContext_setActive'));
-      Assert(Assigned(SfmlContextSetActive));
-
-      SfmlKeyboardIsKeyPressed := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfKeyboard_isKeyPressed'));
-      Assert(Assigned(SfmlKeyboardIsKeyPressed));
-
-      SfmlJoystickIsConnected := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfJoystick_isConnected'));
-      Assert(Assigned(SfmlJoystickIsConnected));
-
-      SfmlJoystickGetButtonCount := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfJoystick_getButtonCount'));
-      Assert(Assigned(SfmlJoystickGetButtonCount));
-
-      SfmlJoystickHasAxis := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfJoystick_hasAxis'));
-      Assert(Assigned(SfmlJoystickHasAxis));
-
-      SfmlJoystickIsButtonPressed := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfJoystick_isButtonPressed'));
-      Assert(Assigned(SfmlJoystickIsButtonPressed));
-
-      SfmlJoystickGetAxisPosition := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfJoystick_getAxisPosition'));
-      Assert(Assigned(SfmlJoystickGetAxisPosition));
-
-      SfmlJoystickGetIdentification := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfJoystick_getIdentification'));
-      Assert(Assigned(SfmlJoystickGetIdentification));
-
-      SfmlJoystickUpdate := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfJoystick_update'));
-      Assert(Assigned(SfmlJoystickUpdate));
-
-      SfmlMouseIsButtonPressed := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfMouse_isButtonPressed'));
-      Assert(Assigned(SfmlMouseIsButtonPressed));
-
-      SfmlMouseGetPosition := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfMouse_getPosition'));
-      Assert(Assigned(SfmlMouseGetPosition));
-
-      SfmlMouseSetPosition := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfMouse_setPosition'));
-      Assert(Assigned(SfmlMouseSetPosition));
-
-      SfmlSensorIsAvailable := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfSensor_isAvailable'));
-      Assert(Assigned(SfmlSensorIsAvailable));
-
-      SfmlSensorSetEnabled := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfSensor_setEnabled'));
-      Assert(Assigned(SfmlSensorSetEnabled));
-
-      SfmlSensorGetValue := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfSensor_getValue'));
-      Assert(Assigned(SfmlSensorGetValue));
-
-      SfmlTouchIsDown := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfTouch_isDown'));
-      Assert(Assigned(SfmlTouchIsDown));
-
-      SfmlTouchGetPosition := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfTouch_getPosition'));
-      Assert(Assigned(SfmlTouchGetPosition));
-
-      SfmlVideoModeGetDesktopMode := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfVideoMode_getDesktopMode'));
-      Assert(Assigned(SfmlVideoModeGetDesktopMode));
-
-      SfmlVideoModeGetFullscreenModes := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfVideoMode_getFullscreenModes'));
-      Assert(Assigned(SfmlVideoModeGetFullscreenModes));
-
-      SfmlVideoModeIsValid := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfVideoMode_isValid'));
-      Assert(Assigned(SfmlVideoModeIsValid));
-
-      SfmlWindowCreate := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_create'));
-      Assert(Assigned(SfmlWindowCreate));
-
-      SfmlWindowCreateUnicode := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_createUnicode'));
-      Assert(Assigned(SfmlWindowCreateUnicode));
-
-      SfmlWindowCreateFromHandle := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_createFromHandle'));
-      Assert(Assigned(SfmlWindowCreateFromHandle));
-
-      SfmlWindowDestroy := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_destroy'));
-      Assert(Assigned(SfmlWindowDestroy));
-
-      SfmlWindowClose := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_close'));
-      Assert(Assigned(SfmlWindowClose));
-
-      SfmlWindowIsOpen := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_isOpen'));
-      Assert(Assigned(SfmlWindowIsOpen));
-
-      SfmlWindowGetSettings := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_getSettings'));
-      Assert(Assigned(SfmlWindowGetSettings));
-
-      SfmlWindowPollEvent := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_pollEvent'));
-      Assert(Assigned(SfmlWindowPollEvent));
-
-      SfmlWindowWaitEvent := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_waitEvent'));
-      Assert(Assigned(SfmlWindowWaitEvent));
-
-      SfmlWindowGetPosition := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_getPosition'));
-      Assert(Assigned(SfmlWindowGetPosition));
-
-      SfmlWindowSetPosition := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_setPosition'));
-      Assert(Assigned(SfmlWindowSetPosition));
-
-      SfmlWindowGetSize := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_getSize'));
-      Assert(Assigned(SfmlWindowGetSize));
-
-      SfmlWindowSetSize := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_setSize'));
-      Assert(Assigned(SfmlWindowSetSize));
-
-      SfmlWindowSetTitle := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_setTitle'));
-      Assert(Assigned(SfmlWindowSetTitle));
-
-      SfmlWindowSetUnicodeTitle := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_setUnicodeTitle'));
-      Assert(Assigned(SfmlWindowSetUnicodeTitle));
-
-      SfmlWindowSetIcon := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_setIcon'));
-      Assert(Assigned(SfmlWindowSetIcon));
-
-      SfmlWindowSetVisible := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_setVisible'));
-      Assert(Assigned(SfmlWindowSetVisible));
-
-      SfmlWindowSetMouseCursorVisible := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_setMouseCursorVisible'));
-      Assert(Assigned(SfmlWindowSetMouseCursorVisible));
-
-      SfmlWindowSetVerticalSyncEnabled := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_setVerticalSyncEnabled'));
-      Assert(Assigned(SfmlWindowSetVerticalSyncEnabled));
-
-      SfmlWindowSetKeyRepeatEnabled := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_setKeyRepeatEnabled'));
-      Assert(Assigned(SfmlWindowSetKeyRepeatEnabled));
-
-      SfmlWindowSetActive := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_setActive'));
-      Assert(Assigned(SfmlWindowSetActive));
-
-      SfmlWindowRequestFocus := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_requestFocus'));
-      Assert(Assigned(SfmlWindowRequestFocus));
-
-      SfmlWindowHasFocus := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_hasFocus'));
-      Assert(Assigned(SfmlWindowHasFocus));
-
-      SfmlWindowDisplay := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_display'));
-      Assert(Assigned(SfmlWindowDisplay));
-
-      SfmlWindowSetFramerateLimit := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_setFramerateLimit'));
-      Assert(Assigned(SfmlWindowSetFramerateLimit));
-
-      SfmlWindowSetJoystickThreshold := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_setJoystickThreshold'));
-      Assert(Assigned(SfmlWindowSetJoystickThreshold));
-
-      SfmlWindowGetSystemHandle := GetProcAddress(CSfmlWindowHandle, PAnsiChar('sfWindow_getSystemHandle'));
-      Assert(Assigned(SfmlWindowGetSystemHandle));
+      SfmlContextCreate := BindFunction('sfContext_create');
+      SfmlContextDestroy := BindFunction('sfContext_destroy');
+      SfmlContextSetActive := BindFunction('sfContext_setActive');
+      SfmlKeyboardIsKeyPressed := BindFunction('sfKeyboard_isKeyPressed');
+      SfmlJoystickIsConnected := BindFunction('sfJoystick_isConnected');
+      SfmlJoystickGetButtonCount := BindFunction('sfJoystick_getButtonCount');
+      SfmlJoystickHasAxis := BindFunction('sfJoystick_hasAxis');
+      SfmlJoystickIsButtonPressed := BindFunction('sfJoystick_isButtonPressed');
+      SfmlJoystickGetAxisPosition := BindFunction('sfJoystick_getAxisPosition');
+      SfmlJoystickGetIdentification := BindFunction('sfJoystick_getIdentification');
+      SfmlJoystickUpdate := BindFunction('sfJoystick_update');
+      SfmlMouseIsButtonPressed := BindFunction('sfMouse_isButtonPressed');
+      SfmlMouseGetPosition := BindFunction('sfMouse_getPosition');
+      SfmlMouseSetPosition := BindFunction('sfMouse_setPosition');
+      SfmlSensorIsAvailable := BindFunction('sfSensor_isAvailable');
+      SfmlSensorSetEnabled := BindFunction('sfSensor_setEnabled');
+      SfmlSensorGetValue := BindFunction('sfSensor_getValue');
+      SfmlTouchIsDown := BindFunction('sfTouch_isDown');
+      SfmlTouchGetPosition := BindFunction('sfTouch_getPosition');
+      SfmlVideoModeGetDesktopMode := BindFunction('sfVideoMode_getDesktopMode');
+      SfmlVideoModeGetFullscreenModes := BindFunction('sfVideoMode_getFullscreenModes');
+      SfmlVideoModeIsValid := BindFunction('sfVideoMode_isValid');
+      SfmlWindowCreate := BindFunction('sfWindow_create');
+      SfmlWindowCreateUnicode := BindFunction('sfWindow_createUnicode');
+      SfmlWindowCreateFromHandle := BindFunction('sfWindow_createFromHandle');
+      SfmlWindowDestroy := BindFunction('sfWindow_destroy');
+      SfmlWindowClose := BindFunction('sfWindow_close');
+      SfmlWindowIsOpen := BindFunction('sfWindow_isOpen');
+      SfmlWindowGetSettings := BindFunction('sfWindow_getSettings');
+      SfmlWindowPollEvent := BindFunction('sfWindow_pollEvent');
+      SfmlWindowWaitEvent := BindFunction('sfWindow_waitEvent');
+      SfmlWindowGetPosition := BindFunction('sfWindow_getPosition');
+      SfmlWindowSetPosition := BindFunction('sfWindow_setPosition');
+      SfmlWindowGetSize := BindFunction('sfWindow_getSize');
+      SfmlWindowSetSize := BindFunction('sfWindow_setSize');
+      SfmlWindowSetTitle := BindFunction('sfWindow_setTitle');
+      SfmlWindowSetUnicodeTitle := BindFunction('sfWindow_setUnicodeTitle');
+      SfmlWindowSetIcon := BindFunction('sfWindow_setIcon');
+      SfmlWindowSetVisible := BindFunction('sfWindow_setVisible');
+      SfmlWindowSetMouseCursorVisible := BindFunction('sfWindow_setMouseCursorVisible');
+      SfmlWindowSetVerticalSyncEnabled := BindFunction('sfWindow_setVerticalSyncEnabled');
+      SfmlWindowSetKeyRepeatEnabled := BindFunction('sfWindow_setKeyRepeatEnabled');
+      SfmlWindowSetActive := BindFunction('sfWindow_setActive');
+      SfmlWindowRequestFocus := BindFunction('sfWindow_requestFocus');
+      SfmlWindowHasFocus := BindFunction('sfWindow_hasFocus');
+      SfmlWindowDisplay := BindFunction('sfWindow_display');
+      SfmlWindowSetFramerateLimit := BindFunction('sfWindow_setFramerateLimit');
+      SfmlWindowSetJoystickThreshold := BindFunction('sfWindow_setJoystickThreshold');
+      SfmlWindowGetSystemHandle := BindFunction('sfWindow_getSystemHandle');
     except
       FreeLibrary(CSfmlWindowHandle);
       CSfmlWindowHandle := 0;
@@ -481,5 +452,7 @@ InitDLL;
 finalization
 
 FreeDLL;
+
+{$ENDIF}
 
 end.
