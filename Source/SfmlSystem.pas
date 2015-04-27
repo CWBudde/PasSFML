@@ -41,20 +41,7 @@ const
   CSFML_VERSION_MINOR = 2;
   CSFML_VERSION_PATCH = 0;
 
-  sfFalse = 0;
-  sfTrue = 1;
-
 type
-  sfBool = LongInt;
-  sfInt8 = ShortInt;
-  sfUint8 = Byte;
-  sfInt16 = SmallInt;
-  sfUint16 = Word;
-  sfInt32 = LongInt;
-  sfUint32 = Cardinal;
-  sfInt64 = Int64;
-  sfUint64 = UInt64;
-
   PSfmlClock = Pointer;
   PSfmlMutex = Pointer;
   PSfmlThread = Pointer;
@@ -79,10 +66,10 @@ type
     X, Y, Z: Single;
   end;
 
-  TSfmlInputStreamReadFunc = function (Data: Pointer; Size: sfInt64; UserData: Pointer): sfInt64; cdecl;
-  TSfmlInputStreamSeekFunc = function (Position: sfInt64; UserData: Pointer): sfInt64; cdecl;
-  TSfmlInputStreamTellFunc = function (UserData: Pointer): sfInt64; cdecl;
-  TSfmlInputStreamGetSizeFunc = function (UserData: Pointer): sfInt64; cdecl;
+  TSfmlInputStreamReadFunc = function (Data: Pointer; Size: Int64; UserData: Pointer): Int64; cdecl;
+  TSfmlInputStreamSeekFunc = function (Position: Int64; UserData: Pointer): Int64; cdecl;
+  TSfmlInputStreamTellFunc = function (UserData: Pointer): Int64; cdecl;
+  TSfmlInputStreamGetSizeFunc = function (UserData: Pointer): Int64; cdecl;
 
   TSfmlInputStream = record
     Read: TSfmlInputStreamReadFunc;
@@ -101,7 +88,7 @@ type
 
   TSfmlSeconds = function (Amount: Single): TSfmlTime; cdecl;
   TSfmlMilliseconds = function (Amount: sfInt32): TSfmlTime; cdecl;
-  TSfmlMicroseconds = function (Amount: sfInt64): TSfmlTime; cdecl;
+  TSfmlMicroseconds = function (Amount: Int64): TSfmlTime; cdecl;
 
   TSfmlClockCreate = function : PSfmlClock; cdecl;
   TSfmlClockCopy = function (const Clock: PSfmlClock): PSfmlClock; cdecl;
@@ -155,12 +142,12 @@ var
   // static linking
   function SfmlTimeZero: TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfTime_Zero';
   function SfmlTimeAsSeconds(Time: TSfmlTime): Single; cdecl; external CSfmlSystemLibrary name 'sfTime_asSeconds';
-  function SfmlTimeAsMilliseconds(Time: TSfmlTime): sfInt32; cdecl; external CSfmlSystemLibrary name 'sfTime_asMilliseconds';
+  function SfmlTimeAsMilliseconds(Time: TSfmlTime): LongInt; cdecl; external CSfmlSystemLibrary name 'sfTime_asMilliseconds';
   function SfmlTimeAsMicroseconds(Time: TSfmlTime): Int64; cdecl; external CSfmlSystemLibrary name 'sfTime_asMicroseconds';
 
   function SfmlSeconds(Amount: Single): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfSeconds';
-  function SfmlMilliseconds(Amount: sfInt32): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfMilliseconds';
-  function SfmlMicroseconds(Amount: sfInt64): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfMicroseconds';
+  function SfmlMilliseconds(Amount: LongInt): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfMilliseconds';
+  function SfmlMicroseconds(Amount: Int64): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfMicroseconds';
 
   function SfmlClockCreate: PSfmlClock; cdecl; external CSfmlSystemLibrary name 'sfClock_create:';
   function SfmlClockCopy(const Clock: PSfmlClock): PSfmlClock; cdecl; external CSfmlSystemLibrary name 'sfClock_copy';
@@ -244,6 +231,7 @@ end;
 
 initialization
 
+Assert(SizeOf(Boolean) = 4);
 InitDLL;
 
 finalization

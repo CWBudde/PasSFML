@@ -107,10 +107,10 @@ type
   TSfmlKeyEvent = record
     EventType: TSfmlEventType;
     Code: TSfmlKeyCode;
-    Alt: sfBool;
-    Control: sfBool;
-    Shift: sfBool;
-    System: sfBool;
+    Alt: Boolean;
+    Control: Boolean;
+    Shift: Boolean;
+    System: Boolean;
   end;
 
   TSfmlJoystickIdentification = record
@@ -121,7 +121,7 @@ type
 
   TSfmlTextEvent = record
     EventType: TSfmlEventType;
-    Unicode: sfUint32;
+    Unicode: Cardinal;
   end;
 
   TSfmlMouseMoveEvent = record
@@ -194,56 +194,56 @@ type
 {$IFDEF DynLink}
   TSfmlContextCreate = function : PSfmlContext; cdecl;
   TSfmlContextDestroy = procedure (Context: PSfmlContext); cdecl;
-  TSfmlContextSetActive = procedure (Context: PSfmlContext; Active: sfBool); cdecl;
+  TSfmlContextSetActive = procedure (Context: PSfmlContext; Active: Boolean); cdecl;
 
-  TSfmlKeyboardIsKeyPressed = function (Key: TSfmlKeyCode): sfBool; cdecl;
+  TSfmlKeyboardIsKeyPressed = function (Key: TSfmlKeyCode): Boolean; cdecl;
 
-  TSfmlJoystickIsConnected = function (Joystick: Cardinal): sfBool; cdecl;
+  TSfmlJoystickIsConnected = function (Joystick: Cardinal): Boolean; cdecl;
   TSfmlJoystickGetButtonCount = function (Joystick: Cardinal): Cardinal; cdecl;
-  TSfmlJoystickHasAxis = function (Joystick: Cardinal; Axis: TSfmlJoystickAxis): sfBool; cdecl;
-  TSfmlJoystickIsButtonPressed = function (Joystick, button: Cardinal): sfBool; cdecl;
+  TSfmlJoystickHasAxis = function (Joystick: Cardinal; Axis: TSfmlJoystickAxis): Boolean; cdecl;
+  TSfmlJoystickIsButtonPressed = function (Joystick, button: Cardinal): Boolean; cdecl;
   TSfmlJoystickGetAxisPosition = function (Joystick: Cardinal; Axis: TSfmlJoystickAxis): Single; cdecl;
   TSfmlJoystickGetIdentification = function (Joystick: Cardinal): TSfmlJoystickIdentification; cdecl;
   TSfmlJoystickUpdate = procedure; cdecl;
 
-  TSfmlMouseIsButtonPressed = function (Button: TSfmlMouseButton): sfBool; cdecl;
+  TSfmlMouseIsButtonPressed = function (Button: TSfmlMouseButton): Boolean; cdecl;
   TSfmlMouseGetPosition = function (const RelativeTo: PSfmlWindow): TSfmlVector2i; cdecl;
   TSfmlMouseSetPosition = procedure (Position: TSfmlVector2i; const RelativeTo: PSfmlWindow); cdecl;
 
-  TSfmlSensorIsAvailable = function (Sensor: TSfmlSensorType): sfBool; cdecl;
-  TSfmlSensorSetEnabled = procedure (Sensor: TSfmlSensorType; Enabled: sfBool); cdecl;
+  TSfmlSensorIsAvailable = function (Sensor: TSfmlSensorType): Boolean; cdecl;
+  TSfmlSensorSetEnabled = procedure (Sensor: TSfmlSensorType; Enabled: Boolean); cdecl;
   TSfmlSensorGetValue = function (Sensor: TSfmlSensorType): TSfmlVector3f; cdecl;
 
-  TSfmlTouchIsDown = function (Finger: Cardinal): sfBool; cdecl;
+  TSfmlTouchIsDown = function (Finger: Cardinal): Boolean; cdecl;
   TSfmlTouchGetPosition = function (Finger: Cardinal; const RelativeTo: PSfmlWindow): TSfmlVector2i; cdecl;
 
   TSfmlVideoModeGetDesktopMode = function: TSfmlVideoMode; cdecl;
   TSfmlVideoModeGetFullscreenModes = function (var Count: NativeUInt): PSfmlVideoMode; cdecl;
-  TSfmlVideoModeIsValid = function (Mode: TSfmlVideoMode): sfBool; cdecl;
+  TSfmlVideoModeIsValid = function (Mode: TSfmlVideoMode): Boolean; cdecl;
 
   TSfmlWindowCreate = function (Mode: TSfmlVideoMode; const Title: PAnsiChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
-  TSfmlWindowCreateUnicode = function (Mode: TSfmlVideoMode; const Title: PWideChar; style: sfUint32; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
+  TSfmlWindowCreateUnicode = function (Mode: TSfmlVideoMode; const Title: PWideChar; style: Cardinal; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
   TSfmlWindowCreateFromHandle = function (Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
   TSfmlWindowDestroy = procedure (Window: PSfmlWindow); cdecl;
   TSfmlWindowClose = procedure (Window: PSfmlWindow); cdecl;
-  TSfmlWindowIsOpen = function (const Window: PSfmlWindow): sfBool; cdecl;
+  TSfmlWindowIsOpen = function (const Window: PSfmlWindow): Boolean; cdecl;
   TSfmlWindowGetSettings = function (const Window: PSfmlWindow): TSfmlContextSettings; cdecl;
-  TSfmlWindowPollEvent = function (Window: PSfmlWindow; var Event: TSfmlEvent): sfBool; cdecl;
-  TSfmlWindowWaitEvent = function (Window: PSfmlWindow; var Event: TSfmlEvent): sfBool; cdecl;
+  TSfmlWindowPollEvent = function (Window: PSfmlWindow; var Event: TSfmlEvent): Boolean; cdecl;
+  TSfmlWindowWaitEvent = function (Window: PSfmlWindow; var Event: TSfmlEvent): Boolean; cdecl;
   TSfmlWindowGetPosition = function (const Window: PSfmlWindow): TSfmlVector2i; cdecl;
   TSfmlWindowSetPosition = procedure (Window: PSfmlWindow; Position: TSfmlVector2i); cdecl;
   TSfmlWindowGetSize = function (const Window: PSfmlWindow): TSfmlVector2u; cdecl;
   TSfmlWindowSetSize = procedure (Window: PSfmlWindow; Size: TSfmlVector2u); cdecl;
   TSfmlWindowSetTitle = procedure (Window: PSfmlWindow; const Title: PAnsiChar); cdecl;
   TSfmlWindowSetUnicodeTitle = procedure (Window: PSfmlWindow; const Title: PWideChar); cdecl;
-  TSfmlWindowSetIcon = procedure (Window: PSfmlWindow; Width, Height: Cardinal; const pixels: PByte); cdecl;
-  TSfmlWindowSetVisible = procedure (Window: PSfmlWindow; Visible: sfBool); cdecl;
-  TSfmlWindowSetMouseCursorVisible = procedure (Window: PSfmlWindow; Visible: sfBool); cdecl;
-  TSfmlWindowSetVerticalSyncEnabled = procedure (Window: PSfmlWindow; Enabled: sfBool); cdecl;
-  TSfmlWindowSetKeyRepeatEnabled = procedure (Window: PSfmlWindow; Enabled: sfBool); cdecl;
-  TSfmlWindowSetActive = function (Window: PSfmlWindow; Active: sfBool): sfBool; cdecl;
+  TSfmlWindowSetIcon = procedure (Window: PSfmlWindow; Width, Height: Cardinal; const Pixels: PByte); cdecl;
+  TSfmlWindowSetVisible = procedure (Window: PSfmlWindow; Visible: Boolean); cdecl;
+  TSfmlWindowSetMouseCursorVisible = procedure (Window: PSfmlWindow; Visible: Boolean); cdecl;
+  TSfmlWindowSetVerticalSyncEnabled = procedure (Window: PSfmlWindow; Enabled: Boolean); cdecl;
+  TSfmlWindowSetKeyRepeatEnabled = procedure (Window: PSfmlWindow; Enabled: Boolean); cdecl;
+  TSfmlWindowSetActive = function (Window: PSfmlWindow; Active: Boolean): Boolean; cdecl;
   TSfmlWindowRequestFocus = procedure (Window: PSfmlWindow); cdecl;
-  TSfmlWindowHasFocus = function (const Window: PSfmlWindow): sfBool; cdecl;
+  TSfmlWindowHasFocus = function (const Window: PSfmlWindow): Boolean; cdecl;
   TSfmlWindowDisplay = procedure (Window: PSfmlWindow); cdecl;
   TSfmlWindowSetFramerateLimit = procedure (Window: PSfmlWindow; limit: Cardinal); cdecl;
   TSfmlWindowSetJoystickThreshold = procedure (Window: PSfmlWindow; Threshold: Single); cdecl;
@@ -309,63 +309,279 @@ var
 {$ELSE}
   function SfmlContextCreate: PSfmlContext; cdecl; external CSfmlWindowLibrary name 'sfContext_create';
   procedure SfmlContextDestroy(Context: PSfmlContext); cdecl; external CSfmlWindowLibrary name 'sfContext_destroy';
-  procedure SfmlContextSetActive(Context: PSfmlContext; Active: sfBool); cdecl; external CSfmlWindowLibrary name 'sfContext_setActive';
+  procedure SfmlContextSetActive(Context: PSfmlContext; Active: Boolean); cdecl; external CSfmlWindowLibrary name 'sfContext_setActive';
 
-  function SfmlKeyboardIsKeyPressed(Key: TSfmlKeyCode): sfBool; cdecl; external CSfmlWindowLibrary name 'sfKeyboard_isKeyPressed';
+  function SfmlKeyboardIsKeyPressed(Key: TSfmlKeyCode): Boolean; cdecl; external CSfmlWindowLibrary name 'sfKeyboard_isKeyPressed';
 
-  function SfmlJoystickIsConnected(Joystick: Cardinal): sfBool; cdecl; external CSfmlWindowLibrary name 'sfJoystick_isConnected';
+  function SfmlJoystickIsConnected(Joystick: Cardinal): Boolean; cdecl; external CSfmlWindowLibrary name 'sfJoystick_isConnected';
   function SfmlJoystickGetButtonCount(Joystick: Cardinal): Cardinal; cdecl; external CSfmlWindowLibrary name 'sfJoystick_getButtonCount';
-  function SfmlJoystickHasAxis(Joystick: Cardinal; Axis: TSfmlJoystickAxis): sfBool; cdecl; external CSfmlWindowLibrary name 'sfJoystick_hasAxis';
-  function SfmlJoystickIsButtonPressed(Joystick, button: Cardinal): sfBool; cdecl; external CSfmlWindowLibrary name 'sfJoystick_isButtonPressed';
+  function SfmlJoystickHasAxis(Joystick: Cardinal; Axis: TSfmlJoystickAxis): Boolean; cdecl; external CSfmlWindowLibrary name 'sfJoystick_hasAxis';
+  function SfmlJoystickIsButtonPressed(Joystick, button: Cardinal): Boolean; cdecl; external CSfmlWindowLibrary name 'sfJoystick_isButtonPressed';
   function SfmlJoystickGetAxisPosition(Joystick: Cardinal; Axis: TSfmlJoystickAxis): Single; cdecl; external CSfmlWindowLibrary name 'sfJoystick_getAxisPosition';
   function SfmlJoystickGetIdentification(Joystick: Cardinal): TSfmlJoystickIdentification; cdecl; external CSfmlWindowLibrary name 'sfJoystick_getIdentification';
   procedure SfmlJoystickUpdate; cdecl; external CSfmlWindowLibrary name 'sfJoystickUpdate';
 
-  function SfmlMouseIsButtonPressed(Button: TSfmlMouseButton): sfBool; cdecl; external CSfmlWindowLibrary name 'sfMouse_isButtonPressed';
+  function SfmlMouseIsButtonPressed(Button: TSfmlMouseButton): Boolean; cdecl; external CSfmlWindowLibrary name 'sfMouse_isButtonPressed';
   function SfmlMouseGetPosition(const RelativeTo: PSfmlWindow): TSfmlVector2i; cdecl; external CSfmlWindowLibrary name 'sfMouse_getPosition';
   procedure SfmlMouseSetPosition(Position: TSfmlVector2i; const RelativeTo: PSfmlWindow); cdecl; external CSfmlWindowLibrary name 'sfMouse_setPosition';
 
-  function SfmlSensorIsAvailable(Sensor: TSfmlSensorType): sfBool; cdecl; external CSfmlWindowLibrary name 'sfSensor_isAvailable';
-  procedure SfmlSensorSetEnabled(Sensor: TSfmlSensorType; Enabled: sfBool); cdecl; external CSfmlWindowLibrary name 'sfSensor_setEnabled';
+  function SfmlSensorIsAvailable(Sensor: TSfmlSensorType): Boolean; cdecl; external CSfmlWindowLibrary name 'sfSensor_isAvailable';
+  procedure SfmlSensorSetEnabled(Sensor: TSfmlSensorType; Enabled: Boolean); cdecl; external CSfmlWindowLibrary name 'sfSensor_setEnabled';
   function SfmlSensorGetValue(Sensor: TSfmlSensorType): TSfmlVector3f; cdecl; external CSfmlWindowLibrary name 'sfSensor_getValue';
 
-  function SfmlTouchIsDown(Finger: Cardinal): sfBool; cdecl; external CSfmlWindowLibrary name 'sfTouch_isDown';
+  function SfmlTouchIsDown(Finger: Cardinal): Boolean; cdecl; external CSfmlWindowLibrary name 'sfTouch_isDown';
   function SfmlTouchGetPosition(Finger: Cardinal; const RelativeTo: PSfmlWindow): TSfmlVector2i; cdecl; external CSfmlWindowLibrary name 'sfTouch_getPosition';
 
   function SfmlVideoModeGetDesktopMode: TSfmlVideoMode; cdecl; external CSfmlWindowLibrary name 'sfVideoMode_getDesktopMode';
   function SfmlVideoModeGetFullscreenModes(var Count: NativeUInt): PSfmlVideoMode; cdecl; external CSfmlWindowLibrary name 'sfVideoMode_getFullscreenModes';
-  function SfmlVideoModeIsValid(Mode: TSfmlVideoMode): sfBool; cdecl; external CSfmlWindowLibrary name 'sfVideoMode_isValid';
+  function SfmlVideoModeIsValid(Mode: TSfmlVideoMode): Boolean; cdecl; external CSfmlWindowLibrary name 'sfVideoMode_isValid';
 
   function SfmlWindowCreate(Mode: TSfmlVideoMode; const Title: PAnsiChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl; external CSfmlWindowLibrary name 'sfWindow_create';
-  function SfmlWindowCreateUnicode(Mode: TSfmlVideoMode; const Title: PWideChar; style: sfUint32; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl; external CSfmlWindowLibrary name 'sfWindow_createUnicode';
+  function SfmlWindowCreateUnicode(Mode: TSfmlVideoMode; const Title: PWideChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl; external CSfmlWindowLibrary name 'sfWindow_createUnicode';
   function SfmlWindowCreateFromHandle(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl; external CSfmlWindowLibrary name 'sfWindow_createFromHandle';
   procedure SfmlWindowDestroy(Window: PSfmlWindow); cdecl; external CSfmlWindowLibrary name 'sfWindow_destroy';
   procedure SfmlWindowClose(Window: PSfmlWindow); cdecl; external CSfmlWindowLibrary name 'sfWindow_close';
-  function SfmlWindowIsOpen(const Window: PSfmlWindow): sfBool; cdecl; external CSfmlWindowLibrary name 'sfWindow_isOpen';
+  function SfmlWindowIsOpen(const Window: PSfmlWindow): Boolean; cdecl; external CSfmlWindowLibrary name 'sfWindow_isOpen';
   function SfmlWindowGetSettings(const Window: PSfmlWindow): TSfmlContextSettings; cdecl; external CSfmlWindowLibrary name 'sfWindow_getSettings';
-  function SfmlWindowPollEvent(Window: PSfmlWindow; var Event: TSfmlEvent): sfBool; cdecl; external CSfmlWindowLibrary name 'sfWindow_pollEvent';
-  function SfmlWindowWaitEvent(Window: PSfmlWindow; var Event: TSfmlEvent): sfBool; cdecl; external CSfmlWindowLibrary name 'sfWindow_waitEvent';
+  function SfmlWindowPollEvent(Window: PSfmlWindow; var Event: TSfmlEvent): Boolean; cdecl; external CSfmlWindowLibrary name 'sfWindow_pollEvent';
+  function SfmlWindowWaitEvent(Window: PSfmlWindow; var Event: TSfmlEvent): Boolean; cdecl; external CSfmlWindowLibrary name 'sfWindow_waitEvent';
   function SfmlWindowGetPosition(const Window: PSfmlWindow): TSfmlVector2i; cdecl; external CSfmlWindowLibrary name 'sfWindow_getPosition';
   procedure SfmlWindowSetPosition(Window: PSfmlWindow; Position: TSfmlVector2i); cdecl; external CSfmlWindowLibrary name 'sfWindow_setPosition';
   function SfmlWindowGetSize(const Window: PSfmlWindow): TSfmlVector2u; cdecl; external CSfmlWindowLibrary name 'sfWindow_getSize';
   procedure SfmlWindowSetSize(Window: PSfmlWindow; Size: TSfmlVector2u); cdecl; external CSfmlWindowLibrary name 'sfWindow_setSize';
   procedure SfmlWindowSetTitle(Window: PSfmlWindow; const Title: PAnsiChar); cdecl; external CSfmlWindowLibrary name 'sfWindow_setTitle';
   procedure SfmlWindowSetUnicodeTitle(Window: PSfmlWindow; const Title: PWideChar); cdecl; external CSfmlWindowLibrary name 'sfWindow_setUnicodeTitle';
-  procedure SfmlWindowSetIcon(Window: PSfmlWindow; Width, Height: Cardinal; const pixels: PByte); cdecl; external CSfmlWindowLibrary name 'sfWindow_setIcon';
-  procedure SfmlWindowSetVisible(Window: PSfmlWindow; Visible: sfBool); cdecl; external CSfmlWindowLibrary name 'sfWindow_setVisible';
-  procedure SfmlWindowSetMouseCursorVisible(Window: PSfmlWindow; Visible: sfBool); cdecl; external CSfmlWindowLibrary name 'sfWindow_setMouseCursorVisible';
-  procedure SfmlWindowSetVerticalSyncEnabled(Window: PSfmlWindow; Enabled: sfBool); cdecl; external CSfmlWindowLibrary name 'sfWindow_setVerticalSyncEnabled';
-  procedure SfmlWindowSetKeyRepeatEnabled(Window: PSfmlWindow; Enabled: sfBool); cdecl; external CSfmlWindowLibrary name 'sfWindow_setKeyRepeatEnabled';
-  function SfmlWindowSetActive(Window: PSfmlWindow; Active: sfBool): sfBool; cdecl; external CSfmlWindowLibrary name 'sfWindow_setActive';
+  procedure SfmlWindowSetIcon(Window: PSfmlWindow; Width, Height: Cardinal; const Pixels: PByte); cdecl; external CSfmlWindowLibrary name 'sfWindow_setIcon';
+  procedure SfmlWindowSetVisible(Window: PSfmlWindow; Visible: Boolean); cdecl; external CSfmlWindowLibrary name 'sfWindow_setVisible';
+  procedure SfmlWindowSetMouseCursorVisible(Window: PSfmlWindow; Visible: Boolean); cdecl; external CSfmlWindowLibrary name 'sfWindow_setMouseCursorVisible';
+  procedure SfmlWindowSetVerticalSyncEnabled(Window: PSfmlWindow; Enabled: Boolean); cdecl; external CSfmlWindowLibrary name 'sfWindow_setVerticalSyncEnabled';
+  procedure SfmlWindowSetKeyRepeatEnabled(Window: PSfmlWindow; Enabled: Boolean); cdecl; external CSfmlWindowLibrary name 'sfWindow_setKeyRepeatEnabled';
+  function SfmlWindowSetActive(Window: PSfmlWindow; Active: Boolean): Boolean; cdecl; external CSfmlWindowLibrary name 'sfWindow_setActive';
   procedure SfmlWindowRequestFocus(Window: PSfmlWindow); cdecl; external CSfmlWindowLibrary name 'sfWindow_requestFocus';
-  function SfmlWindowHasFocus(const Window: PSfmlWindow): sfBool; cdecl; external CSfmlWindowLibrary name 'sfWindow_hasFocus';
+  function SfmlWindowHasFocus(const Window: PSfmlWindow): Boolean; cdecl; external CSfmlWindowLibrary name 'sfWindow_hasFocus';
   procedure SfmlWindowDisplay(Window: PSfmlWindow); cdecl; external CSfmlWindowLibrary name 'sfWindow_display';
   procedure SfmlWindowSetFramerateLimit(Window: PSfmlWindow; limit: Cardinal); cdecl; external CSfmlWindowLibrary name 'sfWindow_setFramerateLimit';
   procedure SfmlWindowSetJoystickThreshold(Window: PSfmlWindow; Threshold: Single); cdecl; external CSfmlWindowLibrary name 'sfWindow_setJoystickThreshold';
   function SfmlWindowGetSystemHandle(const Window: PSfmlWindow): TSfmlWindowHandle; cdecl; external CSfmlWindowLibrary name 'sfWindow_getSystemHandle';
 {$ENDIF}
 
+type
+  TSfmlContext = class
+  private
+    FActive: Boolean;
+    FHandle: PSfmlContext;
+    procedure SetActive(const Value: Boolean);
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property Active: Boolean read FActive write SetActive;
+  end;
+
+  TSfmlWindow = class
+  private
+    FHandle: PSfmlWindow;
+    function GetPosition: TSfmlVector2i;
+    function GetSize: TSfmlVector2u;
+    procedure SetPosition(Position: TSfmlVector2i);
+    procedure SetSize(Size: TSfmlVector2u);
+  public
+    constructor Create(VideoMode: TSfmlVideoMode; Title: AnsiString;
+      Style: TSfmlWindowStyles); overload;
+    constructor Create(VideoMode: TSfmlVideoMode; Title: string;
+      Style: TSfmlWindowStyles); overload;
+    constructor Create(Handle: TSfmlWindowHandle); overload;
+    destructor Destroy; override;
+
+    procedure Close;
+    function IsOpen: Boolean;
+    function GetSettings: TSfmlContextSettings;
+    function PollEvent(var Event: TSfmlEvent): Boolean;
+    function WaitEvent(var Event: TSfmlEvent): Boolean;
+    procedure SetTitle(const Title: AnsiString);
+    procedure SetUnicodeTitle(const Title: string);
+    procedure SetIcon(Width, Height: Cardinal; const Pixels: PByte);
+    procedure SetVisible(Visible: Boolean);
+    procedure SetMouseCursorVisible(Visible: Boolean);
+    procedure SetVerticalSyncEnabled(Enabled: Boolean);
+    procedure SetKeyRepeatEnabled(Enabled: Boolean);
+    function SetActive(Active: Boolean): Boolean;
+    procedure SetFramerateLimit(Limit: Cardinal);
+    procedure SetJoystickThreshold(Threshold: Single);
+
+    procedure RequestFocus;
+    function HasFocus: Boolean;
+    procedure Display;
+    function GetSystemHandle: TSfmlWindowHandle;
+
+    property Size: TSfmlVector2u read GetSize write SetSize;
+    property Position: TSfmlVector2i read GetPosition write SetPosition;
+  end;
+
 implementation
+
+{ TSfmlContext }
+
+constructor TSfmlContext.Create;
+begin
+  FHandle := SfmlContextCreate;
+  FActive := False;
+end;
+
+destructor TSfmlContext.Destroy;
+begin
+  SfmlContextDestroy(FHandle);
+  inherited;
+end;
+
+procedure TSfmlContext.SetActive(const Value: Boolean);
+begin
+  if FActive <> Value then
+  begin
+    FActive := Value;
+    SfmlContextSetActive(FHandle, Value);
+  end;
+end;
+
+{ TSfmlWindow }
+
+constructor TSfmlWindow.Create(VideoMode: TSfmlVideoMode; Title: AnsiString;
+  Style: TSfmlWindowStyles);
+begin
+  FHandle := SfmlWindowCreate(VideoMode, PAnsiChar(Title), Style, nil);
+end;
+
+constructor TSfmlWindow.Create(VideoMode: TSfmlVideoMode; Title: string;
+  Style: TSfmlWindowStyles);
+begin
+  FHandle := SfmlWindowCreateUnicode(VideoMode, PWideChar(Title), Style, nil);
+end;
+
+procedure TSfmlWindow.Close;
+begin
+
+end;
+
+constructor TSfmlWindow.Create(Handle: TSfmlWindowHandle);
+begin
+  FHandle := SfmlWindowCreateFromHandle(Handle, nil);
+end;
+
+destructor TSfmlWindow.Destroy;
+begin
+  SfmlWindowDestroy(FHandle);
+  inherited;
+end;
+
+procedure TSfmlWindow.Display;
+begin
+  SfmlWindowDisplay(FHandle);
+end;
+
+function TSfmlWindow.GetPosition: TSfmlVector2i;
+begin
+  Result := SfmlWindowGetPosition(FHandle);
+end;
+
+function TSfmlWindow.GetSettings: TSfmlContextSettings;
+begin
+  Result := SfmlWindowGetSettings(FHandle);
+end;
+
+function TSfmlWindow.GetSize: TSfmlVector2u;
+begin
+  Result := SfmlWindowGetSize(FHandle);
+end;
+
+function TSfmlWindow.GetSystemHandle: TSfmlWindowHandle;
+begin
+  Result := SfmlWindowGetSystemHandle(FHandle);
+end;
+
+function TSfmlWindow.HasFocus: Boolean;
+begin
+  Result := SfmlWindowHasFocus(FHandle);
+end;
+
+function TSfmlWindow.IsOpen: Boolean;
+begin
+  Result := SfmlWindowIsOpen(FHandle);
+end;
+
+function TSfmlWindow.PollEvent(var Event: TSfmlEvent): Boolean;
+begin
+  Result := SfmlWindowPollEvent(FHandle, Event);
+end;
+
+procedure TSfmlWindow.RequestFocus;
+begin
+  SfmlWindowRequestFocus(FHandle);
+end;
+
+function TSfmlWindow.SetActive(Active: Boolean): Boolean;
+begin
+  Result := SfmlWindowSetActive(FHandle, Boolean(Active));
+end;
+
+procedure TSfmlWindow.SetFramerateLimit(Limit: Cardinal);
+begin
+  SfmlWindowSetFramerateLimit(FHandle, Limit);
+end;
+
+procedure TSfmlWindow.SetIcon(Width, Height: Cardinal; const Pixels: PByte);
+begin
+  SfmlWindowSetIcon(FHandle, Width, Height, Pixels);
+end;
+
+procedure TSfmlWindow.SetJoystickThreshold(Threshold: Single);
+begin
+  SfmlWindowSetJoystickThreshold(FHandle, Threshold);
+end;
+
+procedure TSfmlWindow.SetKeyRepeatEnabled(Enabled: Boolean);
+begin
+  SfmlWindowSetKeyRepeatEnabled(FHandle, Enabled);
+end;
+
+procedure TSfmlWindow.SetMouseCursorVisible(Visible: Boolean);
+begin
+  SfmlWindowSetMouseCursorVisible(FHandle, Visible);
+end;
+
+procedure TSfmlWindow.SetPosition(Position: TSfmlVector2i);
+begin
+  SfmlWindowSetPosition(FHandle, Position);
+end;
+
+procedure TSfmlWindow.SetSize(Size: TSfmlVector2u);
+begin
+  SfmlWindowSetSize(FHandle, Size);
+end;
+
+procedure TSfmlWindow.SetTitle(const Title: AnsiString);
+begin
+  SfmlWindowSetTitle(FHandle, PAnsiChar(Title));
+end;
+
+procedure TSfmlWindow.SetUnicodeTitle(const Title: string);
+begin
+  SfmlWindowSetUnicodeTitle(FHandle, PWideChar(Title));
+end;
+
+procedure TSfmlWindow.SetVerticalSyncEnabled(Enabled: Boolean);
+begin
+  SfmlWindowSetVerticalSyncEnabled(FHandle, Enabled);
+end;
+
+procedure TSfmlWindow.SetVisible(Visible: Boolean);
+begin
+  SfmlWindowSetVisible(FHandle, Visible);
+end;
+
+function TSfmlWindow.WaitEvent(var Event: TSfmlEvent): Boolean;
+begin
+  Result := SfmlWindowWaitEvent(FHandle, Event);
+end;
 
 {$IFDEF DynLink}
 
@@ -454,5 +670,4 @@ finalization
 FreeDLL;
 
 {$ENDIF}
-
 end.

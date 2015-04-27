@@ -7,8 +7,11 @@ It is originally written in C++, and this project is an inofficial binding for t
 
 You can find SFML here: http://www.sfml-dev.org/
 
+SFML is released under the the zlib/png+ license. 
+The license can be optained here: http://opensource.org/licenses/Zlib
+
 Authors
 -------
 
 Christian-W. Budde - developer (Christian@savioursofsoul.de)
-Laurent Gomila - original CSFML developer (laurent@sfml-dev.org)
+Laurent Gomila - original CSFML and SFML developer (laurent@sfml-dev.org)

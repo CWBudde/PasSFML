@@ -24,7 +24,7 @@ begin
   Mode.Width := 800;
   Mode.Height := 600;
   Mode.BitsPerPixel := 32;
-  if SfmlVideoModeIsValid(Mode) = sfFalse then
+  if not SfmlVideoModeIsValid(Mode) then
     raise Exception.Create('Invalid video mode');
 
   Window := SfmlRenderWindowCreate(Mode, 'SFML Window', [sfResize, sfClose], nil);
@@ -36,7 +36,7 @@ begin
   if not Assigned(Texture) then
     raise Exception.Create('Texture error');
   Sprite := SfmlSpriteCreate;
-  SfmlSpriteSetTexture(Sprite, texture, sfTrue);
+  SfmlSpriteSetTexture(Sprite, texture, True);
 
   // Create a graphical text to display
   Font := SfmlFontCreateFromFile('../Resources/AdmirationPains.ttf');
@@ -60,10 +60,10 @@ begin
   SfmlMusicPlay(Music);
 
   // Start the game loop
-  while SfmlRenderWindowIsOpen(Window) = sfTrue do
+  while SfmlRenderWindowIsOpen(Window) do
   begin
     // Process events
-    while SfmlRenderWindowPollEvent(Window, @Event) = sfTrue do
+    while SfmlRenderWindowPollEvent(Window, @Event) do
     begin
       // Close window : exit
       if Event.EventType = sfEvtClosed then
