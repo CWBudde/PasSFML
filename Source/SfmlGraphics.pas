@@ -1392,6 +1392,7 @@ type
     function GetOutlineColor: TSfmlColor;
     function GetOutlineThickness: Single;
     function GetPointCount: Cardinal;
+    function GetPoint(Index: Cardinal): TSfmlVector2f;
     function GetPosition: TSfmlVector2f;
     function GetRadius: Single;
     function GetRotation: Single;
@@ -1419,17 +1420,18 @@ type
     procedure Rotate(Angle: Single);
     procedure Scale(Factors: TSfmlVector2f);
 
-    function GetPoint(Index: Cardinal): TSfmlVector2f;
     procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
 
     property FillColor: TSfmlColor read GetFillColor write SetFillColor;
     property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
+    property Handle: PSfmlCircleShape read FHandle;
     property InverseTransform: TSfmlTransform read GetInverseTransform;
     property LocalBounds: TSfmlFloatRect read GetLocalBounds;
     property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
     property OutlineColor: TSfmlColor read GetOutlineColor write SetOutlineColor;
     property OutlineThickness: Single read GetOutlineThickness write SetOutlineThickness;
     property PointCount: Cardinal read GetPointCount write SetPointCount;
+    property Point[Index: Cardinal]: TSfmlVector2f read GetPoint;
     property Position: TSfmlVector2f read GetPosition write SetPosition;
     property Radius: Single read GetRadius write SetRadius;
     property Rotation: Single read GetRotation write SetRotation;
@@ -1442,40 +1444,59 @@ type
   TSfmlConvexShape = class
   private
     FHandle: PSfmlConvexShape;
+    function GetFillColor: TSfmlColor;
+    function GetGlobalBounds: TSfmlFloatRect;
+    function GetInverseTransform: TSfmlTransform;
+    function GetLocalBounds: TSfmlFloatRect;
+    function GetOrigin: TSfmlVector2f;
+    function GetOutlineColor: TSfmlColor;
+    function GetOutlineThickness: Single;
+    function GetPoint(Index: Cardinal): TSfmlVector2f;
+    function GetPointCount: Cardinal;
+    function GetPosition: TSfmlVector2f;
+    function GetRotation: Single;
+    function GetScale: TSfmlVector2f;
+    function GetTexture: PSfmlTexture;
+    function GetTextureRect: TSfmlIntRect;
+    function GetTransform: TSfmlTransform;
+    procedure SetFillColor(Color: TSfmlColor);
+    procedure SetOrigin(Origin: TSfmlVector2f);
+    procedure SetOutlineColor(Color: TSfmlColor);
+    procedure SetOutlineThickness(Thickness: Single);
+    procedure SetPoint(Index: Cardinal; Point: TSfmlVector2f);
+    procedure SetPointCount(Count: Cardinal);
+    procedure SetPosition(Position: TSfmlVector2f);
+    procedure SetRotation(Angle: Single);
+    procedure SetScale(Scale: TSfmlVector2f);
+    procedure SetTextureRect(Rect: TSfmlIntRect);
   public
     constructor Create;
     destructor Destroy; override;
 
     function Copy: TSfmlConvexShape;
-    procedure SetPosition(Position: TSfmlVector2f);
-    procedure SetRotation(Angle: Single);
-    procedure SetScale(Scale: TSfmlVector2f);
-    procedure SetOrigin(Origin: TSfmlVector2f);
-    function GetPosition: TSfmlVector2f;
-    function GetRotation: Single;
-    function GetScale: TSfmlVector2f;
-    function GetOrigin: TSfmlVector2f;
+
     procedure Move(Offset: TSfmlVector2f);
     procedure Rotate(Angle: Single);
     procedure Scale(Factors: TSfmlVector2f);
-    function GetTransform: TSfmlTransform;
-    function GetInverseTransform: TSfmlTransform;
+
     procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
-    procedure SetTextureRect(Rect: TSfmlIntRect);
-    procedure SetFillColor(Color: TSfmlColor);
-    procedure SetOutlineColor(Color: TSfmlColor);
-    procedure SetOutlineThickness(Thickness: Single);
-    function GetTexture: PSfmlTexture;
-    function GetTextureRect: TSfmlIntRect;
-    function GetFillColor: TSfmlColor;
-    function GetOutlineColor: TSfmlColor;
-    function GetOutlineThickness: Single;
-    function GetPointCount: Cardinal;
-    function GetPoint(Index: Cardinal): TSfmlVector2f;
-    procedure SetPointCount(Count: Cardinal);
-    procedure SetPoint(Index: Cardinal; Point: TSfmlVector2f);
-    function GetLocalBounds: TSfmlFloatRect;
-    function GetGlobalBounds: TSfmlFloatRect;
+
+    property FillColor: TSfmlColor read GetFillColor write SetFillColor;
+    property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
+    property Handle: PSfmlConvexShape read FHandle;
+    property InverseTransform: TSfmlTransform read GetInverseTransform;
+    property LocalBounds: TSfmlFloatRect read GetLocalBounds;
+    property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
+    property OutlineColor: TSfmlColor read GetOutlineColor write SetOutlineColor;
+    property OutlineThickness: Single read GetOutlineThickness write SetOutlineThickness;
+    property Point[Index: Cardinal]: TSfmlVector2f read GetPoint write SetPoint;
+    property PointCount: Cardinal read GetPointCount write SetPointCount;
+    property Position: TSfmlVector2f read GetPosition write SetPosition;
+    property Rotation: Single read GetRotation write SetRotation;
+    property ScaleVector: TSfmlVector2f read GetScale write SetScale;
+    property Texture: PSfmlTexture read GetTexture;
+    property TextureRect: TSfmlIntRect read GetTextureRect write SetTextureRect;
+    property Transform: TSfmlTransform read GetTransform;
   end;
 
   TSfmlFont = class
@@ -1495,11 +1516,15 @@ type
     function GetUnderlineThickness(CharacterSize: Cardinal): Single;
     function GetTexture(CharacterSize: Cardinal): PSfmlTexture;
     function GetInfo: TSfmlFontInfo;
+
+    property Handle: PSfmlFont read FHandle;
   end;
 
   TSfmlImage = class
   private
     FHandle: PSfmlImage;
+    procedure SetPixel(X, Y: Cardinal; Color: TSfmlColor);
+    function GetPixel(X, Y: Cardinal): TSfmlColor;
   public
     constructor Create(Width, Height: Cardinal); overload;
     constructor Create(Width, Height: Cardinal; Color: TSfmlColor); overload;
@@ -1510,148 +1535,196 @@ type
     destructor Destroy; override;
 
     function Copy: TSfmlImage;
-    function SaveToFile(const FileName: AnsiString): Boolean;
-    function GetSize: TSfmlVector2u;
-    procedure CreateMaskFromColor(Color: TSfmlColor; Alpha: Byte);
-    procedure CopyImage(const Source: TSfmlImage; DestX, DestY: Cardinal; SourceRect: TSfmlIntRect; ApplyAlpha: Boolean); overload;
-    procedure CopyImage(const Source: PSfmlImage; DestX, DestY: Cardinal; SourceRect: TSfmlIntRect; ApplyAlpha: Boolean); overload;
-    procedure SetPixel(X, Y: Cardinal; Color: TSfmlColor);
-    function GetPixel(X, Y: Cardinal): TSfmlColor;
     function GetPixelsPtr: PByte;
+    function GetSize: TSfmlVector2u;
+    function SaveToFile(const FileName: AnsiString): Boolean;
+    procedure CopyImage(const Source: PSfmlImage; DestX, DestY: Cardinal; SourceRect: TSfmlIntRect; ApplyAlpha: Boolean); overload;
+    procedure CopyImage(const Source: TSfmlImage; DestX, DestY: Cardinal; SourceRect: TSfmlIntRect; ApplyAlpha: Boolean); overload;
+    procedure CreateMaskFromColor(Color: TSfmlColor; Alpha: Byte);
     procedure FlipHorizontally;
     procedure FlipVertically;
+
+    property Handle: PSfmlImage read FHandle;
+    property Pixel[X, Y: Cardinal]: TSfmlColor read GetPixel write SetPixel;
   end;
 
   TSfmlRectangleShape = class
   private
     FHandle: PSfmlRectangleShape;
+
+    function GetFillColor: TSfmlColor;
+    function GetGlobalBounds: TSfmlFloatRect;
+    function GetInverseTransform: TSfmlTransform;
+    function GetLocalBounds: TSfmlFloatRect;
+    function GetOrigin: TSfmlVector2f;
+    function GetOutlineColor: TSfmlColor;
+    function GetOutlineThickness: Single;
+    function GetPoint(Index: Cardinal): TSfmlVector2f;
+    function GetPointCount: Cardinal;
+    function GetPosition: TSfmlVector2f;
+    function GetRotation: Single;
+    function GetScale: TSfmlVector2f;
+    function GetSize: TSfmlVector2f;
+    function GetTexture: PSfmlTexture;
+    function GetTextureRect: TSfmlIntRect;
+    function GetTransform: TSfmlTransform;
+    procedure SetFillColor(Color: TSfmlColor);
+    procedure SetOrigin(Origin: TSfmlVector2f);
+    procedure SetOutlineColor(Color: TSfmlColor);
+    procedure SetOutlineThickness(Thickness: Single);
+    procedure SetPosition(Position: TSfmlVector2f);
+    procedure SetRotation(Angle: Single);
+    procedure SetScale(Scale: TSfmlVector2f);
+    procedure SetSize(Size: TSfmlVector2f);
+    procedure SetTextureRect(Rect: TSfmlIntRect);
   public
     constructor Create;
     destructor Destroy; override;
 
     function Copy: TSfmlRectangleShape;
-    procedure SetPosition(Position: TSfmlVector2f);
-    procedure SetRotation(Angle: Single);
-    procedure SetScale(Scale: TSfmlVector2f);
-    procedure SetOrigin(Origin: TSfmlVector2f);
-    function GetPosition: TSfmlVector2f;
-    function GetRotation: Single;
-    function GetScale: TSfmlVector2f;
-    function GetOrigin: TSfmlVector2f;
     procedure Move(Offset: TSfmlVector2f);
     procedure Rotate(Angle: Single);
     procedure Scale(Factors: TSfmlVector2f);
-    function GetTransform: TSfmlTransform;
-    function GetInverseTransform: TSfmlTransform;
+
     procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
-    procedure SetTextureRect(Rect: TSfmlIntRect);
-    procedure SetFillColor(Color: TSfmlColor);
-    procedure SetOutlineColor(Color: TSfmlColor);
-    procedure SetOutlineThickness(Thickness: Single);
-    function GetTexture: PSfmlTexture;
-    function GetTextureRect: TSfmlIntRect;
-    function GetFillColor: TSfmlColor;
-    function GetOutlineColor: TSfmlColor;
-    function GetOutlineThickness: Single;
-    function GetPointCount: Cardinal;
-    function GetPoint(Index: Cardinal): TSfmlVector2f;
-    procedure SetSize(Size: TSfmlVector2f);
-    function GetSize: TSfmlVector2f;
-    function GetLocalBounds: TSfmlFloatRect;
-    function GetGlobalBounds: TSfmlFloatRect;
+
+    property FillColor: TSfmlColor read GetFillColor write SetFillColor;
+    property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
+    property Handle: PSfmlRectangleShape read FHandle;
+    property InverseTransform: TSfmlTransform read GetInverseTransform;
+    property LocalBounds: TSfmlFloatRect read GetLocalBounds;
+    property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
+    property OutlineColor: TSfmlColor read GetOutlineColor write SetOutlineColor;
+    property OutlineThickness: Single read GetOutlineThickness write SetOutlineThickness;
+    property Point[Index: Cardinal]: TSfmlVector2f read GetPoint;
+    property PointCount: Cardinal read GetPointCount;
+    property Position: TSfmlVector2f read GetPosition write SetPosition;
+    property Rotation: Single read GetRotation write SetRotation;
+    property ScaleVector: TSfmlVector2f read GetScale write SetScale;
+    property Size: TSfmlVector2f read GetSize write SetSize;
+    property Texture: PSfmlTexture read GetTexture;
+    property TextureRect: TSfmlIntRect read GetTextureRect write SetTextureRect;
+    property Transform: TSfmlTransform read GetTransform;
   end;
 
   TSfmlRenderTexture = class
   private
     FHandle: PSfmlRenderTexture;
+    procedure SetRepeated(Repeated: Boolean);
+    procedure SetSmooth(Smooth: Boolean);
+    function GetRepeated: Boolean;
+    function GetSmooth: Boolean;
   public
     constructor Create(Width, Height: Cardinal; DepthBuffer: Boolean);
     destructor Destroy; override;
 
-    function GetSize: TSfmlVector2u;
-    function SetActive(Active: Boolean): Boolean;
-    procedure Display;
-    procedure Clear(Color: TSfmlColor);
-    procedure SetView(const View: PSfmlView);
-    function GetView: PSfmlView;
     function GetDefaultView: PSfmlView;
+    function GetSize: TSfmlVector2u;
+    function GetTexture: PSfmlTexture;
+    function GetView: PSfmlView;
     function GetViewport(const View: PSfmlView): TSfmlIntRect;
-    function MapPixelToCoords(Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f;
     function MapCoordsToPixel(Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i;
-    procedure DrawSprite(const &Object: PSfmlSprite; const States: PSfmlRenderStates);
-    procedure DrawText(const &Object: PSfmlText; const States: PSfmlRenderStates);
-    procedure DrawShape(const &Object: PSfmlShape; const States: PSfmlRenderStates);
+    function MapPixelToCoords(Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f;
+    function SetActive(Active: Boolean): Boolean;
+
+    procedure Clear(Color: TSfmlColor);
+    procedure Display;
+
     procedure DrawCircleShape(const &Object: PSfmlCircleShape; const States: PSfmlRenderStates);
     procedure DrawConvexShape(const &Object: PSfmlConvexShape; const States: PSfmlRenderStates);
-    procedure DrawRectangleShape(const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates);
-    procedure DrawVertexArray(const &Object: PSfmlVertexArray; const States: PSfmlRenderStates);
     procedure DrawPrimitives;
-    procedure PushGLStates;
+    procedure DrawRectangleShape(const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates);
+    procedure DrawShape(const &Object: PSfmlShape; const States: PSfmlRenderStates);
+    procedure DrawSprite(const &Object: PSfmlSprite; const States: PSfmlRenderStates);
+    procedure DrawText(const &Object: PSfmlText; const States: PSfmlRenderStates);
+    procedure DrawVertexArray(const &Object: PSfmlVertexArray; const States: PSfmlRenderStates);
+
     procedure PopGLStates;
+    procedure PushGLStates;
     procedure ResetGLStates;
-    function GetTexture: PSfmlTexture ;
-    procedure SetSmooth(Smooth: Boolean);
-    function IsSmooth: Boolean;
-    procedure SetRepeated(Repeated: Boolean);
-    function IsRepeated: Boolean;
+
+    procedure SetView(const View: PSfmlView);
+
+    property Handle: PSfmlRenderTexture read FHandle;
+    property Repeated: Boolean read GetRepeated write SetRepeated;
+    property Smooth: Boolean read GetSmooth write SetSmooth;
   end;
+
+  TSfmlShape = class;
+  TSfmlSprite = class;
+  TSfmlText = class;
+  TSfmlVertexArray = class;
 
   TSfmlRenderWindow = class
   private
     FHandle: PSfmlRenderWindow;
+    function GetPosition: TSfmlVector2i;
+    procedure SetPosition(Position: TSfmlVector2i);
   public
     constructor Create(Mode: TSfmlVideoMode; const Title: AnsiString; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings); overload;
     constructor Create(Mode: TSfmlVideoMode; const Title: PWideChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings); overload;
     constructor Create(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings); overload;
     destructor Destroy; override;
 
-    procedure Close;
-    function IsOpen: Boolean;
+    function Capture: PSfmlImage;
+    function GetDefaultView: PSfmlView;
     function GetSettings: TSfmlContextSettings;
-    function PollEvent(Event: PSfmlEvent): Boolean;
-    function WaitEvent(Event: PSfmlEvent): Boolean;
-    function GetPosition: TSfmlVector2i;
-    procedure SetPosition(Position: TSfmlVector2i);
     function GetSize: TSfmlVector2u;
+    function GetSystemHandle: TSfmlWindowHandle;
+    function GetView: PSfmlView;
+    function GetViewport(const View: PSfmlView): TSfmlIntRect;
+    function MapCoordsToPixel(Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i;
+    function MapPixelToCoords(Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f;
+    function PollEvent(Event: PSfmlEvent): Boolean;
+    function SetActive(Active: Boolean): Boolean;
+    function WaitEvent(Event: PSfmlEvent): Boolean;
+
+    procedure Clear(Color: TSfmlColor);
+    procedure Close;
+    procedure Display;
+    procedure RequestFocus;
+    function IsOpen: Boolean;
+    function HasFocus: Boolean;
+
+    procedure DrawCircleShape(const &Object: PSfmlCircleShape; const States: PSfmlRenderStates); overload;
+    procedure DrawCircleShape(const &Object: TSfmlCircleShape; const States: PSfmlRenderStates); overload;
+    procedure DrawConvexShape(const &Object: PSfmlConvexShape; const States: PSfmlRenderStates); overload;
+    procedure DrawConvexShape(const &Object: TSfmlConvexShape; const States: PSfmlRenderStates); overload;
+    procedure DrawPrimitives;
+    procedure DrawRectangleShape(const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates);overload;
+    procedure DrawRectangleShape(const &Object: TSfmlRectangleShape; const States: PSfmlRenderStates);overload;
+    procedure DrawShape(const &Object: PSfmlShape; const States: PSfmlRenderStates); overload;
+    procedure DrawShape(const &Object: TSfmlShape; const States: PSfmlRenderStates); overload;
+    procedure DrawSprite(const &Object: PSfmlSprite; const States: PSfmlRenderStates); overload;
+    procedure DrawSprite(const &Object: TSfmlSprite; const States: PSfmlRenderStates); overload;
+    procedure DrawText(const &Object: PSfmlText; const States: PSfmlRenderStates); overload;
+    procedure DrawText(const &Object: TSfmlText; const States: PSfmlRenderStates); overload;
+    procedure DrawVertexArray(const &Object: PSfmlVertexArray; const States: PSfmlRenderStates); overload;
+    procedure DrawVertexArray(const &Object: TSfmlVertexArray; const States: PSfmlRenderStates); overload;
+
+    procedure PopGLStates;
+    procedure PushGLStates;
+    procedure ResetGLStates;
+
+    procedure SetFramerateLimit(Limit: Cardinal);
+    procedure SetIcon(Width, Height: Cardinal; const Pixels: PByte);
+    procedure SetJoystickThreshold(Threshold: Single);
+    procedure SetKeyRepeatEnabled(Enabled: Boolean);
+    procedure SetMouseCursorVisible(Show: Boolean);
     procedure SetSize(Size: TSfmlVector2u);
     procedure SetTitle(const Title: AnsiString); overload;
     procedure SetTitle(const Title: string); overload;
-    procedure SetIcon(Width, Height: Cardinal; const Pixels: PByte);
-    procedure SetVisible(Visible: Boolean);
-    procedure SetMouseCursorVisible(Show: Boolean);
     procedure SetVerticalSyncEnabled(Enabled: Boolean);
-    procedure SetKeyRepeatEnabled(Enabled: Boolean);
-    function SetActive(Active: Boolean): Boolean;
-    procedure RequestFocus;
-    function HasFocus: Boolean;
-    procedure Display;
-    procedure SetFramerateLimit(Limit: Cardinal);
-    procedure SetJoystickThreshold(Threshold: Single);
-    function GetSystemHandle: TSfmlWindowHandle;
-    procedure Clear(Color: TSfmlColor);
     procedure SetView(const View: PSfmlView);
-    function GetView: PSfmlView;
-    function GetDefaultView: PSfmlView;
-    function GetViewport(const View: PSfmlView): TSfmlIntRect;
-    function MapPixelToCoords(Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f;
-    function MapCoordsToPixel(Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i;
-    procedure DrawSprite(const &Object: PSfmlSprite; const States: PSfmlRenderStates);
-    procedure DrawText(const &Object: PSfmlText; const States: PSfmlRenderStates);
-    procedure DrawShape(const &Object: PSfmlShape; const States: PSfmlRenderStates);
-    procedure DrawCircleShape(const &Object: PSfmlCircleShape; const States: PSfmlRenderStates);
-    procedure DrawConvexShape(const &Object: PSfmlConvexShape; const States: PSfmlRenderStates);
-    procedure DrawRectangleShape(const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates);
-    procedure DrawVertexArray(const &Object: PSfmlVertexArray; const States: PSfmlRenderStates);
-    procedure DrawPrimitives;
-    procedure PushGLStates;
-    procedure PopGLStates;
-    procedure ResetGLStates;
-    function Capture: PSfmlImage;
+    procedure SetVisible(Visible: Boolean);
 (*
     function SfmlMouseGetPositionRenderWindow(const relativeTo: PSfmlRenderWindow): TSfmlVector2i;
     procedure SfmlMouseSetPositionRenderWindow(position: TSfmlVector2i; const RelativeTo: PSfmlRenderWindow);
     function SfmlTouchGetPositionRenderWindow(Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): TSfmlVector2i;
 *)
+
+    property Handle: PSfmlRenderWindow read FHandle;
+    property Position: TSfmlVector2i read GetPosition write SetPosition;
   end;
 
   TSfmlShader = class
@@ -1674,117 +1747,176 @@ type
     procedure SetTextureParameter(const Name: AnsiString; const Texture: PSfmlTexture);
     procedure SetCurrentTextureParameter(const Name: AnsiString);
     procedure Bind;
+
+    property Handle: PSfmlShader read FHandle;
   end;
 
   TSfmlShape = class
   private
     FHandle: PSfmlShape;
+    function GetFillColor: TSfmlColor;
+    function GetGlobalBounds: TSfmlFloatRect;
+    function GetInverseTransform: TSfmlTransform;
+    function GetLocalBounds: TSfmlFloatRect;
+    function GetOrigin: TSfmlVector2f;
+    function GetOutlineColor: TSfmlColor;
+    function GetOutlineThickness: Single;
+    function GetPoint(Index: Cardinal): TSfmlVector2f;
+    function GetPointCount: Cardinal;
+    function GetPosition: TSfmlVector2f;
+    function GetRotation: Single;
+    function GetScale: TSfmlVector2f;
+    function GetTexture: PSfmlTexture;
+    function GetTextureRect: TSfmlIntRect;
+    function GetTransform: TSfmlTransform;
+    procedure SetFillColor(Color: TSfmlColor);
+    procedure SetOrigin(Origin: TSfmlVector2f);
+    procedure SetOutlineColor(Color: TSfmlColor);
+    procedure SetOutlineThickness(Thickness: Single);
+    procedure SetPosition(Position: TSfmlVector2f);
+    procedure SetRotation(Angle: Single);
+    procedure SetScale(Scale: TSfmlVector2f);
+    procedure SetTextureRect(Rect: TSfmlIntRect);
   public
     constructor Create(GetPointCount: TSfmlShapeGetPointCountCallback; GetPoint: TSfmlShapeGetPointCallback; UserData: Pointer); overload;
     destructor Destroy; override;
 
-    procedure SetPosition(Position: TSfmlVector2f);
-    procedure SetRotation(Angle: Single);
-    procedure SetScale(Scale: TSfmlVector2f);
-    procedure SetOrigin(Origin: TSfmlVector2f);
-    function GetPosition: TSfmlVector2f;
-    function GetRotation: Single;
-    function GetScale: TSfmlVector2f;
-    function GetOrigin: TSfmlVector2f;
     procedure Move(Offset: TSfmlVector2f);
     procedure Rotate(Angle: Single);
     procedure Scale(Factors: TSfmlVector2f);
-    function GetTransform: TSfmlTransform;
-    function GetInverseTransform: TSfmlTransform;
+
     procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
-    procedure SetTextureRect(Rect: TSfmlIntRect);
-    procedure SetFillColor(Color: TSfmlColor);
-    procedure SetOutlineColor(Color: TSfmlColor);
-    procedure SetOutlineThickness(Thickness: Single);
-    function GetTexture: PSfmlTexture;
-    function GetTextureRect: TSfmlIntRect;
-    function GetFillColor: TSfmlColor;
-    function GetOutlineColor: TSfmlColor;
-    function GetOutlineThickness: Single;
-    function GetPointCount: Cardinal;
-    function GetPoint(Index: Cardinal): TSfmlVector2f;
-    function GetLocalBounds: TSfmlFloatRect;
-    function GetGlobalBounds: TSfmlFloatRect;
+
     procedure Update;
+
+    property FillColor: TSfmlColor read GetFillColor write SetFillColor;
+    property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
+    property Handle: PSfmlShape read FHandle;
+    property InverseTransform: TSfmlTransform read GetInverseTransform;
+    property LocalBounds: TSfmlFloatRect read GetLocalBounds;
+    property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
+    property OutlineColor: TSfmlColor read GetOutlineColor write SetOutlineColor;
+    property OutlineThickness: Single read GetOutlineThickness write SetOutlineThickness;
+    property Point[Index: Cardinal]: TSfmlVector2f read GetPoint;
+    property PointCount: Cardinal read GetPointCount;
+    property Position: TSfmlVector2f read GetPosition write SetPosition;
+    property Rotation: Single read GetRotation write SetRotation;
+    property ScaleVector: TSfmlVector2f read GetScale write SetScale;
+    property Texture: PSfmlTexture read GetTexture;
+    property TextureRect: TSfmlIntRect read GetTextureRect write SetTextureRect;
+    property Transform: TSfmlTransform read GetTransform;
   end;
 
+  TSfmlTexture = class;
   TSfmlSprite = class
   private
     FHandle: PSfmlSprite;
+    function GetColor: TSfmlColor;
+    function GetGlobalBounds: TSfmlFloatRect;
+    function GetInverseTransform: TSfmlTransform;
+    function GetLocalBounds: TSfmlFloatRect;
+    function GetOrigin: TSfmlVector2f;
+    function GetPosition: TSfmlVector2f;
+    function GetRotation: Single;
+    function GetScale: TSfmlVector2f;
+    function GetTexture: PSfmlTexture;
+    function GetTextureRect: TSfmlIntRect;
+    function GetTransform: TSfmlTransform;
+    procedure SetColor(Color: TSfmlColor);
+    procedure SetOrigin(Origin: TSfmlVector2f);
+    procedure SetPosition(Position: TSfmlVector2f);
+    procedure SetRotation(Angle: Single);
+    procedure SetScale(Scale: TSfmlVector2f);
   public
     constructor Create;
     destructor Destroy; override;
 
     function Copy: TSfmlSprite;
-    procedure SetPosition(Position: TSfmlVector2f);
-    procedure SetRotation(Angle: Single);
-    procedure SetScale(Scale: TSfmlVector2f);
-    procedure SetOrigin(Origin: TSfmlVector2f);
-    function GetPosition: TSfmlVector2f;
-    function GetRotation: Single;
-    function GetScale: TSfmlVector2f;
-    function GetOrigin: TSfmlVector2f;
+
     procedure Move(Offset: TSfmlVector2f);
     procedure Rotate(Angle: Single);
     procedure Scale(Factors: TSfmlVector2f);
-    function GetTransform: TSfmlTransform;
-    function GetInverseTransform: TSfmlTransform;
-    procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
+
+    procedure SetTexture(const Texture: TSfmlTexture; ResetRect: Boolean); overload;
+    procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean); overload;
     procedure SetTextureRect(Rectangle: TSfmlIntRect);
-    procedure SetColor(Color: TSfmlColor);
-    function GetTexture: PSfmlTexture;
-    function GetTextureRect: TSfmlIntRect;
-    function GetColor: TSfmlColor;
-    function GetLocalBounds: TSfmlFloatRect;
-    function GetGlobalBounds: TSfmlFloatRect;
+
+    property Color: TSfmlColor read GetColor write SetColor;
+    property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
+    property Handle: PSfmlSprite read FHandle;
+    property InverseTransform: TSfmlTransform read GetInverseTransform;
+    property LocalBounds: TSfmlFloatRect read GetLocalBounds;
+    property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
+    property Position: TSfmlVector2f read GetPosition write SetPosition;
+    property Rotation: Single read GetRotation write SetRotation;
+    property ScaleVector: TSfmlVector2f read GetScale write SetScale;
+    property Texture: PSfmlTexture read GetTexture;
+    property TextureRect: TSfmlIntRect read GetTextureRect write SetTextureRect;
+    property Transform: TSfmlTransform read GetTransform;
   end;
 
   TSfmlText = class
   private
     FHandle: PSfmlText;
+    function GetCharacterSize: Cardinal;
+    function GetColor: TSfmlColor;
+    function GetFont: PSfmlFont;
+    function GetGlobalBounds: TSfmlFloatRect;
+    function GetInverseTransform: TSfmlTransform;
+    function GetLocalBounds: TSfmlFloatRect;
+    function GetOrigin: TSfmlVector2f;
+    function GetPosition: TSfmlVector2f;
+    function GetRotation: Single;
+    function GetScale: TSfmlVector2f;
+    function GetString: AnsiString;
+    function GetStyle: Cardinal;
+    function GetTransform: TSfmlTransform;
+    function GetUnicodeString: string;
+    procedure SetCharacterSize(Size: Cardinal);
+    procedure SetColor(Color: TSfmlColor);
+    procedure SetFont(const Font: PSfmlFont);
+    procedure SetOrigin(Origin: TSfmlVector2f);
+    procedure SetPosition(Position: TSfmlVector2f);
+    procedure SetRotation(Angle: Single);
+    procedure SetScale(Scale: TSfmlVector2f);
+    procedure SetString(const &String: AnsiString);
+    procedure SetStyle(Style: Cardinal);
+    procedure SetUnicodeString(const &String: string);
   public
     constructor Create;
     destructor Destroy; override;
 
     function Copy: TSfmlText;
-    procedure SetPosition(Position: TSfmlVector2f);
-    procedure SetRotation(Angle: Single);
-    procedure SetScale(Scale: TSfmlVector2f);
-    procedure SetOrigin(Origin: TSfmlVector2f);
-    function GetPosition: TSfmlVector2f;
-    function GetRotation: Single;
-    function GetScale: TSfmlVector2f;
-    function GetOrigin: TSfmlVector2f;
+    function FindCharacterPos(Index: NativeUInt): TSfmlVector2f;
+
     procedure Move(Offset: TSfmlVector2f);
     procedure Rotate(Angle: Single);
     procedure Scale(Factors: TSfmlVector2f);
-    function GetTransform: TSfmlTransform;
-    function GetInverseTransform: TSfmlTransform;
-    procedure SetString(const &String: AnsiString);
-    procedure SetUnicodeString(const &String: string);
-    procedure SetFont(const Font: PSfmlFont);
-    procedure SetCharacterSize(Size: Cardinal);
-    procedure SetStyle(Style: Cardinal);
-    procedure SetColor(Color: TSfmlColor);
-    function GetString: AnsiString;
-    function GetUnicodeString: PWideChar;
-    function GetFont: PSfmlFont;
-    function GetCharacterSize: Cardinal;
-    function GetStyle: Cardinal;
-    function GetColor: TSfmlColor;
-    function FindCharacterPos(Index: NativeUInt): TSfmlVector2f;
-    function GetLocalBounds: TSfmlFloatRect;
-    function GetGlobalBounds: TSfmlFloatRect;
+
+    property CharacterSize: Cardinal read GetCharacterSize write SetCharacterSize;
+    property Color: TSfmlColor read GetColor write SetColor;
+    property Font: PSfmlFont read GetFont write SetFont;
+    property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
+    property Handle: PSfmlText read FHandle;
+    property InverseTransform: TSfmlTransform read GetInverseTransform;
+    property LocalBounds: TSfmlFloatRect read GetLocalBounds;
+    property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
+    property Position: TSfmlVector2f read GetPosition write SetPosition;
+    property Rotation: Single read GetRotation write SetRotation;
+    property ScaleVector: TSfmlVector2f read GetScale write SetScale;
+    property &String: AnsiString read GetString write SetString;
+    property Style: Cardinal read GetStyle write SetStyle;
+    property Transform: TSfmlTransform read GetTransform;
+    property UnicodeString: string read GetUnicodeString write SetUnicodeString;
   end;
 
   TSfmlTexture = class
   private
     FHandle: PSfmlTexture;
+    function GetRepeated: Boolean;
+    function GetSmooth: Boolean;
+    procedure SetRepeated(Repeated: Boolean);
+    procedure SetSmooth(Smooth: Boolean);
   public
     constructor Create(Width, Height: Cardinal); overload;
     constructor Create(const FileName: AnsiString; const Area: PSfmlIntRect); overload;
@@ -1794,81 +1926,102 @@ type
     destructor Destroy; override;
 
     function Copy: TSfmlTexture;
-    function GetSize: TSfmlVector2u;
     function CopyToImage: PSfmlImage;
-    procedure UpdateFromPixels(const Pixels: PByte; Width, Height, X, Y: Cardinal);
-    procedure UpdateFromImage(const Image: PSfmlImage; X, Y: Cardinal);
-    procedure UpdateFromWindow(const Window: PSfmlWindow; X, Y: Cardinal);
-    procedure UpdateFromRenderWindow(const RenderWindow: PSfmlRenderWindow; X, Y: Cardinal);
-    procedure SetSmooth(Smooth: Boolean);
-    function IsSmooth: Boolean;
-    procedure SetRepeated(Repeated: Boolean);
-    function IsRepeated: Boolean;
+    function GetSize: TSfmlVector2u;
     procedure Bind;
+
+    procedure UpdateFromImage(const Image: PSfmlImage; X, Y: Cardinal);
+    procedure UpdateFromPixels(const Pixels: PByte; Width, Height, X, Y: Cardinal);
+    procedure UpdateFromRenderWindow(const RenderWindow: PSfmlRenderWindow; X, Y: Cardinal);
+    procedure UpdateFromWindow(const Window: PSfmlWindow; X, Y: Cardinal);
+
+    property Handle: PSfmlTexture read FHandle;
+    property Repeated: Boolean read GetRepeated write SetRepeated;
+    property Smooth: Boolean read GetSmooth write SetSmooth;
   end;
 
   TSfmlTransformable = class
   private
     FHandle: PSfmlTransformable;
+    function GetInverseTransform: TSfmlTransform;
+    function GetOrigin: TSfmlVector2f;
+    function GetPosition: TSfmlVector2f;
+    function GetRotation: Single;
+    function GetScale: TSfmlVector2f;
+    function GetTransform: TSfmlTransform;
+    procedure SetOrigin(Origin: TSfmlVector2f);
+    procedure SetPosition(Position: TSfmlVector2f);
+    procedure SetRotation(Angle: Single);
+    procedure SetScale(Scale: TSfmlVector2f);
   public
     constructor Create;
     destructor Destroy; override;
 
     function Copy: TSfmlTransformable;
-    procedure SetPosition(Position: TSfmlVector2f);
-    procedure SetRotation(Angle: Single);
-    procedure SetScale(Scale: TSfmlVector2f);
-    procedure SetOrigin(Origin: TSfmlVector2f);
-    function GetPosition: TSfmlVector2f;
-    function GetRotation: Single;
-    function GetScale: TSfmlVector2f;
-    function GetOrigin: TSfmlVector2f;
     procedure Move(Offset: TSfmlVector2f);
     procedure Rotate(Angle: Single);
     procedure Scale(Factors: TSfmlVector2f);
-    function GetTransform: TSfmlTransform;
-    function GetInverseTransform: TSfmlTransform;
+
+    property Handle: PSfmlTransformable read FHandle;
+    property InverseTransform: TSfmlTransform read GetInverseTransform;
+    property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
+    property Position: TSfmlVector2f read GetPosition write SetPosition;
+    property Rotation: Single read GetRotation write SetRotation;
+    property ScaleVector: TSfmlVector2f read GetScale write SetScale;
+    property Transform: TSfmlTransform read GetTransform;
   end;
 
   TSfmlVertexArray = class
   private
     FHandle: PSfmlVertexArray;
+    function GetBounds: TSfmlFloatRect;
+    function GetPrimitiveType: TSfmlPrimitiveType;
+    function GetVertex(Index: Cardinal): PSfmlVertex;
+    function GetVertexCount: Cardinal;
+    procedure SetPrimitiveType(&Type: TSfmlPrimitiveType);
   public
     constructor Create;
     destructor Destroy; override;
 
     function Copy: TSfmlVertexArray;
-    function GetVertexCount: Cardinal;
-    function GetVertex(Index: Cardinal): PSfmlVertex;
+    procedure Append(Vertex: TSfmlVertex);
     procedure Clear;
     procedure Resize(VertexCount: Cardinal);
-    procedure Append(Vertex: TSfmlVertex);
-    procedure SetPrimitiveType(&Type: TSfmlPrimitiveType);
-    function GetPrimitiveType: TSfmlPrimitiveType;
-    function GetBounds: TSfmlFloatRect;
+
+    property Bounds: TSfmlFloatRect read GetBounds;
+    property Handle: PSfmlVertexArray read FHandle;
+    property PrimitiveType: TSfmlPrimitiveType read GetPrimitiveType write SetPrimitiveType;
+    property Vertex[Index: Cardinal]: PSfmlVertex read GetVertex;
+    property VertexCount: Cardinal read GetVertexCount;
   end;
 
   TSfmlView = class
   private
     FHandle: PSfmlView;
+    function GetCenter: TSfmlVector2f;
+    function GetRotation: Single;
+    function GetSize: TSfmlVector2f;
+    function GetViewport: TSfmlFloatRect;
+    procedure SetCenter(Center: TSfmlVector2f);
+    procedure SetRotation(Angle: Single);
+    procedure SetSize(Size: TSfmlVector2f);
+    procedure SetViewport(Viewport: TSfmlFloatRect);
   public
     constructor Create; overload;
     constructor Create(Rectangle: TSfmlFloatRect); overload;
     destructor Destroy; override;
 
     function Copy: TSfmlView;
-    procedure SetCenter(Center: TSfmlVector2f);
-    procedure SetSize(Size: TSfmlVector2f);
-    procedure SetRotation(Angle: Single);
-    procedure SetViewport(Viewport: TSfmlFloatRect);
-    procedure Reset(Rectangle: TSfmlFloatRect);
-    function GetCenter: TSfmlVector2f;
-    function GetSize: TSfmlVector2f;
-    function GetRotation: Single;
-    function GetViewport: TSfmlFloatRect;
     procedure Move(Offset: TSfmlVector2f);
+    procedure Reset(Rectangle: TSfmlFloatRect);
     procedure Rotate(Angle: Single);
     procedure Zoom(Factor: Single);
+
+    property Center: TSfmlVector2f read GetCenter write SetCenter;
+    property Handle: PSfmlView read FHandle;
+    property Rotation: Single read GetRotation write SetRotation;
+    property Size: TSfmlVector2f read GetSize write SetSize;
+    property Viewport: TSfmlFloatRect read GetViewport write SetViewport;
   end;
 
 implementation
@@ -2641,12 +2794,12 @@ begin
   Result := SfmlRenderTextureGetViewport(FHandle, View);
 end;
 
-function TSfmlRenderTexture.IsRepeated: Boolean;
+function TSfmlRenderTexture.GetRepeated: Boolean;
 begin
   Result := SfmlRenderTextureIsRepeated(FHandle);
 end;
 
-function TSfmlRenderTexture.IsSmooth: Boolean;
+function TSfmlRenderTexture.GetSmooth: Boolean;
 begin
   Result := SfmlRenderTextureIsSmooth(FHandle);
 end;
@@ -2764,6 +2917,12 @@ begin
 end;
 
 procedure TSfmlRenderWindow.DrawRectangleShape(
+  const &Object: TSfmlRectangleShape; const States: PSfmlRenderStates);
+begin
+  SfmlRenderWindowDrawRectangleShape(FHandle, &Object.FHandle, States);
+end;
+
+procedure TSfmlRenderWindow.DrawRectangleShape(
   const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates);
 begin
   SfmlRenderWindowDrawRectangleShape(FHandle, &Object, States);
@@ -2791,6 +2950,42 @@ procedure TSfmlRenderWindow.DrawVertexArray(const &Object: PSfmlVertexArray;
   const States: PSfmlRenderStates);
 begin
   SfmlRenderWindowDrawVertexArray(FHandle, &Object, States);
+end;
+
+procedure TSfmlRenderWindow.DrawCircleShape(const &Object: TSfmlCircleShape;
+  const States: PSfmlRenderStates);
+begin
+  SfmlRenderWindowDrawCircleShape(FHandle, &Object.Handle, States);
+end;
+
+procedure TSfmlRenderWindow.DrawConvexShape(const &Object: TSfmlConvexShape;
+  const States: PSfmlRenderStates);
+begin
+  SfmlRenderWindowDrawConvexShape(FHandle, &Object.Handle, States);
+end;
+
+procedure TSfmlRenderWindow.DrawShape(const &Object: TSfmlShape;
+  const States: PSfmlRenderStates);
+begin
+  SfmlRenderWindowDrawShape(FHandle, &Object.Handle, States);
+end;
+
+procedure TSfmlRenderWindow.DrawSprite(const &Object: TSfmlSprite;
+  const States: PSfmlRenderStates);
+begin
+  SfmlRenderWindowDrawSprite(FHandle, &Object.Handle, States);
+end;
+
+procedure TSfmlRenderWindow.DrawText(const &Object: TSfmlText;
+  const States: PSfmlRenderStates);
+begin
+  SfmlRenderWindowDrawText(FHandle, &Object.Handle, States);
+end;
+
+procedure TSfmlRenderWindow.DrawVertexArray(const &Object: TSfmlVertexArray;
+  const States: PSfmlRenderStates);
+begin
+  SfmlRenderWindowDrawVertexArray(FHandle, &Object.Handle, States);
 end;
 
 function TSfmlRenderWindow.GetDefaultView: PSfmlView;
@@ -3323,6 +3518,12 @@ begin
   SfmlSpriteSetScale(FHandle, Scale);
 end;
 
+procedure TSfmlSprite.SetTexture(const Texture: TSfmlTexture;
+  ResetRect: Boolean);
+begin
+  SfmlSpriteSetTexture(FHandle, Texture.FHandle, ResetRect);
+end;
+
 procedure TSfmlSprite.SetTexture(const Texture: PSfmlTexture;
   ResetRect: Boolean);
 begin
@@ -3423,7 +3624,7 @@ begin
   Result := SfmlTextGetTransform(FHandle);
 end;
 
-function TSfmlText.GetUnicodeString: PWideChar;
+function TSfmlText.GetUnicodeString: string;
 begin
   Result := SfmlTextGetUnicodeString(FHandle);
 end;
@@ -3547,12 +3748,12 @@ begin
   Result := SfmlTextureGetSize(FHandle);
 end;
 
-function TSfmlTexture.IsRepeated: Boolean;
+function TSfmlTexture.GetRepeated: Boolean;
 begin
   Result := SfmlTextureIsRepeated(FHandle);
 end;
 
-function TSfmlTexture.IsSmooth: Boolean;
+function TSfmlTexture.GetSmooth: Boolean;
 begin
   Result := SfmlTextureIsSmooth(FHandle);
 end;

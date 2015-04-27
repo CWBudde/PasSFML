@@ -433,12 +433,15 @@ type
     FHandle: PSfmlMusic;
     function GetAttenuation: Single;
     function GetChannelCount: Cardinal;
+    function GetDuration: TSfmlTime;
     function GetLoop: Boolean;
     function GetMinDistance: Single;
     function GetPitch: Single;
     function GetPlayingOffset: TSfmlTime;
     function GetPosition: TSfmlVector3f;
+    function GetRelativeToListener: Boolean;
     function GetSampleRate: Cardinal;
+    function GetStatus: TSfmlSoundStatus;
     function GetVolume: Single;
     procedure SetAttenuation(Attenuation: Single);
     procedure SetLoop(Loop: Boolean);
@@ -446,6 +449,7 @@ type
     procedure SetPitch(Pitch: Single);
     procedure SetPlayingOffset(TimeOffset: TSfmlTime);
     procedure SetPosition(Position: TSfmlVector3f);
+    procedure SetRelativeToListener(Relative: Boolean);
     procedure SetVolume(Volume: Single);
   public
     constructor Create(const FileName: AnsiString); overload;
@@ -457,41 +461,42 @@ type
     procedure Pause;
     procedure Stop;
 
-    function IsRelativeToListener: Boolean;
-    function GetDuration: TSfmlTime;
-    function GetStatus: TSfmlSoundStatus;
-    procedure SetRelativeToListener(Relative: Boolean);
-
     property Attenuation: Single read GetAttenuation write SetAttenuation;
     property ChannelCount: Cardinal read GetChannelCount;
+    property Duration: TSfmlTime read GetDuration;
     property Loop: Boolean read GetLoop write SetLoop;
     property MinDistance: Single read GetMinDistance write SetMinDistance;
     property Pitch: Single read GetPitch write SetPitch;
-    property Position: TSfmlVector3f read GetPosition write SetPosition;
     property PlayingOffset: TSfmlTime read GetPlayingOffset write SetPlayingOffset;
+    property Position: TSfmlVector3f read GetPosition write SetPosition;
+    property RelativeToListener: Boolean read GetRelativeToListener write SetRelativeToListener;
     property SampleRate: Cardinal read GetSampleRate;
+    property Status: TSfmlSoundStatus read GetStatus;
     property Volume: Single read GetVolume write SetVolume;
   end;
 
   TSfmlSoundStream = class
   private
     FHandle: PSfmlSoundStream;
-    function GetChannelCount: Cardinal;
-    function GetSampleRate: Cardinal;
-    function GetPitch: Single;
-    function GetVolume: Single;
-    function GetPosition: TSfmlVector3f;
-    function GetMinDistance: Single;
     function GetAttenuation: Single;
+    function GetChannelCount: Cardinal;
     function GetLoop: Boolean;
+    function GetMinDistance: Single;
+    function GetPitch: Single;
     function GetPlayingOffset: TSfmlTime;
-    procedure SetPitch(Pitch: Single);
-    procedure SetVolume(Volume: Single);
-    procedure SetPosition(Position: TSfmlVector3f);
-    procedure SetMinDistance(Distance: Single);
+    function GetPosition: TSfmlVector3f;
+    function GetRelativeToListener: Boolean;
+    function GetSampleRate: Cardinal;
+    function GetStatus: TSfmlSoundStatus;
+    function GetVolume: Single;
     procedure SetAttenuation(Attenuation: Single);
-    procedure SetPlayingOffset(TimeOffset: TSfmlTime);
     procedure SetLoop(Loop: Boolean);
+    procedure SetMinDistance(Distance: Single);
+    procedure SetPitch(Pitch: Single);
+    procedure SetPlayingOffset(TimeOffset: TSfmlTime);
+    procedure SetPosition(Position: TSfmlVector3f);
+    procedure SetRelativeToListener(Relative: Boolean);
+    procedure SetVolume(Volume: Single);
   public
     constructor Create(OnGetData: TSfmlSoundStreamGetDataCallback;
       OnSeek: TSfmlSoundStreamSeekCallback;
@@ -501,18 +506,17 @@ type
     procedure Play;
     procedure Pause;
     procedure Stop;
-    function GetStatus: TSfmlSoundStatus;
-    procedure SetRelativeToListener(Relative: Boolean);
-    function IsRelativeToListener: Boolean;
 
     property Attenuation: Single read GetAttenuation write SetAttenuation;
     property ChannelCount: Cardinal read GetChannelCount;
     property Loop: Boolean read GetLoop write SetLoop;
     property MinDistance: Single read GetMinDistance write SetMinDistance;
     property Pitch: Single read GetPitch write SetPitch;
-    property Position: TSfmlVector3f read GetPosition write SetPosition;
     property PlayingOffset: TSfmlTime read GetPlayingOffset write SetPlayingOffset;
+    property Position: TSfmlVector3f read GetPosition write SetPosition;
+    property RelativeToListener: Boolean read GetRelativeToListener write SetRelativeToListener;
     property SampleRate: Cardinal read GetSampleRate;
+    property Status: TSfmlSoundStatus read GetStatus;
     property Volume: Single read GetVolume write SetVolume;
   end;
 
@@ -520,6 +524,10 @@ type
   private
     FHandle: PSfmlSoundBuffer;
     constructor Create(Handle: PSfmlSoundBuffer); overload;
+    function GetSampleCount: NativeUInt;
+    function GetSampleRate: Cardinal;
+    function GetChannelCount: Cardinal;
+    function GetDuration: TSfmlTime;
   public
     constructor Create(const FileName: AnsiString); overload;
     constructor Create(const Data: Pointer; SizeInBytes: NativeUInt); overload;
@@ -531,61 +539,80 @@ type
     function Copy: TSfmlSoundBuffer;
     function SaveToFile(const FileName: AnsiString): Boolean;
     function GetSamples: PSmallInt;
-    function GetSampleCount: NativeUInt;
-    function GetSampleRate: Cardinal;
-    function GetChannelCount: Cardinal;
-    function GetDuration: TSfmlTime;
+
+    property SampleCount: NativeUInt read GetSampleCount;
+    property SampleRate: Cardinal read GetSampleRate;
+    property ChannelCount: Cardinal read GetChannelCount;
+    property Duration: TSfmlTime read GetDuration;
   end;
 
   TSfmlSound = class
   private
     FHandle: PSfmlSound;
     constructor Create(Handle: PSfmlSound); overload;
+    function GetAttenuation: Single;
+    function GetLoop: Boolean;
+    function GetMinDistance: Single;
+    function GetPitch: Single;
+    function GetPlayingOffset: TSfmlTime;
+    function GetPosition: TSfmlVector3f;
+    function GetRelativeToListener: Boolean;
+    function GetStatus: TSfmlSoundStatus;
+    function GetVolume: Single;
+    procedure SetAttenuation(Attenuation: Single);
+    procedure SetLoop(Loop: Boolean);
+    procedure SetMinDistance(Distance: Single);
+    procedure SetPitch(Pitch: Single);
+    procedure SetPlayingOffset(TimeOffset: TSfmlTime);
+    procedure SetPosition(Position: TSfmlVector3f);
+    procedure SetRelativeToListener(Relative: Boolean);
+    procedure SetVolume(Volume: Single);
   public
     constructor Create; overload;
     destructor Destroy; override;
 
     function Copy: TSfmlSound;
-    procedure Play;
-    procedure Pause;
-    procedure Stop;
-    procedure SetBuffer(const Buffer: TSfmlSoundBuffer);
+
     function GetBuffer: TSfmlSoundBuffer;
-    procedure SetLoop(Loop: Boolean);
-    function GetLoop: Boolean;
-    function GetStatus: TSfmlSoundStatus;
-    procedure SetPitch(Pitch: Single);
-    procedure SetVolume(Volume: Single);
-    procedure SetPosition(Position: TSfmlVector3f);
-    procedure SetRelativeToListener(Relative: Boolean);
-    procedure SetMinDistance(Distance: Single);
-    procedure SetAttenuation(Attenuation: Single);
-    procedure SetPlayingOffset(TimeOffset: TSfmlTime);
-    function GetPitch: Single;
-    function GetVolume: Single;
-    function GetPosition: TSfmlVector3f;
-    function IsRelativeToListener: Boolean;
-    function GetMinDistance: Single;
-    function GetAttenuation: Single;
-    function GetPlayingOffset: TSfmlTime;
+    procedure SetBuffer(const Buffer: TSfmlSoundBuffer);
+
+    procedure Pause;
+    procedure Play;
+    procedure Stop;
+
+    property Attenuation: Single read GetAttenuation write SetAttenuation;
+    property Loop: Boolean read GetLoop write SetLoop;
+    property MinDistance: Single read GetMinDistance write SetMinDistance;
+    property Pitch: Single read GetPitch write SetPitch;
+    property PlayingOffset: TSfmlTime read GetPlayingOffset write SetPlayingOffset;
+    property Position: TSfmlVector3f read GetPosition write SetPosition;
+    property RelativeToListener: Boolean read GetRelativeToListener write SetRelativeToListener;
+    property Status: TSfmlSoundStatus read GetStatus;
+    property Volume: Single read GetVolume write SetVolume;
   end;
 
   TSfmlSoundBufferRecorder = class
   private
     FHandle: PSfmlSoundBufferRecorder;
+    function GetSampleRate: Cardinal;
   public
     constructor Create;
     destructor Destroy; override;
 
     procedure Start(SampleRate: Cardinal);
     procedure Stop;
-    function GetSampleRate: Cardinal;
+
     function GetBuffer: PSfmlSoundBuffer;
+
+    property SampleRate: Cardinal read GetSampleRate;
   end;
 
   TSfmlSoundRecorder = class
   private
     FHandle: PSfmlSoundRecorder;
+    function GetDevice: AnsiString;
+    function GetSampleRate: Cardinal;
+    procedure SetDevice(const Name: AnsiString);
   public
     constructor Create(OnStart: TSfmlSoundRecorderStartCallback;
       OnProcess: TSfmlSoundRecorderProcessCallback;
@@ -594,10 +621,10 @@ type
 
     function Start(SampleRate: Cardinal): Boolean;
     procedure Stop;
-    function GetSampleRate: Cardinal;
     procedure SetProcessingInterval(Interval: TSfmlTime);
-    function SetDevice(const Name: AnsiString): Boolean;
-    function GetDevice: AnsiString;
+
+    property Device: AnsiString read GetDevice write SetDevice;
+    property SampleRate: Cardinal read GetSampleRate;
   end;
 
 implementation
@@ -688,7 +715,7 @@ begin
   Result := SfmlMusicGetVolume(FHandle);
 end;
 
-function TSfmlMusic.IsRelativeToListener: Boolean;
+function TSfmlMusic.GetRelativeToListener: Boolean;
 begin
   Result := SfmlMusicIsRelativeToListener(FHandle);
 end;
@@ -815,7 +842,7 @@ begin
   Result := SfmlSoundStreamGetVolume(FHandle);
 end;
 
-function TSfmlSoundStream.IsRelativeToListener: Boolean;
+function TSfmlSoundStream.GetRelativeToListener: Boolean;
 begin
   Result := SfmlSoundStreamIsRelativeToListener(FHandle);
 end;
@@ -1016,7 +1043,7 @@ begin
   Result := SfmlSoundGetVolume(FHandle);
 end;
 
-function TSfmlSound.IsRelativeToListener: Boolean;
+function TSfmlSound.GetRelativeToListener: Boolean;
 begin
   Result := SfmlSoundIsRelativeToListener(FHandle);
 end;
@@ -1139,9 +1166,9 @@ begin
   Result := SfmlSoundRecorderGetSampleRate(FHandle);
 end;
 
-function TSfmlSoundRecorder.SetDevice(const Name: AnsiString): Boolean;
+procedure TSfmlSoundRecorder.SetDevice(const Name: AnsiString);
 begin
-  Result := SfmlSoundRecorderSetDevice(FHandle, PAnsiChar(Name));
+  Assert(SfmlSoundRecorderSetDevice(FHandle, PAnsiChar(Name)));
 end;
 
 procedure TSfmlSoundRecorder.SetProcessingInterval(Interval: TSfmlTime);
