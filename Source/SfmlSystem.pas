@@ -171,15 +171,92 @@ var
   procedure SfmlThreadTerminate(Thread: PSfmlThread); cdecl; external CSfmlSystemLibrary name 'sfThread_terminate';
 {$ENDIF}
 
+type
+  TSfmlClock = class
+  private
+    FHandle: PSfmlThread;
+    constructor Create(Handle: PSfmlThread); overload;
+  public
+    constructor Create; overload;
+    destructor Destroy; override;
+
+    function Copy: TSfmlClock;
+  end;
+
+  TSfmlThread = class
+  private
+    FHandle: PSfmlThread;
+  public
+    constructor Create(FuncEntryPoint: Pointer; UserData: Pointer);
+    destructor Destroy; override;
+
+    procedure Launch;
+    procedure Wait;
+    procedure Terminate;
+  end;
+
+
 implementation
 
 {$IFDEF DynLink}
-
 {$IFDEF MSWindows}
 uses
   Windows;
 {$ENDIF}
+{$ENDIF}
 
+{ TSfmlClock }
+
+constructor TSfmlClock.Create;
+begin
+  FHandle := SfmlClockCreate;
+end;
+
+constructor TSfmlClock.Create(Handle: PSfmlThread);
+begin
+  FHandle := Handle;
+end;
+
+destructor TSfmlClock.Destroy;
+begin
+  SfmlClockDestroy(FHandle);
+  inherited;
+end;
+
+function TSfmlClock.Copy: TSfmlClock;
+begin
+  Result := TSfmlClock.Create(SfmlClockCopy(FHandle));
+end;
+
+
+{ TSfmlThread }
+
+constructor TSfmlThread.Create(FuncEntryPoint, UserData: Pointer);
+begin
+  FHandle := SfmlThreadCreate(FuncEntryPoint, UserData)
+end;
+
+destructor TSfmlThread.Destroy;
+begin
+  SfmlThreadDestroy(FHandle);
+end;
+
+procedure TSfmlThread.Launch;
+begin
+  SfmlThreadLaunch(FHandle);
+end;
+
+procedure TSfmlThread.Terminate;
+begin
+  SfmlThreadTerminate(FHandle);
+end;
+
+procedure TSfmlThread.Wait;
+begin
+  SfmlThreadWait(FHandle);
+end;
+
+{$IFDEF DynLink}
 var
   CSfmlSystemHandle: HINST;
 
@@ -239,5 +316,4 @@ finalization
 FreeDLL;
 
 {$ENDIF}
-
 end.

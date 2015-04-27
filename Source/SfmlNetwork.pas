@@ -263,7 +263,7 @@ type
   TSfmlTcpSocketConnect = function (Socket: PSfmlTcpSocket; Host: TSfmlIpAddress; Port: Byte; TimeOut: TSfmlTime): TSfmlSocketStatus; cdecl;
   TSfmlTcpSocketDisconnect = procedure (Socket: PSfmlTcpSocket); cdecl;
   TSfmlTcpSocketSend = function (Socket: PSfmlTcpSocket; const Data: Pointer; Size: NativeUInt): TSfmlSocketStatus; cdecl;
-  TSfmlTcpSocketReceive = function (Socket: PSfmlTcpSocket; Data: Pointer; maxSize: NativeUInt; SizeReceived: PNativeUInt): TSfmlSocketStatus; cdecl;
+  TSfmlTcpSocketReceive = function (Socket: PSfmlTcpSocket; Data: Pointer; MaxSize: NativeUInt; SizeReceived: PNativeUInt): TSfmlSocketStatus; cdecl;
   TSfmlTcpSocketSendPacket = function (Socket: PSfmlTcpSocket; Packet: PSfmlPacket): TSfmlSocketStatus; cdecl;
   TSfmlTcpSocketReceivePacket = function (Socket: PSfmlTcpSocket; Packet: PSfmlPacket): TSfmlSocketStatus; cdecl;
 
@@ -275,7 +275,7 @@ type
   TSfmlUdpSocketBind = function (Socket: PSfmlUdpSocket; Port: Byte): TSfmlSocketStatus; cdecl;
   TSfmlUdpSocketUnbind = procedure (Socket: PSfmlUdpSocket); cdecl;
   TSfmlUdpSocketSend = function (Socket: PSfmlUdpSocket; const Data: Pointer; Size: NativeUInt; Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus; cdecl;
-  TSfmlUdpSocketReceive = function (Socket: PSfmlUdpSocket; Data: Pointer; maxSize: NativeUInt; SizeReceived: PNativeUInt; out Address: TSfmlIpAddress; out port: Byte): TSfmlSocketStatus; cdecl;
+  TSfmlUdpSocketReceive = function (Socket: PSfmlUdpSocket; Data: Pointer; MaxSize: NativeUInt; SizeReceived: PNativeUInt; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus; cdecl;
   TSfmlUdpSocketSendPacket = function (Socket: PSfmlUdpSocket; Packet: PSfmlPacket; Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus; cdecl;
   TSfmlUdpSocketReceivePacket = function (Socket: PSfmlUdpSocket; Packet: PSfmlPacket; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus; cdecl;
   TSfmlUdpSocketMaxDatagramSize = function : Cardinal; cdecl;
@@ -549,7 +549,7 @@ var
   function SfmlTcpSocketConnect(Socket: PSfmlTcpSocket; Host: TSfmlIpAddress; Port: Byte; TimeOut: TSfmlTime): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_connect';
   procedure SfmlTcpSocketDisconnect(Socket: PSfmlTcpSocket); cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_disconnect';
   function SfmlTcpSocketSend(Socket: PSfmlTcpSocket; const Data: Pointer; Size: NativeUInt): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_send';
-  function SfmlTcpSocketReceive(Socket: PSfmlTcpSocket; Data: Pointer; maxSize: NativeUInt; SizeReceived: PNativeUInt): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_receive';
+  function SfmlTcpSocketReceive(Socket: PSfmlTcpSocket; Data: Pointer; MaxSize: NativeUInt; SizeReceived: PNativeUInt): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_receive';
   function SfmlTcpSocketSendPacket(Socket: PSfmlTcpSocket; Packet: PSfmlPacket): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_sendPacket';
   function SfmlTcpSocketReceivePacket(Socket: PSfmlTcpSocket; Packet: PSfmlPacket): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_receivePacket';
 
@@ -561,20 +561,890 @@ var
   function SfmlUdpSocketBind(Socket: PSfmlUdpSocket; Port: Byte): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_bind';
   procedure SfmlUdpSocketUnbind(Socket: PSfmlUdpSocket); cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_unbind';
   function SfmlUdpSocketSend(Socket: PSfmlUdpSocket; const Data: Pointer; Size: NativeUInt; Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_send';
-  function SfmlUdpSocketReceive(Socket: PSfmlUdpSocket; Data: Pointer; maxSize: NativeUInt; SizeReceived: PNativeUInt; out Address: TSfmlIpAddress; out port: Byte): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_receive';
+  function SfmlUdpSocketReceive(Socket: PSfmlUdpSocket; Data: Pointer; MaxSize: NativeUInt; SizeReceived: PNativeUInt; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_receive';
   function SfmlUdpSocketSendPacket(Socket: PSfmlUdpSocket; Packet: PSfmlPacket; Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_sendPacket';
   function SfmlUdpSocketReceivePacket(Socket: PSfmlUdpSocket; Packet: PSfmlPacket; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_receivePacket';
   function SfmlUdpSocketMaxDatagramSize: Cardinal; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_maxDatagramSize';
 {$ENDIF}
 
+type
+  TSfmlFtpListingResponse = class
+  private
+    FHandle: PSfmlFtpListingResponse;
+  public
+    destructor Destroy; override;
+    function IsOk: Boolean;
+    function GetStatus: TSfmlFtpStatus;
+    function GetMessage: AnsiString;
+    function GetCount: NativeUInt;
+    function GetName(Index: NativeUInt): AnsiString;
+  end;
+
+  TSfmlFtpDirectoryResponse = class
+  private
+    FHandle: PSfmlFtpDirectoryResponse;
+  public
+    destructor Destroy; override;
+    function IsOk: Boolean;
+    function GetStatus: TSfmlFtpStatus;
+    function GetMessage: AnsiString;
+    function GetDirectory: AnsiString;
+  end;
+
+  TSfmlFtpResponse = class
+  private
+    FHandle: PSfmlFtpResponse;
+  public
+    destructor Destroy; override;
+    function IsOk: Boolean;
+    function GetStatus: TSfmlFtpStatus;
+    function GetMessage: AnsiString;
+  end;
+
+  TSfmlFtp = class
+  private
+    FHandle: PSfmlFtp;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function Connect(Server: TSfmlIpAddress; Port: Byte; Timeout: TSfmlTime): PSfmlFtpResponse;
+    function LoginAnonymous: PSfmlFtpResponse;
+    function Login(const UserName, Password: AnsiString): PSfmlFtpResponse;
+    function Disconnect: PSfmlFtpResponse;
+    function KeepAlive: PSfmlFtpResponse;
+    function GetWorkingDirectory: PSfmlFtpDirectoryResponse;
+    function GetDirectoryListing(Directory: AnsiString): PSfmlFtpListingResponse;
+    function ChangeDirectory(Directory: AnsiString): PSfmlFtpResponse;
+    function ParentDirectory: PSfmlFtpResponse;
+    function CreateDirectory(Name: AnsiString): PSfmlFtpResponse;
+    function DeleteDirectory(Name: AnsiString): PSfmlFtpResponse;
+    function RenameFile(&File: AnsiString; const NewName: AnsiString): PSfmlFtpResponse;
+    function DeleteFile(Name: AnsiString): PSfmlFtpResponse;
+    function Download(DistantFile: AnsiString; const DestPath: AnsiString; Mode: TSfmlFtpTransferMode): PSfmlFtpResponse;
+    function Upload(LocalFile: AnsiString; const DestPath: AnsiString; Mode: TSfmlFtpTransferMode): PSfmlFtpResponse;
+  end;
+
+  TSfmlHttpRequest = class
+  private
+    FHandle: PSfmlHttpRequest;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure SetField(Field: AnsiString; const Value: AnsiString);
+    procedure SetMethod(Method: TSfmlHttpMethod);
+    procedure SetUri(Uri: AnsiString);
+    procedure SetHttpVersion(Major, Minor: Cardinal);
+    procedure SetBody(Body: AnsiString);
+  end;
+
+  TSfmlHttpResponse = class
+  private
+    FHandle: PSfmlHttpResponse;
+  public
+    destructor Destroy; override;
+    function GetField(const Field: AnsiString): AnsiString;
+    function GetStatus: TSfmlHttpStatus;
+    function GetMajorVersion: Cardinal;
+    function GetMinorVersion: Cardinal;
+    function GetBody: AnsiString;
+  end;
+
+  TSfmlHttp = class
+  private
+    FHandle: PSfmlHttp;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure SetHost(const Host: AnsiString; Port: Byte);
+    function SendRequest(const Request: PSfmlHttpRequest; Timeout: TSfmlTime): PSfmlHttpResponse;
+  end;
+
+  TSfmlPacket = class
+  private
+    FHandle: PSfmlPacket;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function Copy: TSfmlPacket;
+    procedure Append(Data: Pointer; SizeInBytes: NativeUInt);
+    procedure Clear;
+    function GetData: Pointer;
+    function GetDataSize: NativeUInt;
+    function EndOfPacket: Boolean;
+    function CanRead: Boolean;
+    function ReadBool: Boolean;
+    function ReadInt8: ShortInt;
+    function ReadUint8: Byte;
+    function ReadInt16: SmallInt;
+    function ReadUint16: Word;
+    function ReadInt32: LongInt;
+    function ReadUint32: Cardinal;
+    function ReadFloat: Single;
+    function ReadDouble: Double;
+    procedure ReadString(&String: AnsiString);
+    procedure ReadWideString(&String: string);
+    procedure WriteBool(Value: Boolean);
+    procedure WriteInt8(Value: ShortInt);
+    procedure WriteUint8(Value: Byte);
+    procedure WriteInt16(Value: SmallInt);
+    procedure WriteUint16(Value: Word);
+    procedure WriteInt32(Value: LongInt);
+    procedure WriteUint32(Value: Cardinal);
+    procedure WriteFloat(Value: Single);
+    procedure WriteDouble(Value: Double);
+    procedure WriteString(&String: AnsiString);
+    procedure WriteWideString(&String: PWideChar);
+  end;
+
+  TSfmlSocketSelector = class
+  private
+    FHandle: PSfmlSocketSelector;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    function Copy: TSfmlSocketSelector;
+    procedure AddTcpListener(Socket: PSfmlTcpListener);
+    procedure RemoveTcpListener(Socket: PSfmlTcpListener);
+    procedure Clear;
+    function Wait(Timeout: TSfmlTime): Boolean;
+    function IsTcpListenerReady(Socket: PSfmlTcpListener): Boolean;
+    function IsTcpSocketReady(Socket: PSfmlTcpSocket): Boolean;
+    function IsUdpSocketReady(Socket: PSfmlUdpSocket): Boolean;
+  end;
+
+  TSfmlTcpListener = class
+  private
+    FHandle: PSfmlTcpListener;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure SetBlocking(Blocking: Boolean);
+    function IsBlocking: Boolean;
+    function GetLocalPort: Byte;
+    function Listen(Port: Byte): TSfmlSocketStatus;
+    function Accept(out Connected: PSfmlTcpSocket): TSfmlSocketStatus;
+  end;
+
+  TSfmlTcpSocket = class
+  private
+    FHandle: PSfmlTcpSocket;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure SetBlocking(Blocking: Boolean);
+    function IsBlocking: Boolean;
+    function GetLocalPort: Byte;
+    function GetRemoteAddress: TSfmlIpAddress;
+    function GetRemotePort: Byte;
+    function Connect(Host: TSfmlIpAddress; Port: Byte; TimeOut: TSfmlTime): TSfmlSocketStatus;
+    procedure Disconnect;
+    function Send(Data: Pointer; Size: NativeUInt): TSfmlSocketStatus;
+    function Receive(Data: Pointer; MaxSize: NativeUInt; SizeReceived: PNativeUInt): TSfmlSocketStatus;
+    function SendPacket(Packet: PSfmlPacket): TSfmlSocketStatus;
+    function ReceivePacket(Packet: PSfmlPacket): TSfmlSocketStatus;
+  end;
+
+  TSfmlUdpSocket = class
+  private
+    FHandle: PSfmlUdpSocket;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure SetBlocking(Blocking: Boolean);
+    function IsBlocking: Boolean;
+    function GetLocalPort: Byte;
+    function Bind(Port: Byte): TSfmlSocketStatus;
+    procedure Unbind;
+    function Send(Data: Pointer; Size: NativeUInt; Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus;
+    function Receive(Data: Pointer; MaxSize: NativeUInt; SizeReceived: PNativeUInt; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus;
+    function SendPacket(Packet: PSfmlPacket; Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus;
+    function ReceivePacket(Packet: PSfmlPacket; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus;
+    function MaxDatagramSize: Cardinal;
+  end;
+
 implementation
 
 {$IFDEF DynLink}
-
 {$IFDEF MSWindows}
 uses
   Windows;
 {$ENDIF}
+{$ENDIF}
+
+{ TSfmlFtpListingResponse }
+
+destructor TSfmlFtpListingResponse.Destroy;
+begin
+  SfmlFtpListingResponseDestroy(FHandle);
+  inherited;
+end;
+
+function TSfmlFtpListingResponse.GetCount: NativeUInt;
+begin
+  Result := SfmlFtpListingResponseGetCount(FHandle);
+end;
+
+function TSfmlFtpListingResponse.GetMessage: AnsiString;
+begin
+  Result := SfmlFtpListingResponseGetMessage(FHandle);
+end;
+
+function TSfmlFtpListingResponse.GetName(Index: NativeUInt): AnsiString;
+begin
+  Result := SfmlFtpListingResponseGetName(FHandle, Index);
+end;
+
+function TSfmlFtpListingResponse.GetStatus: TSfmlFtpStatus;
+begin
+  Result := SfmlFtpListingResponseGetStatus(FHandle);
+end;
+
+function TSfmlFtpListingResponse.IsOk: Boolean;
+begin
+  Result := SfmlFtpListingResponseIsOk(FHandle);
+end;
+
+
+{ TSfmlFtpDirectoryResponse }
+
+destructor TSfmlFtpDirectoryResponse.Destroy;
+begin
+  SfmlFtpDirectoryResponseDestroy(FHandle);
+  inherited;
+end;
+
+function TSfmlFtpDirectoryResponse.GetDirectory: AnsiString;
+begin
+  Result := SfmlFtpDirectoryResponseGetDirectory(FHandle);
+end;
+
+function TSfmlFtpDirectoryResponse.GetMessage: AnsiString;
+begin
+  Result := SfmlFtpDirectoryResponseGetMessage(FHandle);
+end;
+
+function TSfmlFtpDirectoryResponse.GetStatus: TSfmlFtpStatus;
+begin
+  Result := SfmlFtpDirectoryResponseGetStatus(FHandle);
+end;
+
+function TSfmlFtpDirectoryResponse.IsOk: Boolean;
+begin
+  Result := SfmlFtpDirectoryResponseIsOk(FHandle);
+end;
+
+
+{ TSfmlFtpResponse }
+
+destructor TSfmlFtpResponse.Destroy;
+begin
+  SfmlFtpResponseDestroy(FHandle);
+  inherited;
+end;
+
+function TSfmlFtpResponse.GetMessage: AnsiString;
+begin
+  Result := SfmlFtpResponseGetMessage(FHandle);
+end;
+
+function TSfmlFtpResponse.GetStatus: TSfmlFtpStatus;
+begin
+  Result := SfmlFtpResponseGetStatus(FHandle);
+end;
+
+function TSfmlFtpResponse.IsOk: Boolean;
+begin
+  Result := SfmlFtpResponseIsOk(FHandle);
+end;
+
+
+{ TSfmlFtp }
+
+constructor TSfmlFtp.Create;
+begin
+  FHandle := SfmlFtpCreate;
+end;
+
+destructor TSfmlFtp.Destroy;
+begin
+  SfmlFtpDestroy(FHandle);
+  inherited;
+end;
+
+function TSfmlFtp.ChangeDirectory(Directory: AnsiString): PSfmlFtpResponse;
+begin
+  Result := SfmlFtpChangeDirectory(FHandle, PAnsiChar(Directory));
+end;
+
+function TSfmlFtp.Connect(Server: TSfmlIpAddress; Port: Byte;
+  Timeout: TSfmlTime): PSfmlFtpResponse;
+begin
+  Result := SfmlFtpConnect(FHandle, Server, Port, Timeout);
+end;
+
+function TSfmlFtp.CreateDirectory(Name: AnsiString): PSfmlFtpResponse;
+begin
+  Result := SfmlFtpCreateDirectory(FHandle, PAnsiChar(Name));
+end;
+
+function TSfmlFtp.DeleteDirectory(Name: AnsiString): PSfmlFtpResponse;
+begin
+  Result := SfmlFtpDeleteDirectory(FHandle, PAnsiChar(Name));
+end;
+
+function TSfmlFtp.DeleteFile(Name: AnsiString): PSfmlFtpResponse;
+begin
+  Result := SfmlFtpDeleteFile(FHandle, PAnsiChar(Name));
+end;
+
+function TSfmlFtp.Disconnect: PSfmlFtpResponse;
+begin
+  Result := SfmlFtpDisconnect(FHandle);
+end;
+
+function TSfmlFtp.Download(DistantFile: AnsiString; const DestPath: AnsiString;
+  Mode: TSfmlFtpTransferMode): PSfmlFtpResponse;
+begin
+  Result := SfmlFtpDownload(FHandle, PAnsiChar(DistantFile),
+    PAnsiChar(DestPath), Mode);
+end;
+
+function TSfmlFtp.GetDirectoryListing(
+  Directory: AnsiString): PSfmlFtpListingResponse;
+begin
+  Result := SfmlFtpGetDirectoryListing(FHandle, PAnsiChar(Directory));
+end;
+
+function TSfmlFtp.GetWorkingDirectory: PSfmlFtpDirectoryResponse;
+begin
+  Result := SfmlFtpGetWorkingDirectory(FHandle);
+end;
+
+function TSfmlFtp.KeepAlive: PSfmlFtpResponse;
+begin
+  Result := SfmlFtpKeepAlive(FHandle);
+end;
+
+function TSfmlFtp.Login(const UserName, Password: AnsiString): PSfmlFtpResponse;
+begin
+  Result := SfmlFtpLogin(FHandle, PAnsiChar(UserName), PAnsiChar(Password));
+end;
+
+function TSfmlFtp.LoginAnonymous: PSfmlFtpResponse;
+begin
+  Result := SfmlFtpLoginAnonymous(FHandle);
+end;
+
+function TSfmlFtp.ParentDirectory: PSfmlFtpResponse;
+begin
+  Result := SfmlFtpParentDirectory(FHandle);
+end;
+
+function TSfmlFtp.RenameFile(&File: AnsiString;
+  const NewName: AnsiString): PSfmlFtpResponse;
+begin
+  Result := SfmlFtpRenameFile(FHandle, PAnsiChar(&File), PAnsiChar(NewName));
+end;
+
+function TSfmlFtp.Upload(LocalFile: AnsiString; const DestPath: AnsiString;
+  Mode: TSfmlFtpTransferMode): PSfmlFtpResponse;
+begin
+  Result := SfmlFtpUpload(FHandle, PAnsiChar(LocalFile), PAnsiChar(DestPath), Mode);
+end;
+
+
+{ TSfmlHttpRequest }
+
+constructor TSfmlHttpRequest.Create;
+begin
+  FHandle := SfmlHttpRequestCreate;
+end;
+
+destructor TSfmlHttpRequest.Destroy;
+begin
+  SfmlHttpRequestDestroy(FHandle);
+  inherited;
+end;
+
+procedure TSfmlHttpRequest.SetBody(Body: AnsiString);
+begin
+  SfmlHttpRequestSetBody(FHandle, PAnsiChar(Body));
+end;
+
+procedure TSfmlHttpRequest.SetField(Field: AnsiString; const Value: AnsiString);
+begin
+  SfmlHttpRequestSetField(FHandle, PAnsiChar(Field), PAnsiChar(Value));
+end;
+
+procedure TSfmlHttpRequest.SetHttpVersion(Major, Minor: Cardinal);
+begin
+  SfmlHttpRequestSetHttpVersion(FHandle, Major, Minor);
+end;
+
+procedure TSfmlHttpRequest.SetMethod(Method: TSfmlHttpMethod);
+begin
+  SfmlHttpRequestSetMethod(FHandle, Method);
+end;
+
+procedure TSfmlHttpRequest.SetUri(Uri: AnsiString);
+begin
+  SfmlHttpRequestSetUri(FHandle, PAnsiChar(Uri));
+end;
+
+
+{ TSfmlHttpResponse }
+
+destructor TSfmlHttpResponse.Destroy;
+begin
+  SfmlHttpResponseDestroy(FHandle);
+  inherited;
+end;
+
+function TSfmlHttpResponse.GetBody: AnsiString;
+begin
+  SfmlHttpResponseGetBody(FHandle);
+end;
+
+function TSfmlHttpResponse.GetField(const Field: AnsiString): AnsiString;
+begin
+  SfmlHttpResponseGetField(FHandle, PAnsiChar(Field));
+end;
+
+function TSfmlHttpResponse.GetMajorVersion: Cardinal;
+begin
+  Result := SfmlHttpResponseGetMajorVersion(FHandle);
+end;
+
+function TSfmlHttpResponse.GetMinorVersion: Cardinal;
+begin
+  Result := SfmlHttpResponseGetMinorVersion(FHandle);
+end;
+
+function TSfmlHttpResponse.GetStatus: TSfmlHttpStatus;
+begin
+  Result := SfmlHttpResponseGetStatus(FHandle);
+end;
+
+
+{ TSfmlHttp }
+
+constructor TSfmlHttp.Create;
+begin
+  FHandle := SfmlHttpCreate;
+end;
+
+destructor TSfmlHttp.Destroy;
+begin
+  SfmlHttpDestroy(FHandle);
+  inherited;
+end;
+
+function TSfmlHttp.SendRequest(const Request: PSfmlHttpRequest;
+  Timeout: TSfmlTime): PSfmlHttpResponse;
+begin
+  Result := SfmlHttpSendRequest(FHandle, Request, TimeOut);
+end;
+
+procedure TSfmlHttp.SetHost(const Host: AnsiString; Port: Byte);
+begin
+  SfmlHttpSetHost(FHandle, PAnsiChar(Host), Port);
+end;
+
+
+{ TSfmlPacket }
+
+constructor TSfmlPacket.Create;
+begin
+  FHandle := SfmlPacketCreate;
+end;
+
+destructor TSfmlPacket.Destroy;
+begin
+  SfmlPacketDestroy(FHandle);
+  inherited;
+end;
+
+procedure TSfmlPacket.Append(Data: Pointer; SizeInBytes: NativeUInt);
+begin
+  SfmlPacketAppend(FHandle, Data, SizeInBytes);
+end;
+
+function TSfmlPacket.CanRead: Boolean;
+begin
+  Result := SfmlPacketCanRead(FHandle);
+end;
+
+procedure TSfmlPacket.Clear;
+begin
+  SfmlPacketClear(FHandle);
+end;
+
+function TSfmlPacket.Copy: TSfmlPacket;
+begin
+  Result := SfmlPacketCopy(FHandle);
+end;
+
+function TSfmlPacket.EndOfPacket: Boolean;
+begin
+  Result := SfmlPacketEndOfPacket(FHandle);
+end;
+
+function TSfmlPacket.GetData: Pointer;
+begin
+  Result := SfmlPacketGetData(FHandle);
+end;
+
+function TSfmlPacket.GetDataSize: NativeUInt;
+begin
+  Result := SfmlPacketGetDataSize(FHandle);
+end;
+
+function TSfmlPacket.ReadBool: Boolean;
+begin
+  Result := SfmlPacketReadBool(FHandle);
+end;
+
+function TSfmlPacket.ReadDouble: Double;
+begin
+  Result := SfmlPacketReadDouble(FHandle);
+end;
+
+function TSfmlPacket.ReadFloat: Single;
+begin
+  Result := SfmlPacketReadFloat(FHandle);
+end;
+
+function TSfmlPacket.ReadInt16: SmallInt;
+begin
+  Result := SfmlPacketReadInt16(FHandle);
+end;
+
+function TSfmlPacket.ReadInt32: LongInt;
+begin
+  Result := SfmlPacketReadInt32(FHandle);
+end;
+
+function TSfmlPacket.ReadInt8: ShortInt;
+begin
+  Result := SfmlPacketReadInt8(FHandle);
+end;
+
+procedure TSfmlPacket.ReadString(&String: AnsiString);
+begin
+  SfmlPacketReadString(FHandle, PAnsiChar(&String));
+end;
+
+function TSfmlPacket.ReadUint16: Word;
+begin
+  Result := SfmlPacketReadUint16(FHandle);
+end;
+
+function TSfmlPacket.ReadUint32: Cardinal;
+begin
+  Result := SfmlPacketReadUint32(FHandle);
+end;
+
+function TSfmlPacket.ReadUint8: Byte;
+begin
+  Result := SfmlPacketReadUint8(FHandle);
+end;
+
+procedure TSfmlPacket.ReadWideString(&String: string);
+begin
+  SfmlPacketReadWideString(FHandle, PWideChar(&String));
+end;
+
+procedure TSfmlPacket.WriteBool(Value: Boolean);
+begin
+  SfmlPacketWriteBool(FHandle, Value);
+end;
+
+procedure TSfmlPacket.WriteDouble(Value: Double);
+begin
+  SfmlPacketWriteDouble(FHandle, Value);
+end;
+
+procedure TSfmlPacket.WriteFloat(Value: Single);
+begin
+  SfmlPacketWriteFloat(FHandle, Value);
+end;
+
+procedure TSfmlPacket.WriteInt16(Value: SmallInt);
+begin
+  SfmlPacketWriteInt16(FHandle, Value);
+end;
+
+procedure TSfmlPacket.WriteInt32(Value: Integer);
+begin
+  SfmlPacketWriteInt32(FHandle, Value);
+end;
+
+procedure TSfmlPacket.WriteInt8(Value: ShortInt);
+begin
+  SfmlPacketWriteInt8(FHandle, Value);
+end;
+
+procedure TSfmlPacket.WriteString(&String: AnsiString);
+begin
+  SfmlPacketWriteString(FHandle, PAnsiChar(&String));
+end;
+
+procedure TSfmlPacket.WriteUint16(Value: Word);
+begin
+  SfmlPacketWriteUint16(FHandle, Value);
+end;
+
+procedure TSfmlPacket.WriteUint32(Value: Cardinal);
+begin
+  SfmlPacketWriteUint32(FHandle, Value);
+end;
+
+procedure TSfmlPacket.WriteUint8(Value: Byte);
+begin
+  SfmlPacketWriteUint8(FHandle, Value);
+end;
+
+procedure TSfmlPacket.WriteWideString(&String: PWideChar);
+begin
+  SfmlPacketWriteWideString(FHandle, PWideChar(&String));
+end;
+
+
+{ TSfmlSocketSelector }
+
+constructor TSfmlSocketSelector.Create;
+begin
+  FHandle := SfmlSocketSelectorCreate;
+end;
+
+destructor TSfmlSocketSelector.Destroy;
+begin
+  SfmlSocketSelectorDestroy(FHandle);
+  inherited;
+end;
+
+procedure TSfmlSocketSelector.AddTcpListener(Socket: PSfmlTcpListener);
+begin
+  SfmlSocketSelectorAddTcpListener(FHandle, Socket);
+end;
+
+procedure TSfmlSocketSelector.Clear;
+begin
+  SfmlSocketSelectorClear(FHandle);
+end;
+
+function TSfmlSocketSelector.Copy: TSfmlSocketSelector;
+begin
+  Result := SfmlSocketSelectorCopy(FHandle);
+end;
+
+function TSfmlSocketSelector.IsTcpListenerReady(
+  Socket: PSfmlTcpListener): Boolean;
+begin
+  Result := SfmlSocketSelectorIsTcpListenerReady(FHandle, Socket);
+end;
+
+function TSfmlSocketSelector.IsTcpSocketReady(Socket: PSfmlTcpSocket): Boolean;
+begin
+  Result := SfmlSocketSelectorIsTcpSocketReady(FHandle, Socket);
+end;
+
+function TSfmlSocketSelector.IsUdpSocketReady(Socket: PSfmlUdpSocket): Boolean;
+begin
+  Result := SfmlSocketSelectorIsUdpSocketReady(FHandle, Socket);
+end;
+
+procedure TSfmlSocketSelector.RemoveTcpListener(Socket: PSfmlTcpListener);
+begin
+  SfmlSocketSelectorRemoveTcpListener(FHandle, Socket);
+end;
+
+function TSfmlSocketSelector.Wait(Timeout: TSfmlTime): Boolean;
+begin
+  Result := SfmlSocketSelectorWait(FHandle, Timeout);
+end;
+
+
+{ TSfmlTcpListener }
+
+constructor TSfmlTcpListener.Create;
+begin
+  FHandle := SfmlTcpListenerCreate;
+end;
+
+destructor TSfmlTcpListener.Destroy;
+begin
+  SfmlTcpListenerDestroy(FHandle);
+  inherited;
+end;
+
+function TSfmlTcpListener.Accept(
+  out Connected: PSfmlTcpSocket): TSfmlSocketStatus;
+begin
+  Result := SfmlTcpListenerAccept(FHandle, Connected);
+end;
+
+function TSfmlTcpListener.GetLocalPort: Byte;
+begin
+  Result := SfmlTcpListenerGetLocalPort(FHandle);
+end;
+
+function TSfmlTcpListener.IsBlocking: Boolean;
+begin
+  Result := SfmlTcpListenerIsBlocking(FHandle);
+end;
+
+function TSfmlTcpListener.Listen(Port: Byte): TSfmlSocketStatus;
+begin
+  Result := SfmlTcpListenerListen(FHandle, Port);
+end;
+
+procedure TSfmlTcpListener.SetBlocking(Blocking: Boolean);
+begin
+  SfmlTcpListenerSetBlocking(FHandle, Blocking);
+end;
+
+
+{ TSfmlTcpSocket }
+
+constructor TSfmlTcpSocket.Create;
+begin
+  FHandle := SfmlTcpSocketCreate;
+end;
+
+destructor TSfmlTcpSocket.Destroy;
+begin
+  SfmlTcpSocketDestroy(FHandle);
+  inherited;
+end;
+
+function TSfmlTcpSocket.Connect(Host: TSfmlIpAddress; Port: Byte;
+  TimeOut: TSfmlTime): TSfmlSocketStatus;
+begin
+  Result := SfmlTcpSocketConnect(FHandle, Host, Port, TimeOut);
+end;
+
+procedure TSfmlTcpSocket.Disconnect;
+begin
+  SfmlTcpSocketDisconnect(FHandle);
+end;
+
+function TSfmlTcpSocket.GetLocalPort: Byte;
+begin
+  Result := SfmlTcpSocketGetLocalPort(FHandle);
+end;
+
+function TSfmlTcpSocket.GetRemoteAddress: TSfmlIpAddress;
+begin
+  SfmlTcpSocketGetRemoteAddress(FHandle);
+end;
+
+function TSfmlTcpSocket.GetRemotePort: Byte;
+begin
+  Result := SfmlTcpSocketGetRemotePort(FHandle);
+end;
+
+function TSfmlTcpSocket.IsBlocking: Boolean;
+begin
+  Result := SfmlTcpSocketIsBlocking(FHandle);
+end;
+
+function TSfmlTcpSocket.Receive(Data: Pointer; MaxSize: NativeUInt;
+  SizeReceived: PNativeUInt): TSfmlSocketStatus;
+begin
+  Result := SfmlTcpSocketReceive(FHandle, Data, MaxSize, SizeReceived);
+end;
+
+function TSfmlTcpSocket.ReceivePacket(Packet: PSfmlPacket): TSfmlSocketStatus;
+begin
+  Result := SfmlTcpSocketReceivePacket(FHandle, Packet);
+end;
+
+function TSfmlTcpSocket.Send(Data: Pointer;
+  Size: NativeUInt): TSfmlSocketStatus;
+begin
+  Result := SfmlTcpSocketSend(FHandle, Data, Size);
+end;
+
+function TSfmlTcpSocket.SendPacket(Packet: PSfmlPacket): TSfmlSocketStatus;
+begin
+  Result := SfmlTcpSocketSendPacket(FHandle, Packet);
+end;
+
+procedure TSfmlTcpSocket.SetBlocking(Blocking: Boolean);
+begin
+  SfmlTcpSocketSetBlocking(FHandle, Blocking);
+end;
+
+
+{ TSfmlUdpSocket }
+
+constructor TSfmlUdpSocket.Create;
+begin
+  FHandle := SfmlUdpSocketCreate;
+end;
+
+destructor TSfmlUdpSocket.Destroy;
+begin
+  SfmlUdpSocketDestroy(FHandle);
+  inherited;
+end;
+
+function TSfmlUdpSocket.Bind(Port: Byte): TSfmlSocketStatus;
+begin
+  Result := SfmlUdpSocketBind(FHandle, Port);
+end;
+
+function TSfmlUdpSocket.GetLocalPort: Byte;
+begin
+  Result := SfmlUdpSocketGetLocalPort(FHandle);
+end;
+
+function TSfmlUdpSocket.IsBlocking: Boolean;
+begin
+  Result := SfmlUdpSocketIsBlocking(FHandle);
+end;
+
+function TSfmlUdpSocket.Receive(Data: Pointer; MaxSize: NativeUInt;
+  SizeReceived: PNativeUInt; out Address: TSfmlIpAddress;
+  out Port: Byte): TSfmlSocketStatus;
+begin
+  Result := SfmlUdpSocketReceive(FHandle, Data, MaxSize, SizeReceived, Address, Port);
+end;
+
+function TSfmlUdpSocket.ReceivePacket(Packet: PSfmlPacket;
+  out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus;
+begin
+  Result := SfmlUdpSocketReceivePacket(FHandle, Packet, Address, Port);
+end;
+
+function TSfmlUdpSocket.Send(Data: Pointer; Size: NativeUInt;
+  Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus;
+begin
+  Result := SfmlUdpSocketSend(FHandle, Data, Size, Address, Port);
+end;
+
+function TSfmlUdpSocket.SendPacket(Packet: PSfmlPacket; Address: TSfmlIpAddress;
+  Port: Byte): TSfmlSocketStatus;
+begin
+  Result := SfmlUdpSocketSendPacket(FHandle, Packet, Address, Port);
+end;
+
+procedure TSfmlUdpSocket.SetBlocking(Blocking: Boolean);
+begin
+  SfmlUdpSocketSetBlocking(FHandle, Blocking);
+end;
+
+procedure TSfmlUdpSocket.Unbind;
+begin
+  SfmlUdpSocketUnbind(FHandle);
+end;
+
+{$IFDEF DynLink}
 
 var
   CSfmlNetworkHandle: HINST;
