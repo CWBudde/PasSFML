@@ -763,7 +763,6 @@ type
     function Receive(Data: Pointer; MaxSize: NativeUInt; SizeReceived: PNativeUInt; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus;
     function SendPacket(Packet: PSfmlPacket; Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus;
     function ReceivePacket(Packet: PSfmlPacket; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus;
-    function MaxDatagramSize: Cardinal;
   end;
 
 implementation
