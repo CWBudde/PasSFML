@@ -139,18 +139,18 @@ type
 
 {$IFDEF DynLink}
   TSfmlFtpListingResponseDestroy = procedure (FtpListingResponse: PSfmlFtpListingResponse); cdecl;
-  TSfmlFtpListingResponseIsOk = function (const FtpListingResponse: PSfmlFtpListingResponse): sfBool; cdecl;
+  TSfmlFtpListingResponseIsOk = function (const FtpListingResponse: PSfmlFtpListingResponse): Boolean; cdecl;
   TSfmlFtpListingResponseGetStatus = function (const FtpListingResponse: PSfmlFtpListingResponse): TSfmlFtpStatus; cdecl;
   TSfmlFtpListingResponseGetMessage = function (const FtpListingResponse: PSfmlFtpListingResponse): PAnsiChar; cdecl;
   TSfmlFtpListingResponseGetCount = function (const FtpListingResponse: PSfmlFtpListingResponse): NativeUInt; cdecl;
   TSfmlFtpListingResponseGetName = function (const FtpListingResponse: PSfmlFtpListingResponse; Index: NativeUInt): PAnsiChar; cdecl;
   TSfmlFtpDirectoryResponseDestroy = procedure (FtpDirectoryResponse: PSfmlFtpDirectoryResponse); cdecl;
-  TSfmlFtpDirectoryResponseIsOk = function (const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): sfBool; cdecl;
+  TSfmlFtpDirectoryResponseIsOk = function (const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): Boolean; cdecl;
   TSfmlFtpDirectoryResponseGetStatus = function (const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): TSfmlFtpStatus; cdecl;
   TSfmlFtpDirectoryResponseGetMessage = function (const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): PAnsiChar; cdecl;
   TSfmlFtpDirectoryResponseGetDirectory = function (const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): PAnsiChar; cdecl;
   TSfmlFtpResponseDestroy = procedure (FtpResponse: PSfmlFtpResponse); cdecl;
-  TSfmlFtpResponseIsOk = function (const FtpResponse: PSfmlFtpResponse): sfBool; cdecl;
+  TSfmlFtpResponseIsOk = function (const FtpResponse: PSfmlFtpResponse): Boolean; cdecl;
   TSfmlFtpResponseGetStatus = function (const FtpResponse: PSfmlFtpResponse): TSfmlFtpStatus; cdecl;
   TSfmlFtpResponseGetMessage = function (const FtpResponse: PSfmlFtpResponse): PAnsiChar; cdecl;
   TSfmlFtpCreate = function : PSfmlFtp; cdecl;
@@ -195,10 +195,10 @@ type
   const TSfmlIpAddress sfIpAddress_Broadcast;
 *)
   TSfmlIpAddressFromString = function (const address: PAnsiChar): TSfmlIpAddress; cdecl;
-  TSfmlIpAddressFromBytes = function (byte0, byte1, byte2, byte3: sfUint8): TSfmlIpAddress; cdecl;
-  TSfmlIpAddressFromInteger = function (Address: sfUint32): TSfmlIpAddress; cdecl;
+  TSfmlIpAddressFromBytes = function (byte0, byte1, byte2, byte3: Byte): TSfmlIpAddress; cdecl;
+  TSfmlIpAddressFromInteger = function (Address: Cardinal): TSfmlIpAddress; cdecl;
   TSfmlIpAddressToString = procedure (Address: TSfmlIpAddress; &String: PAnsiChar); cdecl;
-  TSfmlIpAddressToInteger = function (Address: TSfmlIpAddress): sfUint32; cdecl;
+  TSfmlIpAddressToInteger = function (Address: TSfmlIpAddress): Cardinal; cdecl;
   TSfmlIpAddressGetLocalAddress = function : TSfmlIpAddress; cdecl;
   TSfmlIpAddressGetPublicAddress = function (Timeout: TSfmlTime): TSfmlIpAddress; cdecl;
 
@@ -209,26 +209,26 @@ type
   TSfmlPacketClear = procedure (Packet: PSfmlPacket); cdecl;
   TSfmlPacketGetData = function (const Packet: PSfmlPacket): Pointer; cdecl;
   TSfmlPacketGetDataSize = function (const Packet: PSfmlPacket): NativeUInt; cdecl;
-  TSfmlPacketEndOfPacket = function (const Packet: PSfmlPacket): sfBool; cdecl;
-  TSfmlPacketCanRead = function (const Packet: PSfmlPacket): sfBool; cdecl;
-  TSfmlPacketReadBool = function (Packet: PSfmlPacket): sfBool; cdecl;
-  TSfmlPacketReadInt8 = function (Packet: PSfmlPacket): sfInt8; cdecl;
-  TSfmlPacketReadUint8 = function (Packet: PSfmlPacket): sfUint8; cdecl;
-  TSfmlPacketReadInt16 = function (Packet: PSfmlPacket): sfInt16; cdecl;
-  TSfmlPacketReadUint16 = function (Packet: PSfmlPacket): sfUint16; cdecl;
-  TSfmlPacketReadInt32 = function (Packet: PSfmlPacket): sfInt32; cdecl;
-  TSfmlPacketReadUint32 = function (Packet: PSfmlPacket): sfUint32; cdecl;
+  TSfmlPacketEndOfPacket = function (const Packet: PSfmlPacket): Boolean; cdecl;
+  TSfmlPacketCanRead = function (const Packet: PSfmlPacket): Boolean; cdecl;
+  TSfmlPacketReadBool = function (Packet: PSfmlPacket): Boolean; cdecl;
+  TSfmlPacketReadInt8 = function (Packet: PSfmlPacket): ShortInt; cdecl;
+  TSfmlPacketReadUint8 = function (Packet: PSfmlPacket): Byte; cdecl;
+  TSfmlPacketReadInt16 = function (Packet: PSfmlPacket): SmallInt; cdecl;
+  TSfmlPacketReadUint16 = function (Packet: PSfmlPacket): Word; cdecl;
+  TSfmlPacketReadInt32 = function (Packet: PSfmlPacket): LongInt; cdecl;
+  TSfmlPacketReadUint32 = function (Packet: PSfmlPacket): Cardinal; cdecl;
   TSfmlPacketReadFloat = function (Packet: PSfmlPacket): Single; cdecl;
   TSfmlPacketReadDouble = function (Packet: PSfmlPacket): Double; cdecl;
   TSfmlPacketReadString = procedure (Packet: PSfmlPacket; &String: PAnsiChar); cdecl;
   TSfmlPacketReadWideString = procedure (Packet: PSfmlPacket; &String: PWideChar); cdecl;
-  TSfmlPacketWriteBool = procedure (Packet: PSfmlPacket; Value: sfBool); cdecl;
-  TSfmlPacketWriteInt8 = procedure (Packet: PSfmlPacket; Value: sfInt8); cdecl;
-  TSfmlPacketWriteUint8 = procedure (Packet: PSfmlPacket; Value: sfUint8); cdecl;
-  TSfmlPacketWriteInt16 = procedure (Packet: PSfmlPacket; Value: sfInt16); cdecl;
-  TSfmlPacketWriteUint16 = procedure (Packet: PSfmlPacket; Value: sfUint16); cdecl;
-  TSfmlPacketWriteInt32 = procedure (Packet: PSfmlPacket; Value: sfInt32); cdecl;
-  TSfmlPacketWriteUint32 = procedure (Packet: PSfmlPacket; Value: sfUint32); cdecl;
+  TSfmlPacketWriteBool = procedure (Packet: PSfmlPacket; Value: Boolean); cdecl;
+  TSfmlPacketWriteInt8 = procedure (Packet: PSfmlPacket; Value: ShortInt); cdecl;
+  TSfmlPacketWriteUint8 = procedure (Packet: PSfmlPacket; Value: Byte); cdecl;
+  TSfmlPacketWriteInt16 = procedure (Packet: PSfmlPacket; Value: SmallInt); cdecl;
+  TSfmlPacketWriteUint16 = procedure (Packet: PSfmlPacket; Value: Word); cdecl;
+  TSfmlPacketWriteInt32 = procedure (Packet: PSfmlPacket; Value: LongInt); cdecl;
+  TSfmlPacketWriteUint32 = procedure (Packet: PSfmlPacket; Value: Cardinal); cdecl;
   TSfmlPacketWriteFloat = procedure (Packet: PSfmlPacket; Value: Single); cdecl;
   TSfmlPacketWriteDouble = procedure (Packet: PSfmlPacket; Value: Double); cdecl;
   TSfmlPacketWriteString = procedure (Packet: PSfmlPacket; const &String: PAnsiChar); cdecl;
@@ -240,23 +240,23 @@ type
   TSfmlSocketSelectorAddTcpListener = procedure (Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener); cdecl;
   TSfmlSocketSelectorRemoveTcpListener = procedure (Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener); cdecl;
   TSfmlSocketSelectorClear = procedure (Selector: PSfmlSocketSelector); cdecl;
-  TSfmlSocketSelectorWait = function (Selector: PSfmlSocketSelector; Timeout: TSfmlTime): sfBool; cdecl;
-  TSfmlSocketSelectorIsTcpListenerReady = function (const Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener): sfBool; cdecl;
-  TSfmlSocketSelectorIsTcpSocketReady = function (const Selector: PSfmlSocketSelector; Socket: PSfmlTcpSocket): sfBool; cdecl;
-  TSfmlSocketSelectorIsUdpSocketReady = function (const Selector: PSfmlSocketSelector; Socket: PSfmlUdpSocket): sfBool; cdecl;
+  TSfmlSocketSelectorWait = function (Selector: PSfmlSocketSelector; Timeout: TSfmlTime): Boolean; cdecl;
+  TSfmlSocketSelectorIsTcpListenerReady = function (const Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener): Boolean; cdecl;
+  TSfmlSocketSelectorIsTcpSocketReady = function (const Selector: PSfmlSocketSelector; Socket: PSfmlTcpSocket): Boolean; cdecl;
+  TSfmlSocketSelectorIsUdpSocketReady = function (const Selector: PSfmlSocketSelector; Socket: PSfmlUdpSocket): Boolean; cdecl;
 
   TSfmlTcpListenerCreate = function : PSfmlTcpListener; cdecl;
   TSfmlTcpListenerDestroy = procedure (Listener: PSfmlTcpListener); cdecl;
-  TSfmlTcpListenerSetBlocking = procedure (Listener: PSfmlTcpListener; Blocking: sfBool); cdecl;
-  TSfmlTcpListenerIsBlocking = function (const Listener: PSfmlTcpListener): sfBool; cdecl;
+  TSfmlTcpListenerSetBlocking = procedure (Listener: PSfmlTcpListener; Blocking: Boolean); cdecl;
+  TSfmlTcpListenerIsBlocking = function (const Listener: PSfmlTcpListener): Boolean; cdecl;
   TSfmlTcpListenerGetLocalPort = function (const Listener: PSfmlTcpListener): Byte; cdecl;
   TSfmlTcpListenerListen = function (Listener: PSfmlTcpListener; Port: Byte): TSfmlSocketStatus; cdecl;
   TSfmlTcpListenerAccept = function (Listener: PSfmlTcpListener; out Connected: PSfmlTcpSocket): TSfmlSocketStatus; cdecl;
 
   TSfmlTcpSocketCreate = function : PSfmlTcpSocket; cdecl;
   TSfmlTcpSocketDestroy = procedure (Socket: PSfmlTcpSocket); cdecl;
-  TSfmlTcpSocketSetBlocking = procedure (Socket: PSfmlTcpSocket; Blocking: sfBool); cdecl;
-  TSfmlTcpSocketIsBlocking = function (const Socket: PSfmlTcpSocket): sfBool; cdecl;
+  TSfmlTcpSocketSetBlocking = procedure (Socket: PSfmlTcpSocket; Blocking: Boolean); cdecl;
+  TSfmlTcpSocketIsBlocking = function (const Socket: PSfmlTcpSocket): Boolean; cdecl;
   TSfmlTcpSocketGetLocalPort = function (const Socket: PSfmlTcpSocket): Byte; cdecl;
   TSfmlTcpSocketGetRemoteAddress = function (const Socket: PSfmlTcpSocket): TSfmlIpAddress; cdecl;
   TSfmlTcpSocketGetRemotePort = function (const Socket: PSfmlTcpSocket): Byte; cdecl;
@@ -269,8 +269,8 @@ type
 
   TSfmlUdpSocketCreate = function : PSfmlUdpSocket; cdecl;
   TSfmlUdpSocketDestroy = procedure (Socket: PSfmlUdpSocket); cdecl;
-  TSfmlUdpSocketSetBlocking = procedure (Socket: PSfmlUdpSocket; Blocking: sfBool); cdecl;
-  TSfmlUdpSocketIsBlocking = function (const Socket: PSfmlUdpSocket): sfBool; cdecl;
+  TSfmlUdpSocketSetBlocking = procedure (Socket: PSfmlUdpSocket; Blocking: Boolean); cdecl;
+  TSfmlUdpSocketIsBlocking = function (const Socket: PSfmlUdpSocket): Boolean; cdecl;
   TSfmlUdpSocketGetLocalPort = function (const Socket: PSfmlUdpSocket): Byte; cdecl;
   TSfmlUdpSocketBind = function (Socket: PSfmlUdpSocket; Port: Byte): TSfmlSocketStatus; cdecl;
   TSfmlUdpSocketUnbind = procedure (Socket: PSfmlUdpSocket); cdecl;

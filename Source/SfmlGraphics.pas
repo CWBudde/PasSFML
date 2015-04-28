@@ -154,7 +154,7 @@ type
   TSfmlCircleShapeScale = procedure (Shape: PSfmlCircleShape; Factors: TSfmlVector2f); cdecl;
   TSfmlCircleShapeGetTransform = function (const Shape: PSfmlCircleShape): TSfmlTransform; cdecl;
   TSfmlCircleShapeGetInverseTransform = function (const Shape: PSfmlCircleShape): TSfmlTransform; cdecl;
-  TSfmlCircleShapeSetTexture = procedure (Shape: PSfmlCircleShape; const Texture: PSfmlTexture; ResetRect: sfBool); cdecl;
+  TSfmlCircleShapeSetTexture = procedure (Shape: PSfmlCircleShape; const Texture: PSfmlTexture; ResetRect: Boolean); cdecl;
   TSfmlCircleShapeSetTextureRect = procedure (Shape: PSfmlCircleShape; Rect: TSfmlIntRect); cdecl;
   TSfmlCircleShapeSetFillColor = procedure (Shape: PSfmlCircleShape; Color: TSfmlColor); cdecl;
   TSfmlCircleShapeSetOutlineColor = procedure (Shape: PSfmlCircleShape; Color: TSfmlColor); cdecl;
@@ -188,7 +188,7 @@ type
   TSfmlConvexShapeScale = procedure (Shape: PSfmlConvexShape; Factors: TSfmlVector2f); cdecl;
   TSfmlConvexShapeGetTransform = function (const Shape: PSfmlConvexShape): TSfmlTransform; cdecl;
   TSfmlConvexShapeGetInverseTransform = function (const Shape: PSfmlConvexShape): TSfmlTransform; cdecl;
-  TSfmlConvexShapeSetTexture = procedure (Shape: PSfmlConvexShape; const Texture: PSfmlTexture; ResetRect: sfBool); cdecl;
+  TSfmlConvexShapeSetTexture = procedure (Shape: PSfmlConvexShape; const Texture: PSfmlTexture; ResetRect: Boolean); cdecl;
   TSfmlConvexShapeSetTextureRect = procedure (Shape: PSfmlConvexShape; Rect: TSfmlIntRect); cdecl;
   TSfmlConvexShapeSetFillColor = procedure (Shape: PSfmlConvexShape; Color: TSfmlColor); cdecl;
   TSfmlConvexShapeSetOutlineColor = procedure (Shape: PSfmlConvexShape; Color: TSfmlColor); cdecl;
@@ -210,8 +210,8 @@ type
   TSfmlFontCreateFromStream = function (const Stream: PSfmlInputStream): PSfmlFont; cdecl;
   TSfmlFontCopy = function (const Font: PSfmlFont): PSfmlFont; cdecl;
   TSfmlFontDestroy = procedure (Font: PSfmlFont); cdecl;
-  TSfmlFontGetGlyph = function (Font: PSfmlFont; CodePoint: sfUint32; CharacterSize: Cardinal; Bold: sfBool): TSfmlGlyph; cdecl;
-  TSfmlFontGetKerning = function (Font: PSfmlFont; First, Second: sfUint32; CharacterSize: Cardinal): Single; cdecl;
+  TSfmlFontGetGlyph = function (Font: PSfmlFont; CodePoint: Cardinal; CharacterSize: Cardinal; Bold: Boolean): TSfmlGlyph; cdecl;
+  TSfmlFontGetKerning = function (Font: PSfmlFont; First, Second: Cardinal; CharacterSize: Cardinal): Single; cdecl;
   TSfmlFontGetLineSpacing = function (Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl;
   TSfmlFontGetUnderlinePosition = function (Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl;
   TSfmlFontGetUnderlineThickness = function (Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl;
@@ -226,20 +226,20 @@ type
   TSfmlImageCreateFromStream = function (const Stream: PSfmlInputStream): PSfmlImage; cdecl;
   TSfmlImageCopy = function (const Image: PSfmlImage): PSfmlImage; cdecl;
   TSfmlImageDestroy = procedure (Image: PSfmlImage); cdecl;
-  TSfmlImageSaveToFile = function (const Image: PSfmlImage; const FileName: PAnsiChar): sfBool; cdecl;
+  TSfmlImageSaveToFile = function (const Image: PSfmlImage; const FileName: PAnsiChar): Boolean; cdecl;
   TSfmlImageGetSize = function (const Image: PSfmlImage): TSfmlVector2u; cdecl;
   TSfmlImageCreateMaskFromColor = procedure (Image: PSfmlImage; Color: TSfmlColor; Alpha: Byte); cdecl;
-  TSfmlImageCopyImage = procedure (Image: PSfmlImage; const Source: PSfmlImage; DestX, DestY: Cardinal; SourceRect: TSfmlIntRect; ApplyAlpha: sfBool); cdecl;
+  TSfmlImageCopyImage = procedure (Image: PSfmlImage; const Source: PSfmlImage; DestX, DestY: Cardinal; SourceRect: TSfmlIntRect; ApplyAlpha: Boolean); cdecl;
   TSfmlImageSetPixel = procedure (Image: PSfmlImage; X, Y: Cardinal; Color: TSfmlColor); cdecl;
   TSfmlImageGetPixel = function (const Image: PSfmlImage; X, Y: Cardinal): TSfmlColor; cdecl;
   TSfmlImageGetPixelsPtr = function (const Image: PSfmlImage): PByte; cdecl;
   TSfmlImageFlipHorizontally = procedure (Image: PSfmlImage); cdecl;
   TSfmlImageFlipVertically = procedure (Image: PSfmlImage); cdecl;
 
-  TSfmlFloatRectContains = function (var Rect: TSfmlFloatRect; X, Y: Single): sfBool; cdecl;
-  TSfmlIntRectContains = function (var Rect: TSfmlIntRect; X, Y: LongInt): sfBool; cdecl;
-  TSfmlFloatRectIntersects = function (var rect1, rect2: TSfmlFloatRect; var Intersection: TSfmlFloatRect): sfBool; cdecl;
-  TSfmlIntRectIntersects = function (var rect1, rect2: TSfmlIntRect; var Intersection: TSfmlFloatRect): sfBool; cdecl;
+  TSfmlFloatRectContains = function (var Rect: TSfmlFloatRect; X, Y: Single): Boolean; cdecl;
+  TSfmlIntRectContains = function (var Rect: TSfmlIntRect; X, Y: LongInt): Boolean; cdecl;
+  TSfmlFloatRectIntersects = function (var rect1, rect2: TSfmlFloatRect; var Intersection: TSfmlFloatRect): Boolean; cdecl;
+  TSfmlIntRectIntersects = function (var rect1, rect2: TSfmlIntRect; var Intersection: TSfmlFloatRect): Boolean; cdecl;
 
   TSfmlRectangleShapeCreate = function : PSfmlRectangleShape; cdecl;
   TSfmlRectangleShapeCopy = function (const Shape: PSfmlRectangleShape): PSfmlRectangleShape; cdecl;
@@ -257,7 +257,7 @@ type
   TSfmlRectangleShapeScale = procedure (Shape: PSfmlRectangleShape; Factors: TSfmlVector2f); cdecl;
   TSfmlRectangleShapeGetTransform = function (const Shape: PSfmlRectangleShape): TSfmlTransform; cdecl;
   TSfmlRectangleShapeGetInverseTransform = function (const Shape: PSfmlRectangleShape): TSfmlTransform; cdecl;
-  TSfmlRectangleShapeSetTexture = procedure (Shape: PSfmlRectangleShape; const Texture: PSfmlTexture; ResetRect: sfBool); cdecl;
+  TSfmlRectangleShapeSetTexture = procedure (Shape: PSfmlRectangleShape; const Texture: PSfmlTexture; ResetRect: Boolean); cdecl;
   TSfmlRectangleShapeSetTextureRect = procedure (Shape: PSfmlRectangleShape; Rect: TSfmlIntRect); cdecl;
   TSfmlRectangleShapeSetFillColor = procedure (Shape: PSfmlRectangleShape; Color: TSfmlColor); cdecl;
   TSfmlRectangleShapeSetOutlineColor = procedure (Shape: PSfmlRectangleShape; Color: TSfmlColor); cdecl;
@@ -274,10 +274,10 @@ type
   TSfmlRectangleShapeGetLocalBounds = function (const Shape: PSfmlRectangleShape): TSfmlFloatRect; cdecl;
   TSfmlRectangleShapeGetGlobalBounds = function (const Shape: PSfmlRectangleShape): TSfmlFloatRect; cdecl;
 
-  TSfmlRenderTextureCreate = function (Width, Height: Cardinal; DepthBuffer: sfBool): PSfmlRenderTexture; cdecl;
+  TSfmlRenderTextureCreate = function (Width, Height: Cardinal; DepthBuffer: Boolean): PSfmlRenderTexture; cdecl;
   TSfmlRenderTextureDestroy = procedure (RenderTexture: PSfmlRenderTexture); cdecl;
   TSfmlRenderTextureGetSize = function (const RenderTexture: PSfmlRenderTexture): TSfmlVector2u; cdecl;
-  TSfmlRenderTextureSetActive = function (RenderTexture: PSfmlRenderTexture; Active: sfBool): sfBool; cdecl;
+  TSfmlRenderTextureSetActive = function (RenderTexture: PSfmlRenderTexture; Active: Boolean): Boolean; cdecl;
   TSfmlRenderTextureDisplay = procedure (RenderTexture: PSfmlRenderTexture); cdecl;
   TSfmlRenderTextureClear = procedure (RenderTexture: PSfmlRenderTexture; Color: TSfmlColor); cdecl;
   TSfmlRenderTextureSetView = procedure (RenderTexture: PSfmlRenderTexture; const View: PSfmlView); cdecl;
@@ -298,20 +298,20 @@ type
   TSfmlRenderTexturePopGLStates = procedure (RenderTexture: PSfmlRenderTexture); cdecl;
   TSfmlRenderTextureResetGLStates = procedure (RenderTexture: PSfmlRenderTexture); cdecl;
   TSfmlRenderTextureGetTexture = function (const RenderTexture: PSfmlRenderTexture): PSfmlTexture ; cdecl;
-  TSfmlRenderTextureSetSmooth = procedure (RenderTexture: PSfmlRenderTexture; Smooth: sfBool); cdecl;
-  TSfmlRenderTextureIsSmooth = function (const RenderTexture: PSfmlRenderTexture): sfBool; cdecl;
-  TSfmlRenderTextureSetRepeated = procedure (RenderTexture: PSfmlRenderTexture; Repeated: sfBool); cdecl;
-  TSfmlRenderTextureIsRepeated = function (const RenderTexture: PSfmlRenderTexture): sfBool; cdecl;
+  TSfmlRenderTextureSetSmooth = procedure (RenderTexture: PSfmlRenderTexture; Smooth: Boolean); cdecl;
+  TSfmlRenderTextureIsSmooth = function (const RenderTexture: PSfmlRenderTexture): Boolean; cdecl;
+  TSfmlRenderTextureSetRepeated = procedure (RenderTexture: PSfmlRenderTexture; Repeated: Boolean); cdecl;
+  TSfmlRenderTextureIsRepeated = function (const RenderTexture: PSfmlRenderTexture): Boolean; cdecl;
 
   TSfmlRenderWindowCreate = function (Mode: TSfmlVideoMode; const Title: PAnsiChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl;
   TSfmlRenderWindowCreateUnicode = function (Mode: TSfmlVideoMode; const Title: PWideChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl;
   TSfmlRenderWindowCreateFromHandle = function (Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl;
   TSfmlRenderWindowDestroy = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
   TSfmlRenderWindowClose = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
-  TSfmlRenderWindowIsOpen = function (const RenderWindow: PSfmlRenderWindow): sfBool; cdecl;
+  TSfmlRenderWindowIsOpen = function (const RenderWindow: PSfmlRenderWindow): Boolean; cdecl;
   TSfmlRenderWindowGetSettings = function (const RenderWindow: PSfmlRenderWindow): TSfmlContextSettings; cdecl;
-  TSfmlRenderWindowPollEvent = function (RenderWindow: PSfmlRenderWindow; Event: PSfmlEvent): sfBool; cdecl;
-  TSfmlRenderWindowWaitEvent = function (RenderWindow: PSfmlRenderWindow; Event: PSfmlEvent): sfBool; cdecl;
+  TSfmlRenderWindowPollEvent = function (RenderWindow: PSfmlRenderWindow; Event: PSfmlEvent): Boolean; cdecl;
+  TSfmlRenderWindowWaitEvent = function (RenderWindow: PSfmlRenderWindow; Event: PSfmlEvent): Boolean; cdecl;
   TSfmlRenderWindowGetPosition = function (const RenderWindow: PSfmlRenderWindow): TSfmlVector2i; cdecl;
   TSfmlRenderWindowSetPosition = procedure (RenderWindow: PSfmlRenderWindow; Position: TSfmlVector2i); cdecl;
   TSfmlRenderWindowGetSize = function (const RenderWindow: PSfmlRenderWindow): TSfmlVector2u; cdecl;
@@ -319,13 +319,13 @@ type
   TSfmlRenderWindowSetTitle = procedure (RenderWindow: PSfmlRenderWindow; const Title: PAnsiChar); cdecl;
   TSfmlRenderWindowSetUnicodeTitle = procedure (RenderWindow: PSfmlRenderWindow; const Title: PWideChar); cdecl;
   TSfmlRenderWindowSetIcon = procedure (RenderWindow: PSfmlRenderWindow; Width, Height: Cardinal; const Pixels: PByte); cdecl;
-  TSfmlRenderWindowSetVisible = procedure (RenderWindow: PSfmlRenderWindow; Visible: sfBool); cdecl;
-  TSfmlRenderWindowSetMouseCursorVisible = procedure (RenderWindow: PSfmlRenderWindow; Show: sfBool); cdecl;
-  TSfmlRenderWindowSetVerticalSyncEnabled = procedure (RenderWindow: PSfmlRenderWindow; Enabled: sfBool); cdecl;
-  TSfmlRenderWindowSetKeyRepeatEnabled = procedure (RenderWindow: PSfmlRenderWindow; Enabled: sfBool); cdecl;
-  TSfmlRenderWindowSetActive = function (RenderWindow: PSfmlRenderWindow; Active: sfBool): sfBool; cdecl;
+  TSfmlRenderWindowSetVisible = procedure (RenderWindow: PSfmlRenderWindow; Visible: Boolean); cdecl;
+  TSfmlRenderWindowSetMouseCursorVisible = procedure (RenderWindow: PSfmlRenderWindow; Show: Boolean); cdecl;
+  TSfmlRenderWindowSetVerticalSyncEnabled = procedure (RenderWindow: PSfmlRenderWindow; Enabled: Boolean); cdecl;
+  TSfmlRenderWindowSetKeyRepeatEnabled = procedure (RenderWindow: PSfmlRenderWindow; Enabled: Boolean); cdecl;
+  TSfmlRenderWindowSetActive = function (RenderWindow: PSfmlRenderWindow; Active: Boolean): Boolean; cdecl;
   TSfmlRenderWindowRequestFocus = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
-  TSfmlRenderWindowHasFocus = function (const RenderWindow: PSfmlRenderWindow): sfBool; cdecl;
+  TSfmlRenderWindowHasFocus = function (const RenderWindow: PSfmlRenderWindow): Boolean; cdecl;
   TSfmlRenderWindowDisplay = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
   TSfmlRenderWindowSetFramerateLimit = procedure (RenderWindow: PSfmlRenderWindow; Limit: Cardinal); cdecl;
   TSfmlRenderWindowSetJoystickThreshold = procedure (RenderWindow: PSfmlRenderWindow; Threshold: Single); cdecl;
@@ -368,7 +368,7 @@ type
   TSfmlShaderSetTextureParameter = procedure (Shader: PSfmlShader; const Name: PAnsiChar; const Texture: PSfmlTexture); cdecl;
   TSfmlShaderSetCurrentTextureParameter = procedure (Shader: PSfmlShader; const Name: PAnsiChar); cdecl;
   TSfmlShaderBind = procedure (const Shader: PSfmlShader); cdecl;
-  TSfmlShaderIsAvailable = function : sfBool; cdecl;
+  TSfmlShaderIsAvailable = function : Boolean; cdecl;
 
   TSfmlShapeCreate = function (GetPointCount: TSfmlShapeGetPointCountCallback; GetPoint: TSfmlShapeGetPointCallback; UserData: Pointer): PSfmlShape; cdecl;
   TSfmlShapeDestroy = procedure (Shape: PSfmlShape); cdecl;
@@ -385,7 +385,7 @@ type
   TSfmlShapeScale = procedure (Shape: PSfmlShape; Factors: TSfmlVector2f); cdecl;
   TSfmlShapeGetTransform = function (const Shape: PSfmlShape): TSfmlTransform; cdecl;
   TSfmlShapeGetInverseTransform = function (const Shape: PSfmlShape): TSfmlTransform; cdecl;
-  TSfmlShapeSetTexture = procedure (Shape: PSfmlShape; const Texture: PSfmlTexture; ResetRect: sfBool); cdecl;
+  TSfmlShapeSetTexture = procedure (Shape: PSfmlShape; const Texture: PSfmlTexture; ResetRect: Boolean); cdecl;
   TSfmlShapeSetTextureRect = procedure (Shape: PSfmlShape; Rect: TSfmlIntRect); cdecl;
   TSfmlShapeSetFillColor = procedure (Shape: PSfmlShape; Color: TSfmlColor); cdecl;
   TSfmlShapeSetOutlineColor = procedure (Shape: PSfmlShape; Color: TSfmlColor); cdecl;
@@ -417,7 +417,7 @@ type
   TSfmlSpriteScale = procedure (Sprite: PSfmlSprite; Factors: TSfmlVector2f); cdecl;
   TSfmlSpriteGetTransform = function (const Sprite: PSfmlSprite): TSfmlTransform; cdecl;
   TSfmlSpriteGetInverseTransform = function (const Sprite: PSfmlSprite): TSfmlTransform; cdecl;
-  TSfmlSpriteSetTexture = procedure (Sprite: PSfmlSprite; const Texture: PSfmlTexture; ResetRect: sfBool); cdecl;
+  TSfmlSpriteSetTexture = procedure (Sprite: PSfmlSprite; const Texture: PSfmlTexture; ResetRect: Boolean); cdecl;
   TSfmlSpriteSetTextureRect = procedure (Sprite: PSfmlSprite; Rectangle: TSfmlIntRect); cdecl;
   TSfmlSpriteSetColor = procedure (Sprite: PSfmlSprite; Color: TSfmlColor); cdecl;
   TSfmlSpriteGetTexture = function (const Sprite: PSfmlSprite): PSfmlTexture; cdecl;
@@ -446,13 +446,13 @@ type
   TSfmlTextSetUnicodeString = procedure (Text: PSfmlText; const &String: PWideChar); cdecl;
   TSfmlTextSetFont = procedure (Text: PSfmlText; const Font: PSfmlFont); cdecl;
   TSfmlTextSetCharacterSize = procedure (Text: PSfmlText; Size: Cardinal); cdecl;
-  TSfmlTextSetStyle = procedure (Text: PSfmlText; Style: sfUint32); cdecl;
+  TSfmlTextSetStyle = procedure (Text: PSfmlText; Style: Cardinal); cdecl;
   TSfmlTextSetColor = procedure (Text: PSfmlText; Color: TSfmlColor); cdecl;
   TSfmlTextGetString = function (const Text: PSfmlText): PAnsiChar; cdecl;
   TSfmlTextGetUnicodeString = function (const Text: PSfmlText): PWideChar; cdecl;
   TSfmlTextGetFont = function (const Text: PSfmlText): PSfmlFont; cdecl;
   TSfmlTextGetCharacterSize = function (const Text: PSfmlText): Cardinal; cdecl;
-  TSfmlTextGetStyle = function (const Text: PSfmlText): sfUint32; cdecl;
+  TSfmlTextGetStyle = function (const Text: PSfmlText): Cardinal; cdecl;
   TSfmlTextGetColor = function (const Text: PSfmlText): TSfmlColor; cdecl;
   TSfmlTextFindCharacterPos = function (const Text: PSfmlText; Index: NativeUInt): TSfmlVector2f; cdecl;
   TSfmlTextGetLocalBounds = function (const Text: PSfmlText): TSfmlFloatRect; cdecl;
@@ -471,10 +471,10 @@ type
   TSfmlTextureUpdateFromImage = procedure (Texture: PSfmlTexture; const Image: PSfmlImage; X, Y: Cardinal); cdecl;
   TSfmlTextureUpdateFromWindow = procedure (Texture: PSfmlTexture; const Window: PSfmlWindow; X, Y: Cardinal); cdecl;
   TSfmlTextureUpdateFromRenderWindow = procedure (Texture: PSfmlTexture; const RenderWindow: PSfmlRenderWindow; X, Y: Cardinal); cdecl;
-  TSfmlTextureSetSmooth = procedure (Texture: PSfmlTexture; Smooth: sfBool); cdecl;
-  TSfmlTextureIsSmooth = function (const Texture: PSfmlTexture): sfBool; cdecl;
-  TSfmlTextureSetRepeated = procedure (Texture: PSfmlTexture; Repeated: sfBool); cdecl;
-  TSfmlTextureIsRepeated = function (const Texture: PSfmlTexture): sfBool; cdecl;
+  TSfmlTextureSetSmooth = procedure (Texture: PSfmlTexture; Smooth: Boolean); cdecl;
+  TSfmlTextureIsSmooth = function (const Texture: PSfmlTexture): Boolean; cdecl;
+  TSfmlTextureSetRepeated = procedure (Texture: PSfmlTexture; Repeated: Boolean); cdecl;
+  TSfmlTextureIsRepeated = function (const Texture: PSfmlTexture): Boolean; cdecl;
   TSfmlTextureBind = procedure (const Texture: PSfmlTexture); cdecl;
   TsfmlTextureGetMaximumSize = function : Cardinal; cdecl;
 
@@ -982,7 +982,7 @@ const
   function SfmlCircleShapeCreate: PSfmlCircleShape; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_create';
   function SfmlCircleShapeCopy(const Shape: PSfmlCircleShape): PSfmlCircleShape; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_copy';
   procedure SfmlCircleShapeDestroy(Shape: PSfmlCircleShape); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_destroy';
-  procedure SfmlCircleShapeSetPosition(Shape: PSfmlCircleShape; Position: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setPosition';
+  procedure SfmlCircleShapeSetPosition(Shape: PSfmlCircleShape; var Position: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setPosition';
   procedure SfmlCircleShapeSetRotation(Shape: PSfmlCircleShape; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setRotation';
   procedure SfmlCircleShapeSetScale(Shape: PSfmlCircleShape; Scale: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setScale';
   procedure SfmlCircleShapeSetOrigin(Shape: PSfmlCircleShape; Origin: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setOrigin';
@@ -1416,7 +1416,8 @@ type
 
     function Copy: TSfmlCircleShape;
 
-    procedure Move(Offset: TSfmlVector2f);
+    procedure Move(Offset: TSfmlVector2f); overload;
+    procedure Move(X, Y: Single); overload;
     procedure Rotate(Angle: Single);
     procedure Scale(Factors: TSfmlVector2f);
 
@@ -1582,9 +1583,11 @@ type
     destructor Destroy; override;
 
     function Copy: TSfmlRectangleShape;
-    procedure Move(Offset: TSfmlVector2f);
+    procedure Move(Offset: TSfmlVector2f); overload;
+    procedure Move(X, Y: Single); overload;
     procedure Rotate(Angle: Single);
-    procedure Scale(Factors: TSfmlVector2f);
+    procedure Scale(Factors: TSfmlVector2f); overload;
+    procedure Scale(X, Y: Single); overload;
 
     procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
 
@@ -1661,6 +1664,8 @@ type
     function GetPosition: TSfmlVector2i;
     procedure SetPosition(Position: TSfmlVector2i);
   public
+    constructor Create(Mode: TSfmlVideoMode; const Title: AnsiString; Style: TSfmlWindowStyles); overload;
+    constructor Create(Mode: TSfmlVideoMode; const Title: PWideChar; Style: TSfmlWindowStyles); overload;
     constructor Create(Mode: TSfmlVideoMode; const Title: AnsiString; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings); overload;
     constructor Create(Mode: TSfmlVideoMode; const Title: PWideChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings); overload;
     constructor Create(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings); overload;
@@ -1686,21 +1691,22 @@ type
     function IsOpen: Boolean;
     function HasFocus: Boolean;
 
-    procedure DrawCircleShape(const &Object: PSfmlCircleShape; const States: PSfmlRenderStates); overload;
-    procedure DrawCircleShape(const &Object: TSfmlCircleShape; const States: PSfmlRenderStates); overload;
-    procedure DrawConvexShape(const &Object: PSfmlConvexShape; const States: PSfmlRenderStates); overload;
-    procedure DrawConvexShape(const &Object: TSfmlConvexShape; const States: PSfmlRenderStates); overload;
+    procedure Draw(const &Object: TSfmlCircleShape; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlConvexShape; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlRectangleShape; const States: PSfmlRenderStates = nil);overload;
+    procedure Draw(const &Object: TSfmlShape; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlSprite; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlText; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlVertexArray; const States: PSfmlRenderStates = nil); overload;
+
+    procedure DrawCircleShape(const &Object: PSfmlCircleShape; const States: PSfmlRenderStates);
+    procedure DrawConvexShape(const &Object: PSfmlConvexShape; const States: PSfmlRenderStates);
     procedure DrawPrimitives;
     procedure DrawRectangleShape(const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates);overload;
-    procedure DrawRectangleShape(const &Object: TSfmlRectangleShape; const States: PSfmlRenderStates);overload;
-    procedure DrawShape(const &Object: PSfmlShape; const States: PSfmlRenderStates); overload;
-    procedure DrawShape(const &Object: TSfmlShape; const States: PSfmlRenderStates); overload;
-    procedure DrawSprite(const &Object: PSfmlSprite; const States: PSfmlRenderStates); overload;
-    procedure DrawSprite(const &Object: TSfmlSprite; const States: PSfmlRenderStates); overload;
-    procedure DrawText(const &Object: PSfmlText; const States: PSfmlRenderStates); overload;
-    procedure DrawText(const &Object: TSfmlText; const States: PSfmlRenderStates); overload;
-    procedure DrawVertexArray(const &Object: PSfmlVertexArray; const States: PSfmlRenderStates); overload;
-    procedure DrawVertexArray(const &Object: TSfmlVertexArray; const States: PSfmlRenderStates); overload;
+    procedure DrawShape(const &Object: PSfmlShape; const States: PSfmlRenderStates);
+    procedure DrawSprite(const &Object: PSfmlSprite; const States: PSfmlRenderStates);
+    procedure DrawText(const &Object: PSfmlText; const States: PSfmlRenderStates);
+    procedure DrawVertexArray(const &Object: PSfmlVertexArray; const States: PSfmlRenderStates);
 
     procedure PopGLStates;
     procedure PushGLStates;
@@ -2134,6 +2140,11 @@ end;
 function TSfmlCircleShape.GetTransform: TSfmlTransform;
 begin
   SfmlCircleShapeGetTransform(FHandle);
+end;
+
+procedure TSfmlCircleShape.Move(X, Y: Single);
+begin
+  SfmlCircleShapeMove(FHandle, SfmlVector2f(X, Y));
 end;
 
 procedure TSfmlCircleShape.Move(Offset: TSfmlVector2f);
@@ -2632,6 +2643,11 @@ begin
   Result := SfmlRectangleShapeGetTransform(FHandle);
 end;
 
+procedure TSfmlRectangleShape.Move(X, Y: Single);
+begin
+  SfmlRectangleShapeMove(FHandle, SfmlVector2f(X, Y));
+end;
+
 procedure TSfmlRectangleShape.Move(Offset: TSfmlVector2f);
 begin
   SfmlRectangleShapeMove(FHandle, Offset);
@@ -2645,6 +2661,11 @@ end;
 procedure TSfmlRectangleShape.Scale(Factors: TSfmlVector2f);
 begin
   SfmlRectangleShapeScale(FHandle, Factors);
+end;
+
+procedure TSfmlRectangleShape.Scale(X, Y: Single);
+begin
+  SfmlRectangleShapeScale(FHandle, SfmlVector2f(X, Y));
 end;
 
 procedure TSfmlRectangleShape.SetFillColor(Color: TSfmlColor);
@@ -2865,12 +2886,24 @@ constructor TSfmlRenderWindow.Create(Mode: TSfmlVideoMode;
   const Title: PWideChar; Style: TSfmlWindowStyles;
   const Settings: PSfmlContextSettings);
 begin
-  FHandle := SfmlRenderWindowCreateUnicode(Mode, PWideChar(Title), Style, Settings);;
+  FHandle := SfmlRenderWindowCreateUnicode(Mode, PWideChar(Title), Style, Settings);
 end;
 
 constructor TSfmlRenderWindow.Create(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings);
 begin
   FHandle := SfmlRenderWindowCreateFromHandle(Handle, Settings);
+end;
+
+constructor TSfmlRenderWindow.Create(Mode: TSfmlVideoMode;
+  const Title: AnsiString; Style: TSfmlWindowStyles);
+begin
+  FHandle := SfmlRenderWindowCreate(Mode, PAnsiChar(Title), Style, nil);
+end;
+
+constructor TSfmlRenderWindow.Create(Mode: TSfmlVideoMode;
+  const Title: PWideChar; Style: TSfmlWindowStyles);
+begin
+  FHandle := SfmlRenderWindowCreateUnicode(Mode, PWideChar(Title), Style, nil);
 end;
 
 destructor TSfmlRenderWindow.Destroy;
@@ -2916,8 +2949,8 @@ begin
   SfmlRenderWindowDrawPrimitives(FHandle);
 end;
 
-procedure TSfmlRenderWindow.DrawRectangleShape(
-  const &Object: TSfmlRectangleShape; const States: PSfmlRenderStates);
+procedure TSfmlRenderWindow.Draw(const &Object: TSfmlRectangleShape;
+  const States: PSfmlRenderStates);
 begin
   SfmlRenderWindowDrawRectangleShape(FHandle, &Object.FHandle, States);
 end;
@@ -2952,37 +2985,37 @@ begin
   SfmlRenderWindowDrawVertexArray(FHandle, &Object, States);
 end;
 
-procedure TSfmlRenderWindow.DrawCircleShape(const &Object: TSfmlCircleShape;
+procedure TSfmlRenderWindow.Draw(const &Object: TSfmlCircleShape;
   const States: PSfmlRenderStates);
 begin
   SfmlRenderWindowDrawCircleShape(FHandle, &Object.Handle, States);
 end;
 
-procedure TSfmlRenderWindow.DrawConvexShape(const &Object: TSfmlConvexShape;
+procedure TSfmlRenderWindow.Draw(const &Object: TSfmlConvexShape;
   const States: PSfmlRenderStates);
 begin
   SfmlRenderWindowDrawConvexShape(FHandle, &Object.Handle, States);
 end;
 
-procedure TSfmlRenderWindow.DrawShape(const &Object: TSfmlShape;
+procedure TSfmlRenderWindow.Draw(const &Object: TSfmlShape;
   const States: PSfmlRenderStates);
 begin
   SfmlRenderWindowDrawShape(FHandle, &Object.Handle, States);
 end;
 
-procedure TSfmlRenderWindow.DrawSprite(const &Object: TSfmlSprite;
+procedure TSfmlRenderWindow.Draw(const &Object: TSfmlSprite;
   const States: PSfmlRenderStates);
 begin
   SfmlRenderWindowDrawSprite(FHandle, &Object.Handle, States);
 end;
 
-procedure TSfmlRenderWindow.DrawText(const &Object: TSfmlText;
+procedure TSfmlRenderWindow.Draw(const &Object: TSfmlText;
   const States: PSfmlRenderStates);
 begin
   SfmlRenderWindowDrawText(FHandle, &Object.Handle, States);
 end;
 
-procedure TSfmlRenderWindow.DrawVertexArray(const &Object: TSfmlVertexArray;
+procedure TSfmlRenderWindow.Draw(const &Object: TSfmlVertexArray;
   const States: PSfmlRenderStates);
 begin
   SfmlRenderWindowDrawVertexArray(FHandle, &Object.Handle, States);

@@ -48,22 +48,35 @@ type
 
   TSfmlTime = record
     MicroSeconds: Int64;
+    function AsSeconds: Single;
   end;
 
   TSfmlVector2i = record
     X, Y: LongInt;
+    {$IFDEF RecordConstructors}
+    constructor Create(X, Y: LongInt);
+    {$ENDIF}
   end;
 
   TSfmlVector2u = record
     X, Y: Cardinal;
+    {$IFDEF RecordConstructors}
+    constructor Create(X, Y: Cardinal);
+    {$ENDIF}
   end;
 
   TSfmlVector2f = record
     X, Y : Single;
+    {$IFDEF RecordConstructors}
+    constructor Create(X, Y: Double);
+    {$ENDIF}
   end;
 
   TSfmlVector3f = record
     X, Y, Z: Single;
+    {$IFDEF RecordConstructors}
+    constructor Create(X, Y, Z: Single);
+    {$ENDIF}
   end;
 
   TSfmlInputStreamReadFunc = function (Data: Pointer; Size: Int64; UserData: Pointer): Int64; cdecl;
@@ -83,11 +96,11 @@ type
 {$IFDEF DynLink}
   TSfmlTimeZero = function: TSfmlTime; cdecl;
   TSfmlTimeAsSeconds = function (Time: TSfmlTime): Single; cdecl;
-  TSfmlTimeAsMilliseconds = function (Time: TSfmlTime): sfInt32; cdecl;
+  TSfmlTimeAsMilliseconds = function (Time: TSfmlTime): LongInt; cdecl;
   TSfmlTimeAsMicroseconds = function (Time: TSfmlTime): Int64; cdecl;
 
   TSfmlSeconds = function (Amount: Single): TSfmlTime; cdecl;
-  TSfmlMilliseconds = function (Amount: sfInt32): TSfmlTime; cdecl;
+  TSfmlMilliseconds = function (Amount: LongInt): TSfmlTime; cdecl;
   TSfmlMicroseconds = function (Amount: Int64): TSfmlTime; cdecl;
 
   TSfmlClockCreate = function : PSfmlClock; cdecl;
@@ -149,10 +162,9 @@ var
   function SfmlMilliseconds(Amount: LongInt): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfMilliseconds';
   function SfmlMicroseconds(Amount: Int64): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfMicroseconds';
 
-  function SfmlClockCreate: PSfmlClock; cdecl; external CSfmlSystemLibrary name 'sfClock_create:';
+  function SfmlClockCreate: PSfmlClock; cdecl; external CSfmlSystemLibrary name 'sfClock_create';
   function SfmlClockCopy(const Clock: PSfmlClock): PSfmlClock; cdecl; external CSfmlSystemLibrary name 'sfClock_copy';
   procedure SfmlClockDestroy(Clock: PSfmlClock); cdecl; external CSfmlSystemLibrary name 'sfClock_destroy';
-
   function SfmlClockGetElapsedTime(const Clock: PSfmlClock): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfClock_getElapsedTime';
   function SfmlClockRestart(Clock: PSfmlClock): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfClock_restart';
 
@@ -181,6 +193,8 @@ type
     destructor Destroy; override;
 
     function Copy: TSfmlClock;
+    function GetElapsedTime: TSfmlTime;
+    function Restart: TSfmlTime;
   end;
 
   TSfmlThread = class
@@ -195,6 +209,8 @@ type
     procedure Terminate;
   end;
 
+function SfmlVector2f(X, Y: Single): TSfmlVector2f;
+function SfmlVector3f(X, Y, Z: Single): TSfmlVector3f;
 
 implementation
 
@@ -204,6 +220,54 @@ uses
   Windows;
 {$ENDIF}
 {$ENDIF}
+
+function SfmlVector2f(X, Y: Single): TSfmlVector2f;
+begin
+  Result.X := X;
+  Result.Y := Y;
+end;
+
+function SfmlVector3f(X, Y, Z: Single): TSfmlVector3f;
+begin
+  Result.X := X;
+  Result.Y := Y;
+  Result.Z := Z;
+end;
+
+{$IFDEF RecordConstructors}
+constructor TSfmlVector2i.Create(X, Y: LongInt);
+begin
+  Self.X := X;
+  Self.Y := Y;
+end;
+
+constructor TSfmlVector2u.Create(X, Y: Cardinal);
+begin
+  Self.X := X;
+  Self.Y := Y;
+end;
+
+constructor TSfmlVector2f.Create(X, Y: Double);
+begin
+  Self.X := X;
+  Self.Y := Y;
+end;
+
+constructor TSfmlVector3f.Create(X, Y, Z: Single);
+begin
+  Self.X := X;
+  Self.Y := Y;
+  Self.Z := Z;
+end;
+{$ENDIF}
+
+{ TSfmlTime }
+
+function TSfmlTime.AsSeconds: Single;
+begin
+  Result := SfmlTimeAsSeconds(Self);
+end;
+
 
 { TSfmlClock }
 
@@ -221,6 +285,16 @@ destructor TSfmlClock.Destroy;
 begin
   SfmlClockDestroy(FHandle);
   inherited;
+end;
+
+function TSfmlClock.GetElapsedTime: TSfmlTime;
+begin
+  Result := SfmlClockGetElapsedTime(FHandle);
+end;
+
+function TSfmlClock.Restart: TSfmlTime;
+begin
+  Result := SfmlClockRestart(FHandle);
 end;
 
 function TSfmlClock.Copy: TSfmlClock;
@@ -308,7 +382,6 @@ end;
 
 initialization
 
-Assert(SizeOf(Boolean) = 4);
 InitDLL;
 
 finalization

@@ -50,6 +50,9 @@ type
 
   TSfmlVideoMode = record
     Width, Height, BitsPerPixel: Cardinal;
+    {$IFDEF RecordConstructors}
+    constructor Create(Width, Height, BitsPerPixel: Cardinal);
+    {$ENDIF}
   end;
   PSfmlVideoMode = ^TSfmlVideoMode;
 
@@ -222,7 +225,7 @@ type
   TSfmlVideoModeIsValid = function (Mode: TSfmlVideoMode): Boolean; cdecl;
 
   TSfmlWindowCreate = function (Mode: TSfmlVideoMode; const Title: PAnsiChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
-  TSfmlWindowCreateUnicode = function (Mode: TSfmlVideoMode; const Title: PWideChar; style: Cardinal; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
+  TSfmlWindowCreateUnicode = function (Mode: TSfmlVideoMode; const Title: PWideChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
   TSfmlWindowCreateFromHandle = function (Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
   TSfmlWindowDestroy = procedure (Window: PSfmlWindow); cdecl;
   TSfmlWindowClose = procedure (Window: PSfmlWindow); cdecl;
@@ -418,7 +421,29 @@ type
     property Position: TSfmlVector2i read GetPosition write SetPosition;
   end;
 
+function SfmlVideoMode(Width, Height, BitsPerPixel: Cardinal) : TSfmlVideoMode;
+
 implementation
+
+function SfmlVideoMode(Width, Height, BitsPerPixel: Cardinal) : TSfmlVideoMode;
+begin
+  Result.Width := Width;
+  Result.Height := Height;
+  Result.BitsPerPixel := BitsPerPixel;
+end;
+
+
+{ TSfmlVideoMode }
+
+{$IFDEF RecordConstructors}
+constructor TSfmlVideoMode.Create(Width, Height, BitsPerPixel: Cardinal);
+begin
+  Self.Width := Width;
+  Self.Height := Height;
+  Self.BitsPerPixel := BitsPerPixel;
+end;
+{$ENDIF}
+
 
 { TSfmlContext }
 
@@ -443,6 +468,7 @@ begin
   end;
 end;
 
+
 { TSfmlWindow }
 
 constructor TSfmlWindow.Create(VideoMode: TSfmlVideoMode; Title: AnsiString;
@@ -457,11 +483,6 @@ begin
   FHandle := SfmlWindowCreateUnicode(VideoMode, PWideChar(Title), Style, nil);
 end;
 
-procedure TSfmlWindow.Close;
-begin
-
-end;
-
 constructor TSfmlWindow.Create(Handle: TSfmlWindowHandle);
 begin
   FHandle := SfmlWindowCreateFromHandle(Handle, nil);
@@ -471,6 +492,11 @@ destructor TSfmlWindow.Destroy;
 begin
   SfmlWindowDestroy(FHandle);
   inherited;
+end;
+
+procedure TSfmlWindow.Close;
+begin
+  SfmlWindowClose(FHandle);
 end;
 
 procedure TSfmlWindow.Display;

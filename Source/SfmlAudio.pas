@@ -464,6 +464,7 @@ type
     property Attenuation: Single read GetAttenuation write SetAttenuation;
     property ChannelCount: Cardinal read GetChannelCount;
     property Duration: TSfmlTime read GetDuration;
+    property Handle: PSfmlMusic read FHandle;
     property Loop: Boolean read GetLoop write SetLoop;
     property MinDistance: Single read GetMinDistance write SetMinDistance;
     property Pitch: Single read GetPitch write SetPitch;
@@ -509,6 +510,7 @@ type
 
     property Attenuation: Single read GetAttenuation write SetAttenuation;
     property ChannelCount: Cardinal read GetChannelCount;
+    property Handle: PSfmlSoundStream read FHandle;
     property Loop: Boolean read GetLoop write SetLoop;
     property MinDistance: Single read GetMinDistance write SetMinDistance;
     property Pitch: Single read GetPitch write SetPitch;
@@ -540,10 +542,11 @@ type
     function SaveToFile(const FileName: AnsiString): Boolean;
     function GetSamples: PSmallInt;
 
-    property SampleCount: NativeUInt read GetSampleCount;
-    property SampleRate: Cardinal read GetSampleRate;
     property ChannelCount: Cardinal read GetChannelCount;
     property Duration: TSfmlTime read GetDuration;
+    property Handle: PSfmlSoundBuffer read FHandle;
+    property SampleCount: NativeUInt read GetSampleCount;
+    property SampleRate: Cardinal read GetSampleRate;
   end;
 
   TSfmlSound = class
@@ -573,14 +576,16 @@ type
 
     function Copy: TSfmlSound;
 
-    function GetBuffer: TSfmlSoundBuffer;
-    procedure SetBuffer(const Buffer: TSfmlSoundBuffer);
+    function GetBuffer: PSfmlSoundBuffer;
+    procedure SetBuffer(const Buffer: PSfmlSoundBuffer); overload;
+    procedure SetBuffer(const Buffer: TSfmlSoundBuffer); overload;
 
     procedure Pause;
     procedure Play;
     procedure Stop;
 
     property Attenuation: Single read GetAttenuation write SetAttenuation;
+    property Handle: PSfmlSound read FHandle;
     property Loop: Boolean read GetLoop write SetLoop;
     property MinDistance: Single read GetMinDistance write SetMinDistance;
     property Pitch: Single read GetPitch write SetPitch;
@@ -604,6 +609,7 @@ type
 
     function GetBuffer: PSfmlSoundBuffer;
 
+    property Handle: PSfmlSoundBufferRecorder read FHandle;
     property SampleRate: Cardinal read GetSampleRate;
   end;
 
@@ -623,6 +629,7 @@ type
     procedure Stop;
     procedure SetProcessingInterval(Interval: TSfmlTime);
 
+    property Handle: PSfmlSoundRecorder read FHandle;
     property Device: AnsiString read GetDevice write SetDevice;
     property SampleRate: Cardinal read GetSampleRate;
   end;
@@ -1003,7 +1010,7 @@ begin
   Result := SfmlSoundGetAttenuation(FHandle);
 end;
 
-function TSfmlSound.GetBuffer: TSfmlSoundBuffer;
+function TSfmlSound.GetBuffer: PSfmlSoundBuffer;
 begin
   Result := SfmlSoundGetBuffer(FHandle);
 end;
@@ -1063,9 +1070,14 @@ begin
   SfmlSoundSetAttenuation(FHandle, Attenuation);
 end;
 
-procedure TSfmlSound.SetBuffer(const Buffer: TSfmlSoundBuffer);
+procedure TSfmlSound.SetBuffer(const Buffer: PSfmlSoundBuffer);
 begin
   SfmlSoundSetBuffer(FHandle, Buffer);
+end;
+
+procedure TSfmlSound.SetBuffer(const Buffer: TSfmlSoundBuffer);
+begin
+  SfmlSoundSetBuffer(FHandle, Buffer.Handle);
 end;
 
 procedure TSfmlSound.SetLoop(Loop: Boolean);
