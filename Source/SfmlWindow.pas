@@ -379,6 +379,7 @@ type
     destructor Destroy; override;
 
     property Active: Boolean read FActive write SetActive;
+    property Handle: PSfmlContext read FHandle;
   end;
 
   TSfmlWindow = class
@@ -393,14 +394,18 @@ type
       Style: TSfmlWindowStyles); overload;
     constructor Create(VideoMode: TSfmlVideoMode; Title: Unicodestring;
       Style: TSfmlWindowStyles); overload;
+    constructor Create(VideoMode: TSfmlVideoMode; Title: AnsiString;
+      Style: TSfmlWindowStyles; ContextSetting: PSfmlContextSettings); overload;
+    constructor Create(VideoMode: TSfmlVideoMode; Title: Unicodestring;
+      Style: TSfmlWindowStyles; ContextSetting: PSfmlContextSettings); overload;
     constructor Create(Handle: TSfmlWindowHandle); overload;
     destructor Destroy; override;
 
     procedure Close;
     function IsOpen: Boolean;
     function GetSettings: TSfmlContextSettings;
-    function PollEvent(var Event: TSfmlEvent): Boolean;
-    function WaitEvent(var Event: TSfmlEvent): Boolean;
+    function PollEvent(out Event: TSfmlEvent): Boolean;
+    function WaitEvent(out Event: TSfmlEvent): Boolean;
     procedure SetTitle(const Title: AnsiString);
     procedure SetUnicodeTitle(const Title: string);
     procedure SetIcon(Width, Height: Cardinal; const Pixels: PByte);
@@ -417,15 +422,17 @@ type
     procedure Display;
     function GetSystemHandle: TSfmlWindowHandle;
 
-    property Size: TSfmlVector2u read GetSize write SetSize;
+    property Handle: PSfmlWindow read FHandle;
     property Position: TSfmlVector2i read GetPosition write SetPosition;
+    property Size: TSfmlVector2u read GetSize write SetSize;
   end;
 
-function SfmlVideoMode(Width, Height, BitsPerPixel: Cardinal) : TSfmlVideoMode;
+function SfmlVideoMode(Width, Height: Cardinal;
+  BitsPerPixel: Cardinal = 32) : TSfmlVideoMode;
 
 implementation
 
-function SfmlVideoMode(Width, Height, BitsPerPixel: Cardinal) : TSfmlVideoMode;
+function SfmlVideoMode(Width, Height: Cardinal; BitsPerPixel: Cardinal = 32): TSfmlVideoMode;
 begin
   Result.Width := Width;
   Result.Height := Height;
@@ -483,6 +490,20 @@ begin
   FHandle := SfmlWindowCreateUnicode(VideoMode, PWideChar(Title), Style, nil);
 end;
 
+constructor TSfmlWindow.Create(VideoMode: TSfmlVideoMode; Title: AnsiString;
+  Style: TSfmlWindowStyles; ContextSetting: PSfmlContextSettings);
+begin
+  FHandle := SfmlWindowCreate(VideoMode, PAnsiChar(Title), Style,
+    ContextSetting);
+end;
+
+constructor TSfmlWindow.Create(VideoMode: TSfmlVideoMode; Title: UnicodeString;
+  Style: TSfmlWindowStyles; ContextSetting: PSfmlContextSettings);
+begin
+  FHandle := SfmlWindowCreateUnicode(VideoMode, PWideChar(Title), Style,
+    ContextSetting);
+end;
+
 constructor TSfmlWindow.Create(Handle: TSfmlWindowHandle);
 begin
   FHandle := SfmlWindowCreateFromHandle(Handle, nil);
@@ -534,7 +555,7 @@ begin
   Result := SfmlWindowIsOpen(FHandle);
 end;
 
-function TSfmlWindow.PollEvent(var Event: TSfmlEvent): Boolean;
+function TSfmlWindow.PollEvent(out Event: TSfmlEvent): Boolean;
 begin
   Result := SfmlWindowPollEvent(FHandle, Event);
 end;
@@ -604,7 +625,7 @@ begin
   SfmlWindowSetVisible(FHandle, Visible);
 end;
 
-function TSfmlWindow.WaitEvent(var Event: TSfmlEvent): Boolean;
+function TSfmlWindow.WaitEvent(out Event: TSfmlEvent): Boolean;
 begin
   Result := SfmlWindowWaitEvent(FHandle, Event);
 end;

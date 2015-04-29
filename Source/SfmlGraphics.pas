@@ -310,8 +310,8 @@ type
   TSfmlRenderWindowClose = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
   TSfmlRenderWindowIsOpen = function (const RenderWindow: PSfmlRenderWindow): Boolean; cdecl;
   TSfmlRenderWindowGetSettings = function (const RenderWindow: PSfmlRenderWindow): TSfmlContextSettings; cdecl;
-  TSfmlRenderWindowPollEvent = function (RenderWindow: PSfmlRenderWindow; Event: PSfmlEvent): Boolean; cdecl;
-  TSfmlRenderWindowWaitEvent = function (RenderWindow: PSfmlRenderWindow; Event: PSfmlEvent): Boolean; cdecl;
+  TSfmlRenderWindowPollEvent = function (RenderWindow: PSfmlRenderWindow; out Event: SfmlEvent): Boolean; cdecl;
+  TSfmlRenderWindowWaitEvent = function (RenderWindow: PSfmlRenderWindow; out Event: SfmlEvent): Boolean; cdecl;
   TSfmlRenderWindowGetPosition = function (const RenderWindow: PSfmlRenderWindow): TSfmlVector2i; cdecl;
   TSfmlRenderWindowSetPosition = procedure (RenderWindow: PSfmlRenderWindow; Position: TSfmlVector2i); cdecl;
   TSfmlRenderWindowGetSize = function (const RenderWindow: PSfmlRenderWindow): TSfmlVector2u; cdecl;
