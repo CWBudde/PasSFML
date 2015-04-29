@@ -1151,8 +1151,8 @@ const
   procedure SfmlRenderWindowClose(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_close';
   function SfmlRenderWindowIsOpen(const RenderWindow: PSfmlRenderWindow): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_isOpen';
   function SfmlRenderWindowGetSettings(const RenderWindow: PSfmlRenderWindow): TSfmlContextSettings; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_getSettings';
-  function SfmlRenderWindowPollEvent(RenderWindow: PSfmlRenderWindow; Event: PSfmlEvent): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_pollEvent';
-  function SfmlRenderWindowWaitEvent(RenderWindow: PSfmlRenderWindow; Event: PSfmlEvent): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_waitEvent';
+  function SfmlRenderWindowPollEvent(RenderWindow: PSfmlRenderWindow; out Event: TSfmlEvent): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_pollEvent';
+  function SfmlRenderWindowWaitEvent(RenderWindow: PSfmlRenderWindow; out Event: TSfmlEvent): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_waitEvent';
   function SfmlRenderWindowGetPosition(const RenderWindow: PSfmlRenderWindow): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_getPosition';
   procedure SfmlRenderWindowSetPosition(RenderWindow: PSfmlRenderWindow; Position: TSfmlVector2i); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setPosition';
   function SfmlRenderWindowGetSize(const RenderWindow: PSfmlRenderWindow): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_getSize';
@@ -1610,6 +1610,11 @@ type
     property Transform: TSfmlTransform read GetTransform;
   end;
 
+  TSfmlShape = class;
+  TSfmlSprite = class;
+  TSfmlText = class;
+  TSfmlVertexArray = class;
+
   TSfmlRenderTexture = class
   private
     FHandle: PSfmlRenderTexture;
@@ -1618,7 +1623,7 @@ type
     function GetRepeated: Boolean;
     function GetSmooth: Boolean;
   public
-    constructor Create(Width, Height: Cardinal; DepthBuffer: Boolean);
+    constructor Create(Width, Height: Cardinal; DepthBuffer: Boolean = False);
     destructor Destroy; override;
 
     function GetDefaultView: PSfmlView;
@@ -1632,6 +1637,14 @@ type
 
     procedure Clear(Color: TSfmlColor);
     procedure Display;
+
+    procedure Draw(const &Object: TSfmlCircleShape; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlConvexShape; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlRectangleShape; const States: PSfmlRenderStates = nil);overload;
+    procedure Draw(const &Object: TSfmlShape; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlSprite; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlText; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlVertexArray; const States: PSfmlRenderStates = nil); overload;
 
     procedure DrawCircleShape(const &Object: PSfmlCircleShape; const States: PSfmlRenderStates);
     procedure DrawConvexShape(const &Object: PSfmlConvexShape; const States: PSfmlRenderStates);
@@ -1652,11 +1665,6 @@ type
     property Repeated: Boolean read GetRepeated write SetRepeated;
     property Smooth: Boolean read GetSmooth write SetSmooth;
   end;
-
-  TSfmlShape = class;
-  TSfmlSprite = class;
-  TSfmlText = class;
-  TSfmlVertexArray = class;
 
   TSfmlRenderWindow = class
   private
@@ -1680,9 +1688,9 @@ type
     function GetViewport(const View: PSfmlView): TSfmlIntRect;
     function MapCoordsToPixel(Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i;
     function MapPixelToCoords(Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f;
-    function PollEvent(Event: PSfmlEvent): Boolean;
+    function PollEvent(out Event: TSfmlEvent): Boolean;
     function SetActive(Active: Boolean): Boolean;
-    function WaitEvent(Event: PSfmlEvent): Boolean;
+    function WaitEvent(out Event: TSfmlEvent): Boolean;
 
     procedure Clear(Color: TSfmlColor);
     procedure Close;
@@ -1742,13 +1750,13 @@ type
     constructor CreateFromFile(const VertexShaderFilename: AnsiString; const FragmentShaderFilename: AnsiString);
     destructor Destroy; override;
 
-    procedure SetFloatParameter(const Name: AnsiString; X: Single);
-    procedure SetFloat2Parameter(const Name: AnsiString; X, Y: Single);
-    procedure SetFloat3Parameter(const Name: AnsiString; X, Y, Z: Single);
-    procedure SetFloat4Parameter(const Name: AnsiString; X, Y, Z, W: Single);
-    procedure SetVector2Parameter(const Name: AnsiString; Vector: TSfmlVector2f);
-    procedure SetVector3Parameter(const Name: AnsiString; Vector: TSfmlVector3f);
-    procedure SetColorParameter(const Name: AnsiString; Color: TSfmlColor);
+    procedure SetParameter(const Name: AnsiString; X: Single); overload;
+    procedure SetParameter(const Name: AnsiString; X, Y: Single); overload;
+    procedure SetParameter(const Name: AnsiString; X, Y, Z: Single); overload;
+    procedure SetParameter(const Name: AnsiString; X, Y, Z, W: Single); overload;
+    procedure SetParameter(const Name: AnsiString; Vector: TSfmlVector2f); overload;
+    procedure SetParameter(const Name: AnsiString; Vector: TSfmlVector3f); overload;
+    procedure SetParameter(const Name: AnsiString; Color: TSfmlColor); overload;
     procedure SetTransformParameter(const Name: AnsiString; Transform: TSfmlTransform);
     procedure SetTextureParameter(const Name: AnsiString; const Texture: PSfmlTexture);
     procedure SetCurrentTextureParameter(const Name: AnsiString);
@@ -1843,8 +1851,8 @@ type
     procedure Rotate(Angle: Single);
     procedure Scale(Factors: TSfmlVector2f);
 
-    procedure SetTexture(const Texture: TSfmlTexture; ResetRect: Boolean); overload;
-    procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean); overload;
+    procedure SetTexture(const Texture: TSfmlTexture; ResetRect: Boolean = False); overload;
+    procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean = False); overload;
     procedure SetTextureRect(Rectangle: TSfmlIntRect);
 
     property Color: TSfmlColor read GetColor write SetColor;
@@ -1877,7 +1885,7 @@ type
     function GetString: AnsiString;
     function GetStyle: Cardinal;
     function GetTransform: TSfmlTransform;
-    function GetUnicodeString: string;
+    function GetUnicodeString: UnicodeString;
     procedure SetCharacterSize(Size: Cardinal);
     procedure SetColor(Color: TSfmlColor);
     procedure SetFont(const Font: PSfmlFont);
@@ -1887,9 +1895,14 @@ type
     procedure SetScale(Scale: TSfmlVector2f);
     procedure SetString(const &String: AnsiString);
     procedure SetStyle(Style: Cardinal);
-    procedure SetUnicodeString(const &String: string);
+    procedure SetUnicodeString(const &String: UnicodeString);
   public
-    constructor Create;
+    constructor Create; overload;
+    constructor Create(Text: UnicodeString); overload;
+    constructor Create(Text: UnicodeString; Font: TSfmlFont); overload;
+    constructor Create(Text: UnicodeString; Font: PSfmlFont); overload;
+    constructor Create(Text: UnicodeString; Font: TSfmlFont; CharacterSize: Cardinal); overload;
+    constructor Create(Text: UnicodeString; Font: PSfmlFont; CharacterSize: Cardinal); overload;
     destructor Destroy; override;
 
     function Copy: TSfmlText;
@@ -1913,7 +1926,7 @@ type
     property &String: AnsiString read GetString write SetString;
     property Style: Cardinal read GetStyle write SetStyle;
     property Transform: TSfmlTransform read GetTransform;
-    property UnicodeString: string read GetUnicodeString write SetUnicodeString;
+    property UnicodeString: UnicodeString read GetUnicodeString write SetUnicodeString;
   end;
 
   TSfmlTexture = class
@@ -1925,10 +1938,10 @@ type
     procedure SetSmooth(Smooth: Boolean);
   public
     constructor Create(Width, Height: Cardinal); overload;
-    constructor Create(const FileName: AnsiString; const Area: PSfmlIntRect); overload;
-    constructor Create(const Data: Pointer; SizeInBytes: NativeUInt; const Area: PSfmlIntRect); overload;
-    constructor Create(Stream: PSfmlInputStream; const Area: PSfmlIntRect); overload;
-    constructor Create(const Image: PSfmlImage; const Area: PSfmlIntRect); overload;
+    constructor Create(const FileName: AnsiString; const Area: PSfmlIntRect = nil); overload;
+    constructor Create(const Data: Pointer; SizeInBytes: NativeUInt; const Area: PSfmlIntRect = nil); overload;
+    constructor Create(Stream: PSfmlInputStream; const Area: PSfmlIntRect = nil); overload;
+    constructor Create(const Image: PSfmlImage; const Area: PSfmlIntRect = nil); overload;
     destructor Destroy; override;
 
     function Copy: TSfmlTexture;
@@ -2722,7 +2735,7 @@ end;
 
 { TSfmlRenderTexture }
 
-constructor TSfmlRenderTexture.Create(Width, Height: Cardinal; DepthBuffer: Boolean);
+constructor TSfmlRenderTexture.Create(Width, Height: Cardinal; DepthBuffer: Boolean = False);
 begin
   FHandle := SfmlRenderTextureCreate(Width, Height, DepthBuffer);
 end;
@@ -2741,6 +2754,48 @@ end;
 procedure TSfmlRenderTexture.Display;
 begin
   SfmlRenderTextureDisplay(FHandle);
+end;
+
+procedure TSfmlRenderTexture.Draw(const &Object: TSfmlRectangleShape;
+  const States: PSfmlRenderStates);
+begin
+  SfmlRenderTextureDrawRectangleShape(FHandle, &Object.Handle, States);
+end;
+
+procedure TSfmlRenderTexture.Draw(const &Object: TSfmlConvexShape;
+  const States: PSfmlRenderStates);
+begin
+  SfmlRenderTextureDrawConvexShape(FHandle, &Object.Handle, States);
+end;
+
+procedure TSfmlRenderTexture.Draw(const &Object: TSfmlCircleShape;
+  const States: PSfmlRenderStates);
+begin
+  SfmlRenderTextureDrawCircleShape(FHandle, &Object.Handle, States);
+end;
+
+procedure TSfmlRenderTexture.Draw(const &Object: TSfmlShape;
+  const States: PSfmlRenderStates);
+begin
+  SfmlRenderTextureDrawShape(FHandle, &Object.Handle, States);
+end;
+
+procedure TSfmlRenderTexture.Draw(const &Object: TSfmlVertexArray;
+  const States: PSfmlRenderStates);
+begin
+  SfmlRenderTextureDrawVertexArray(FHandle, &Object.Handle, States);
+end;
+
+procedure TSfmlRenderTexture.Draw(const &Object: TSfmlText;
+  const States: PSfmlRenderStates);
+begin
+  SfmlRenderTextureDrawText(FHandle, &Object.Handle, States);
+end;
+
+procedure TSfmlRenderTexture.Draw(const &Object: TSfmlSprite;
+  const States: PSfmlRenderStates);
+begin
+  SfmlRenderTextureDrawSprite(FHandle, &Object.Handle, States);
 end;
 
 procedure TSfmlRenderTexture.DrawCircleShape(const &Object: PSfmlCircleShape;
@@ -3078,7 +3133,7 @@ begin
   Result := SfmlRenderWindowMapPixelToCoords(FHandle, Point, View);
 end;
 
-function TSfmlRenderWindow.PollEvent(Event: PSfmlEvent): Boolean;
+function TSfmlRenderWindow.PollEvent(out Event: TSfmlEvent): Boolean;
 begin
   Result := SfmlRenderWindowPollEvent(FHandle, Event);
 end;
@@ -3189,7 +3244,7 @@ begin
 end;
 *)
 
-function TSfmlRenderWindow.WaitEvent(Event: PSfmlEvent): Boolean;
+function TSfmlRenderWindow.WaitEvent(out Event: TSfmlEvent): Boolean;
 begin
   Result := SfmlRenderWindowWaitEvent(FHandle, Event);
 end;
@@ -3225,7 +3280,7 @@ begin
   SfmlShaderBind(FHandle);
 end;
 
-procedure TSfmlShader.SetColorParameter(const Name: AnsiString;
+procedure TSfmlShader.SetParameter(const Name: AnsiString;
   Color: TSfmlColor);
 begin
   SfmlShaderSetColorParameter(FHandle, PAnsiChar(Name), Color);
@@ -3236,24 +3291,24 @@ begin
   SfmlShaderSetCurrentTextureParameter(FHandle, PAnsiChar(Name));
 end;
 
-procedure TSfmlShader.SetFloat2Parameter(const Name: AnsiString; X, Y: Single);
+procedure TSfmlShader.SetParameter(const Name: AnsiString; X, Y: Single);
 begin
   SfmlShaderSetFloat2Parameter(FHandle, PAnsiChar(Name), X, Y);
 end;
 
-procedure TSfmlShader.SetFloat3Parameter(const Name: AnsiString; X, Y,
+procedure TSfmlShader.SetParameter(const Name: AnsiString; X, Y,
   Z: Single);
 begin
   SfmlShaderSetFloat3Parameter(FHandle, PAnsiChar(Name), X, Y, Z);
 end;
 
-procedure TSfmlShader.SetFloat4Parameter(const Name: AnsiString; X, Y, Z,
+procedure TSfmlShader.SetParameter(const Name: AnsiString; X, Y, Z,
   W: Single);
 begin
   SfmlShaderSetFloat4Parameter(FHandle, PAnsiChar(Name), X, Y, Z, W);
 end;
 
-procedure TSfmlShader.SetFloatParameter(const Name: AnsiString; X: Single);
+procedure TSfmlShader.SetParameter(const Name: AnsiString; X: Single);
 begin
   SfmlShaderSetFloatParameter(FHandle, PAnsiChar(Name), X);
 end;
@@ -3270,13 +3325,13 @@ begin
   SfmlShaderSetTransformParameter(FHandle, PAnsiChar(Name), Transform);
 end;
 
-procedure TSfmlShader.SetVector2Parameter(const Name: AnsiString;
+procedure TSfmlShader.SetParameter(const Name: AnsiString;
   Vector: TSfmlVector2f);
 begin
   SfmlShaderSetVector2Parameter(FHandle, PAnsiChar(Name), Vector);
 end;
 
-procedure TSfmlShader.SetVector3Parameter(const Name: AnsiString;
+procedure TSfmlShader.SetParameter(const Name: AnsiString;
   Vector: TSfmlVector3f);
 begin
   SfmlShaderSetVector3Parameter(FHandle, PAnsiChar(Name), Vector);
@@ -3552,13 +3607,13 @@ begin
 end;
 
 procedure TSfmlSprite.SetTexture(const Texture: TSfmlTexture;
-  ResetRect: Boolean);
+  ResetRect: Boolean = False);
 begin
   SfmlSpriteSetTexture(FHandle, Texture.FHandle, ResetRect);
 end;
 
 procedure TSfmlSprite.SetTexture(const Texture: PSfmlTexture;
-  ResetRect: Boolean);
+  ResetRect: Boolean = False);
 begin
   SfmlSpriteSetTexture(FHandle, Texture, ResetRect);
 end;
@@ -3574,6 +3629,44 @@ end;
 constructor TSfmlText.Create;
 begin
   FHandle := SfmlTextCreate;
+end;
+
+constructor TSfmlText.Create(Text: UnicodeString; Font: TSfmlFont;
+  CharacterSize: Cardinal);
+begin
+  Create;
+  SetString(Text);
+  SetFont(Font.Handle);
+  SetCharacterSize(CharacterSize);
+end;
+
+constructor TSfmlText.Create(Text: UnicodeString; Font: TSfmlFont);
+begin
+  Create;
+  SetString(Text);
+  SetFont(Font.Handle);
+end;
+
+constructor TSfmlText.Create(Text: UnicodeString);
+begin
+  Create;
+  SetString(Text);
+end;
+
+constructor TSfmlText.Create(Text: UnicodeString; Font: PSfmlFont;
+  CharacterSize: Cardinal);
+begin
+  Create;
+  SetString(Text);
+  SetFont(Font);
+  SetCharacterSize(CharacterSize);
+end;
+
+constructor TSfmlText.Create(Text: UnicodeString; Font: PSfmlFont);
+begin
+  Create;
+  SetString(Text);
+  SetFont(Font);
 end;
 
 destructor TSfmlText.Destroy;
@@ -3657,7 +3750,7 @@ begin
   Result := SfmlTextGetTransform(FHandle);
 end;
 
-function TSfmlText.GetUnicodeString: string;
+function TSfmlText.GetUnicodeString: UnicodeString;
 begin
   Result := SfmlTextGetUnicodeString(FHandle);
 end;
@@ -3722,7 +3815,7 @@ begin
   SfmlTextSetStyle(FHandle, Style);
 end;
 
-procedure TSfmlText.SetUnicodeString(const &String: string);
+procedure TSfmlText.SetUnicodeString(const &String: UnicodeString);
 begin
   SfmlTextSetUnicodeString(FHandle, PWideChar(&String));
 end;
@@ -3735,22 +3828,26 @@ begin
   FHandle := SfmlTextureCreate(Width, Height);
 end;
 
-constructor TSfmlTexture.Create(const Image: PSfmlImage; const Area: PSfmlIntRect);
+constructor TSfmlTexture.Create(const Image: PSfmlImage;
+  const Area: PSfmlIntRect = nil);
 begin
   FHandle := SfmlTextureCreateFromImage(Image, Area);
 end;
 
-constructor TSfmlTexture.Create(Stream: PSfmlInputStream; const Area: PSfmlIntRect);
+constructor TSfmlTexture.Create(Stream: PSfmlInputStream;
+  const Area: PSfmlIntRect = nil);
 begin
   FHandle := SfmlTextureCreateFromStream(Stream, Area);
 end;
 
-constructor TSfmlTexture.Create(const FileName: AnsiString; const Area: PSfmlIntRect);
+constructor TSfmlTexture.Create(const FileName: AnsiString;
+  const Area: PSfmlIntRect = nil);
 begin
   FHandle := SfmlTextureCreateFromFile(PAnsiChar(FileName), Area);
 end;
 
-constructor TSfmlTexture.Create(const Data: Pointer; SizeInBytes: NativeUInt; const Area: PSfmlIntRect);
+constructor TSfmlTexture.Create(const Data: Pointer; SizeInBytes: NativeUInt;
+  const Area: PSfmlIntRect = nil);
 begin
   FHandle := SfmlTextureCreateFromMemory(Data, SizeInBytes, Area);
 end;

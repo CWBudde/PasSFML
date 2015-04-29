@@ -61,7 +61,7 @@ begin
   while SfmlRenderWindowIsOpen(Window) do
   begin
     // Process events
-    while SfmlRenderWindowPollEvent(Window, @Event) do
+    while SfmlRenderWindowPollEvent(Window, Event) do
     begin
       // Close window : exit
       if Event.EventType = sfEvtClosed then

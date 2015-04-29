@@ -58,7 +58,7 @@ begin
               while Window.IsOpen do
               begin
                 // Process events
-                while Window.PollEvent(@Event) do
+                while Window.PollEvent(Event) do
                 begin
                   // Close window : exit
                   if Event.EventType = sfEvtClosed then
@@ -69,10 +69,10 @@ begin
                 Window.Clear(SfmlWhite);
 
                 // Draw the sprite
-                Window.DrawSprite(Sprite, nil);
+                Window.Draw(Sprite, nil);
 
                 // Draw the text
-                Window.DrawText(Text, nil);
+                Window.Draw(Text, nil);
 
                 // Update the window
                 Window.Display;

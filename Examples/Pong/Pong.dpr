@@ -89,7 +89,7 @@ begin
   while Window.isOpen do
   begin
     // Handle events
-    while Window.PollEvent(@Event) do
+    while Window.PollEvent(Event) do
     begin
       // Window closed or escape key pressed: exit
       if (Event.EventType = sfEvtClosed) or
