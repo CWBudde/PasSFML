@@ -5,7 +5,7 @@
 
 {-$DEFINE DynLink}
 
-{$DEFINE RecordConstructors}
+{-$DEFINE RecordConstructors}
 
 {$Z4}
 {$A4}

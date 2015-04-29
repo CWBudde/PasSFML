@@ -391,7 +391,7 @@ type
   public
     constructor Create(VideoMode: TSfmlVideoMode; Title: AnsiString;
       Style: TSfmlWindowStyles); overload;
-    constructor Create(VideoMode: TSfmlVideoMode; Title: string;
+    constructor Create(VideoMode: TSfmlVideoMode; Title: Unicodestring;
       Style: TSfmlWindowStyles); overload;
     constructor Create(Handle: TSfmlWindowHandle); overload;
     destructor Destroy; override;
@@ -477,7 +477,7 @@ begin
   FHandle := SfmlWindowCreate(VideoMode, PAnsiChar(Title), Style, nil);
 end;
 
-constructor TSfmlWindow.Create(VideoMode: TSfmlVideoMode; Title: string;
+constructor TSfmlWindow.Create(VideoMode: TSfmlVideoMode; Title: UnicodeString;
   Style: TSfmlWindowStyles);
 begin
   FHandle := SfmlWindowCreateUnicode(VideoMode, PWideChar(Title), Style, nil);

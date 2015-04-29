@@ -1,7 +1,5 @@
 program HelloWorld;
 
-{$R *.res}
-
 uses
   SysUtils,
   SfmlAudio in '..\..\Source\SfmlAudio.pas',
@@ -84,7 +82,6 @@ begin
   end;
 
   // Cleanup resources
-  SfmlMusicStop(Music);
   SfmlMusicDestroy(Music);
   SfmlTextDestroy(Text);
   SfmlFontDestroy(Font);

@@ -1,7 +1,5 @@
 program HelloWorld;
 
-{$R *.res}
-
 uses
   SysUtils,
   SfmlAudio in '..\..\Source\SfmlAudio.pas',

@@ -982,14 +982,14 @@ const
   function SfmlCircleShapeCreate: PSfmlCircleShape; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_create';
   function SfmlCircleShapeCopy(const Shape: PSfmlCircleShape): PSfmlCircleShape; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_copy';
   procedure SfmlCircleShapeDestroy(Shape: PSfmlCircleShape); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_destroy';
-  procedure SfmlCircleShapeSetPosition(Shape: PSfmlCircleShape; var Position: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setPosition';
+  procedure SfmlCircleShapeSetPosition(Shape: PSfmlCircleShape; Position: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setPosition';
   procedure SfmlCircleShapeSetRotation(Shape: PSfmlCircleShape; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setRotation';
   procedure SfmlCircleShapeSetScale(Shape: PSfmlCircleShape; Scale: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setScale';
   procedure SfmlCircleShapeSetOrigin(Shape: PSfmlCircleShape; Origin: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setOrigin';
   function SfmlCircleShapeGetPosition(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getPosition';
   function SfmlCircleShapeGetRotation(const Shape: PSfmlCircleShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getRotation';
   function SfmlCircleShapeGetScale(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getScale';
-  function SfmlCircleShapeGetOrigin(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getOrigin';
+  function SfmlCircleShapeGetOrigin(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getOrigin'; // changed!!!
   procedure SfmlCircleShapeMove(Shape: PSfmlCircleShape; Offset: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_move';
   procedure SfmlCircleShapeRotate(Shape: PSfmlCircleShape; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_rotate';
   procedure SfmlCircleShapeScale(Shape: PSfmlCircleShape; Factors: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_scale';
@@ -1719,7 +1719,7 @@ type
     procedure SetMouseCursorVisible(Show: Boolean);
     procedure SetSize(Size: TSfmlVector2u);
     procedure SetTitle(const Title: AnsiString); overload;
-    procedure SetTitle(const Title: string); overload;
+    procedure SetTitle(const Title: UnicodeString); overload;
     procedure SetVerticalSyncEnabled(Enabled: Boolean);
     procedure SetView(const View: PSfmlView);
     procedure SetVisible(Visible: Boolean);
@@ -2064,32 +2064,32 @@ end;
 
 function TSfmlCircleShape.GetFillColor: TSfmlColor;
 begin
-  SfmlCircleShapeGetFillColor(FHandle);
+  Result := SfmlCircleShapeGetFillColor(FHandle);
 end;
 
 function TSfmlCircleShape.GetGlobalBounds: TSfmlFloatRect;
 begin
-  SfmlCircleShapeGetGlobalBounds(FHandle);
+  Result := SfmlCircleShapeGetGlobalBounds(FHandle);
 end;
 
 function TSfmlCircleShape.GetInverseTransform: TSfmlTransform;
 begin
-  SfmlCircleShapeGetInverseTransform(FHandle);
+  Result := SfmlCircleShapeGetInverseTransform(FHandle);
 end;
 
 function TSfmlCircleShape.GetLocalBounds: TSfmlFloatRect;
 begin
-  SfmlCircleShapeGetLocalBounds(FHandle);
+  Result := SfmlCircleShapeGetLocalBounds(FHandle);
 end;
 
 function TSfmlCircleShape.GetOrigin: TSfmlVector2f;
 begin
-  SfmlCircleShapeGetOrigin(FHandle);
+  Result := SfmlCircleShapeGetOrigin(FHandle);
 end;
 
 function TSfmlCircleShape.GetOutlineColor: TSfmlColor;
 begin
-  SfmlCircleShapeGetOutlineColor(FHandle);
+  Result := SfmlCircleShapeGetOutlineColor(FHandle);
 end;
 
 function TSfmlCircleShape.GetOutlineThickness: Single;
@@ -2099,7 +2099,7 @@ end;
 
 function TSfmlCircleShape.GetPoint(Index: Cardinal): TSfmlVector2f;
 begin
-  SfmlCircleShapeGetPoint(FHandle, Index);
+  Result := SfmlCircleShapeGetPoint(FHandle, Index);
 end;
 
 function TSfmlCircleShape.GetPointCount: Cardinal;
@@ -2109,7 +2109,7 @@ end;
 
 function TSfmlCircleShape.GetPosition: TSfmlVector2f;
 begin
-  SfmlCircleShapeGetPosition(FHandle);
+  Result := SfmlCircleShapeGetPosition(FHandle);
 end;
 
 function TSfmlCircleShape.GetRadius: Single;
@@ -2134,12 +2134,12 @@ end;
 
 function TSfmlCircleShape.GetTextureRect: TSfmlIntRect;
 begin
-  SfmlCircleShapeGetTextureRect(FHandle);
+  Result := SfmlCircleShapeGetTextureRect(FHandle);
 end;
 
 function TSfmlCircleShape.GetTransform: TSfmlTransform;
 begin
-  SfmlCircleShapeGetTransform(FHandle);
+  Result := SfmlCircleShapeGetTransform(FHandle);
 end;
 
 procedure TSfmlCircleShape.Move(X, Y: Single);
@@ -3149,7 +3149,7 @@ begin
   SfmlRenderWindowSetTitle(FHandle, PAnsiChar(Title));
 end;
 
-procedure TSfmlRenderWindow.SetTitle(const Title: string);
+procedure TSfmlRenderWindow.SetTitle(const Title: UnicodeString);
 begin
   SfmlRenderWindowSetUnicodeTitle(FHandle, PWideChar(Title));
 end;

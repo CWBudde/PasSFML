@@ -1,7 +1,5 @@
 program Pong;
 
-{$R *.res}
-
 uses
   SysUtils,
   SfmlAudio in '..\..\Source\SfmlAudio.pas',
@@ -70,7 +68,6 @@ begin
   Ball.OutlineColor := SfmlBlack;
   Ball.FillColor := SfmlWhite;
   Ball.Origin := SfmlVector2f(0.5 * BallRadius, 0.5 * BallRadius);
-  Assert(Ball.Origin.X = 0.5 * BallRadius);
 
   // Load the text font
   Font := TSfmlFont.Create('../Resources/Sansation.ttf');
@@ -127,7 +124,7 @@ begin
 
     if IsPlaying then
     begin
-      DeltaTime := 0.01; // Clock.Restart.AsSeconds;
+      DeltaTime := Clock.Restart.AsSeconds;
 
       // Move the player's paddle
       if SfmlKeyboardIsKeyPressed(sfKeyUp) and
