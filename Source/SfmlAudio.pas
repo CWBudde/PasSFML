@@ -419,7 +419,7 @@ var
   function SfmlSoundRecorderStart(SoundRecorder: PSfmlSoundRecorder; SampleRate: Cardinal): Boolean; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_start';
   procedure SfmlSoundRecorderStop(SoundRecorder: PSfmlSoundRecorder); cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_stop';
   function SfmlSoundRecorderGetSampleRate(const SoundRecorder: PSfmlSoundRecorder): Cardinal; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_getSampleRate';
-  function SfmlSoundRecorderIsAvailable: Boolean; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorderIsAvailable';
+  function SfmlSoundRecorderIsAvailable: Boolean; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_isAvailable';
   procedure SfmlSoundRecorderSetProcessingInterval(SoundRecorder: PSfmlSoundRecorder; Interval: TSfmlTime); cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_setProcessingInterval';
   function SfmlSoundRecorderGetAvailableDevices(count: PNativeUInt): PPAnsiChar; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_getAvailableDevices';
   function SfmlSoundRecorderGetDefaultDevice: PAnsiChar; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_getDefaultDevice';

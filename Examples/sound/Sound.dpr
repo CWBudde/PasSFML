@@ -29,7 +29,7 @@ begin
   Sound.Play;
 
   // Loop while the sound is playing
-  while sound.Status = sfPlaying do
+  while Sound.Status = sfPlaying do
   begin
     // Leave some CPU time for other processes
     SfmlSleep(SfmlMilliseconds(100));
@@ -40,7 +40,7 @@ begin
   WriteLn;
 end;
 
-procedure playMusic;
+procedure PlayMusic;
 var
   Music: TSfmlMusic;
 begin
