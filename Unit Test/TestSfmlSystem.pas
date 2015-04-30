@@ -1,13 +1,11 @@
 unit TestSfmlSystem;
 
-{$IFDEF FPC}
-  {$MODE Delphi}
-{$ENDIF}
+{$I ..\Source\Sfml.inc}
 
 interface
 
 uses
-{$IFnDEF FPC}
+{$IFNDEF FPC}
   TestFramework,
 {$ELSE}
   FPCUnit, TestUtils, TestRegistry,
@@ -176,8 +174,8 @@ end;
 
 procedure TestFunction(UserData: Pointer); cdecl;
 begin
-  // sleep one second
-//  SfmlSleep(SfmlSeconds(1));
+  // sleep one tenth second
+  SfmlSleep(SfmlSeconds(0.1));
 
   // set signal
   Assert(TObject(UserData) is TestTSfmlThread);

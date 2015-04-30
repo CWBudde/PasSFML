@@ -304,7 +304,7 @@ type
   TSfmlRenderTextureIsRepeated = function (const RenderTexture: PSfmlRenderTexture): Boolean; cdecl;
 
   TSfmlRenderWindowCreate = function (Mode: TSfmlVideoMode; const Title: PAnsiChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl;
-  TSfmlRenderWindowCreateUnicode = function (Mode: TSfmlVideoMode; const Title: PWideChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl;
+  TSfmlRenderWindowCreateUnicode = function (Mode: TSfmlVideoMode; const Title: PUCS4CharArray; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl;
   TSfmlRenderWindowCreateFromHandle = function (Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl;
   TSfmlRenderWindowDestroy = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
   TSfmlRenderWindowClose = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
@@ -317,7 +317,7 @@ type
   TSfmlRenderWindowGetSize = function (const RenderWindow: PSfmlRenderWindow): TSfmlVector2u; cdecl;
   TSfmlRenderWindowSetSize = procedure (RenderWindow: PSfmlRenderWindow; Size: TSfmlVector2u); cdecl;
   TSfmlRenderWindowSetTitle = procedure (RenderWindow: PSfmlRenderWindow; const Title: PAnsiChar); cdecl;
-  TSfmlRenderWindowSetUnicodeTitle = procedure (RenderWindow: PSfmlRenderWindow; const Title: PWideChar); cdecl;
+  TSfmlRenderWindowSetUnicodeTitle = procedure (RenderWindow: PSfmlRenderWindow; const Title: PUCS4CharArray); cdecl;
   TSfmlRenderWindowSetIcon = procedure (RenderWindow: PSfmlRenderWindow; Width, Height: Cardinal; const Pixels: PByte); cdecl;
   TSfmlRenderWindowSetVisible = procedure (RenderWindow: PSfmlRenderWindow; Visible: Boolean); cdecl;
   TSfmlRenderWindowSetMouseCursorVisible = procedure (RenderWindow: PSfmlRenderWindow; Show: Boolean); cdecl;
@@ -443,13 +443,13 @@ type
   TSfmlTextGetTransform = function (const Text: PSfmlText): TSfmlTransform; cdecl;
   TSfmlTextGetInverseTransform = function (const Text: PSfmlText): TSfmlTransform; cdecl;
   TSfmlTextSetString = procedure (Text: PSfmlText; const &String: PAnsiChar); cdecl;
-  TSfmlTextSetUnicodeString = procedure (Text: PSfmlText; const &String: PWideChar); cdecl;
+  TSfmlTextSetUnicodeString = procedure (Text: PSfmlText; const &String: PUCS4CharArray); cdecl;
   TSfmlTextSetFont = procedure (Text: PSfmlText; const Font: PSfmlFont); cdecl;
   TSfmlTextSetCharacterSize = procedure (Text: PSfmlText; Size: Cardinal); cdecl;
   TSfmlTextSetStyle = procedure (Text: PSfmlText; Style: Cardinal); cdecl;
   TSfmlTextSetColor = procedure (Text: PSfmlText; Color: TSfmlColor); cdecl;
   TSfmlTextGetString = function (const Text: PSfmlText): PAnsiChar; cdecl;
-  TSfmlTextGetUnicodeString = function (const Text: PSfmlText): PWideChar; cdecl;
+  TSfmlTextGetUnicodeString = function (const Text: PSfmlText): PUCS4CharArray; cdecl;
   TSfmlTextGetFont = function (const Text: PSfmlText): PSfmlFont; cdecl;
   TSfmlTextGetCharacterSize = function (const Text: PSfmlText): Cardinal; cdecl;
   TSfmlTextGetStyle = function (const Text: PSfmlText): Cardinal; cdecl;
@@ -1145,7 +1145,7 @@ const
   function SfmlRenderTextureIsRepeated(const RenderTexture: PSfmlRenderTexture): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_isRepeated';
 
   function SfmlRenderWindowCreate(Mode: TSfmlVideoMode; const Title: PAnsiChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_create';
-  function SfmlRenderWindowCreateUnicode(Mode: TSfmlVideoMode; const Title: PWideChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_createUnicode';
+  function SfmlRenderWindowCreateUnicode(Mode: TSfmlVideoMode; const Title: PUCS4CharArray; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_createUnicode';
   function SfmlRenderWindowCreateFromHandle(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_createFromHandle';
   procedure SfmlRenderWindowDestroy(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_destroy';
   procedure SfmlRenderWindowClose(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_close';
@@ -1158,7 +1158,7 @@ const
   function SfmlRenderWindowGetSize(const RenderWindow: PSfmlRenderWindow): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_getSize';
   procedure SfmlRenderWindowSetSize(RenderWindow: PSfmlRenderWindow; Size: TSfmlVector2u); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setSize';
   procedure SfmlRenderWindowSetTitle(RenderWindow: PSfmlRenderWindow; const Title: PAnsiChar); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setTitle';
-  procedure SfmlRenderWindowSetUnicodeTitle(RenderWindow: PSfmlRenderWindow; const Title: PWideChar); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setUnicodeTitle';
+  procedure SfmlRenderWindowSetUnicodeTitle(RenderWindow: PSfmlRenderWindow; const Title: PUCS4CharArray); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setUnicodeTitle';
   procedure SfmlRenderWindowSetIcon(RenderWindow: PSfmlRenderWindow; Width, Height: Cardinal; const Pixels: PByte); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setIcon';
   procedure SfmlRenderWindowSetVisible(RenderWindow: PSfmlRenderWindow; Visible: Boolean); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setVisible';
   procedure SfmlRenderWindowSetMouseCursorVisible(RenderWindow: PSfmlRenderWindow; Show: Boolean); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setMouseCursorVisible';
@@ -1284,13 +1284,13 @@ const
   function SfmlTextGetTransform(const Text: PSfmlText): TSfmlTransform; cdecl; external CSfmlGraphicsLibrary name 'sfText_getTransform';
   function SfmlTextGetInverseTransform(const Text: PSfmlText): TSfmlTransform; cdecl; external CSfmlGraphicsLibrary name 'sfText_getInverseTransform';
   procedure SfmlTextSetString(Text: PSfmlText; const &String: PAnsiChar); cdecl; external CSfmlGraphicsLibrary name 'sfText_setString';
-  procedure SfmlTextSetUnicodeString(Text: PSfmlText; const &String: PWideChar); cdecl; external CSfmlGraphicsLibrary name 'sfText_setUnicodeString';
+  procedure SfmlTextSetUnicodeString(Text: PSfmlText; const &String: PUCS4CharArray); cdecl; external CSfmlGraphicsLibrary name 'sfText_setUnicodeString';
   procedure SfmlTextSetFont(Text: PSfmlText; const Font: PSfmlFont); cdecl; external CSfmlGraphicsLibrary name 'sfText_setFont';
   procedure SfmlTextSetCharacterSize(Text: PSfmlText; Size: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfText_setCharacterSize';
   procedure SfmlTextSetStyle(Text: PSfmlText; Style: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfText_setStyle';
   procedure SfmlTextSetColor(Text: PSfmlText; Color: TSfmlColor); cdecl; external CSfmlGraphicsLibrary name 'sfText_setColor';
   function SfmlTextGetString(const Text: PSfmlText): PAnsiChar; cdecl; external CSfmlGraphicsLibrary name 'sfText_getString';
-  function SfmlTextGetUnicodeString(const Text: PSfmlText): PWideChar; cdecl; external CSfmlGraphicsLibrary name 'sfText_getUnicodeString';
+  function SfmlTextGetUnicodeString(const Text: PSfmlText): PUCS4CharArray; cdecl; external CSfmlGraphicsLibrary name 'sfText_getUnicodeString';
   function SfmlTextGetFont(const Text: PSfmlText): PSfmlFont; cdecl; external CSfmlGraphicsLibrary name 'sfText_getFont';
   function SfmlTextGetCharacterSize(const Text: PSfmlText): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfText_getCharacterSize';
   function SfmlTextGetStyle(const Text: PSfmlText): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfText_getStyle';
@@ -1673,9 +1673,9 @@ type
     procedure SetPosition(Position: TSfmlVector2i);
   public
     constructor Create(Mode: TSfmlVideoMode; const Title: AnsiString; Style: TSfmlWindowStyles); overload;
-    constructor Create(Mode: TSfmlVideoMode; const Title: PWideChar; Style: TSfmlWindowStyles); overload;
+    constructor Create(Mode: TSfmlVideoMode; const Title: PUCS4CharArray; Style: TSfmlWindowStyles); overload;
     constructor Create(Mode: TSfmlVideoMode; const Title: AnsiString; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings); overload;
-    constructor Create(Mode: TSfmlVideoMode; const Title: PWideChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings); overload;
+    constructor Create(Mode: TSfmlVideoMode; const Title: PUCS4CharArray; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings); overload;
     constructor Create(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings); overload;
     destructor Destroy; override;
 
@@ -2957,10 +2957,10 @@ begin
 end;
 
 constructor TSfmlRenderWindow.Create(Mode: TSfmlVideoMode;
-  const Title: PWideChar; Style: TSfmlWindowStyles;
+  const Title: PUCS4CharArray; Style: TSfmlWindowStyles;
   const Settings: PSfmlContextSettings);
 begin
-  FHandle := SfmlRenderWindowCreateUnicode(Mode, PWideChar(Title), Style, Settings);
+  FHandle := SfmlRenderWindowCreateUnicode(Mode, PUCS4CharArray(Title), Style, Settings);
 end;
 
 constructor TSfmlRenderWindow.Create(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings);
@@ -2975,9 +2975,9 @@ begin
 end;
 
 constructor TSfmlRenderWindow.Create(Mode: TSfmlVideoMode;
-  const Title: PWideChar; Style: TSfmlWindowStyles);
+  const Title: PUCS4CharArray; Style: TSfmlWindowStyles);
 begin
-  FHandle := SfmlRenderWindowCreateUnicode(Mode, PWideChar(Title), Style, nil);
+  FHandle := SfmlRenderWindowCreateUnicode(Mode, PUCS4CharArray(Title), Style, nil);
 end;
 
 destructor TSfmlRenderWindow.Destroy;
@@ -3225,7 +3225,7 @@ end;
 
 procedure TSfmlRenderWindow.SetTitle(const Title: UnicodeString);
 begin
-  SfmlRenderWindowSetUnicodeTitle(FHandle, PWideChar(Title));
+  SfmlRenderWindowSetUnicodeTitle(FHandle, PUCS4CharArray(Title));
 end;
 
 procedure TSfmlRenderWindow.SetVerticalSyncEnabled(Enabled: Boolean);
@@ -3654,7 +3654,7 @@ constructor TSfmlText.Create(Text: UnicodeString; Font: TSfmlFont;
   CharacterSize: Cardinal);
 begin
   Create;
-  SetString(Text);
+  SetUnicodeString(Text);
   SetFont(Font.Handle);
   SetCharacterSize(CharacterSize);
 end;
@@ -3662,21 +3662,21 @@ end;
 constructor TSfmlText.Create(Text: UnicodeString; Font: TSfmlFont);
 begin
   Create;
-  SetString(Text);
+  SetUnicodeString(Text);
   SetFont(Font.Handle);
 end;
 
 constructor TSfmlText.Create(Text: UnicodeString);
 begin
   Create;
-  SetString(Text);
+  SetUnicodeString(WideCharToUCS4String(Text));
 end;
 
 constructor TSfmlText.Create(Text: UnicodeString; Font: PSfmlFont;
   CharacterSize: Cardinal);
 begin
   Create;
-  SetString(Text);
+  SetUnicodeString(Text);
   SetFont(Font);
   SetCharacterSize(CharacterSize);
 end;
@@ -3684,7 +3684,7 @@ end;
 constructor TSfmlText.Create(Text: UnicodeString; Font: PSfmlFont);
 begin
   Create;
-  SetString(Text);
+  SetUnicodeString(Text);
   SetFont(Font);
 end;
 
@@ -3771,7 +3771,7 @@ end;
 
 function TSfmlText.GetUnicodeString: UnicodeString;
 begin
-  Result := SfmlTextGetUnicodeString(FHandle);
+  Result := UCS4StringToUnicodeString(SfmlTextGetUnicodeString(FHandle));
 end;
 
 procedure TSfmlText.Move(Offset: TSfmlVector2f);
@@ -3836,7 +3836,7 @@ end;
 
 procedure TSfmlText.SetUnicodeString(const &String: UnicodeString);
 begin
-  SfmlTextSetUnicodeString(FHandle, PWideChar(&String));
+  SfmlTextSetUnicodeString(FHandle, PUCS4CharArray(&String));
 end;
 
 

@@ -1,21 +1,17 @@
 program SfmlUnitTest;
 
-{$IFDEF FPC}
-  {$MODE Delphi}
-{$ENDIF}
+{$I ..\Source\Sfml.inc}
 
 {$IFDEF CONSOLE_TESTRUNNER}
 {$APPTYPE CONSOLE}
 {$ENDIF}
 
 uses
-{$IFDEF FPC}
-  Interfaces, Forms, GuiTestRunner,
-{$ELSE}
   DUnitTestRunner,
-{$ENDIF}
+  SfmlSystem in '..\Source\SfmlSystem.pas',
+  SfmlWindow in '..\Source\SfmlWindow.pas',
   TestSfmlSystem in 'TestSfmlSystem.pas',
-  SfmlSystem in '..\Source\SfmlSystem.pas';
+  TestSfmlWindow in 'TestSfmlWindow.pas';
 
 {$R *.res}
 

@@ -221,7 +221,7 @@ type
   TSfmlPacketReadFloat = function (Packet: PSfmlPacket): Single; cdecl;
   TSfmlPacketReadDouble = function (Packet: PSfmlPacket): Double; cdecl;
   TSfmlPacketReadString = procedure (Packet: PSfmlPacket; &String: PAnsiChar); cdecl;
-  TSfmlPacketReadWideString = procedure (Packet: PSfmlPacket; &String: PWideChar); cdecl;
+  TSfmlPacketReadWideString = procedure (Packet: PSfmlPacket; &String: PUCS4CharArray); cdecl;
   TSfmlPacketWriteBool = procedure (Packet: PSfmlPacket; Value: Boolean); cdecl;
   TSfmlPacketWriteInt8 = procedure (Packet: PSfmlPacket; Value: ShortInt); cdecl;
   TSfmlPacketWriteUint8 = procedure (Packet: PSfmlPacket; Value: Byte); cdecl;
@@ -232,7 +232,7 @@ type
   TSfmlPacketWriteFloat = procedure (Packet: PSfmlPacket; Value: Single); cdecl;
   TSfmlPacketWriteDouble = procedure (Packet: PSfmlPacket; Value: Double); cdecl;
   TSfmlPacketWriteString = procedure (Packet: PSfmlPacket; const &String: PAnsiChar); cdecl;
-  TSfmlPacketWriteWideString = procedure (Packet: PSfmlPacket; const &String: PWideChar); cdecl;
+  TSfmlPacketWriteWideString = procedure (Packet: PSfmlPacket; const &String: PUCS4CharArray); cdecl;
 
   TSfmlSocketSelectorCreate = function : PSfmlSocketSelector; cdecl;
   TSfmlSocketSelectorCopy = function (const Selector: PSfmlSocketSelector): PSfmlSocketSelector; cdecl;
@@ -507,7 +507,7 @@ var
   function SfmlPacketReadFloat(Packet: PSfmlPacket): Single; cdecl; external CSfmlNetworkLibrary name 'sfPacket_readFloat';
   function SfmlPacketReadDouble(Packet: PSfmlPacket): Double; cdecl; external CSfmlNetworkLibrary name 'sfPacket_readDouble';
   procedure SfmlPacketReadString(Packet: PSfmlPacket; &String: PAnsiChar); cdecl; external CSfmlNetworkLibrary name 'sfPacket_readString';
-  procedure SfmlPacketReadWideString(Packet: PSfmlPacket; &String: PWideChar); cdecl; external CSfmlNetworkLibrary name 'sfPacket_readWideString';
+  procedure SfmlPacketReadWideString(Packet: PSfmlPacket; &String: PUCS4CharArray); cdecl; external CSfmlNetworkLibrary name 'sfPacket_readWideString';
   procedure SfmlPacketWriteBool(Packet: PSfmlPacket; Value: Boolean); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeBool';
   procedure SfmlPacketWriteInt8(Packet: PSfmlPacket; Value: ShortInt); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeInt8';
   procedure SfmlPacketWriteUint8(Packet: PSfmlPacket; Value: Byte); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeUint8';
@@ -518,7 +518,7 @@ var
   procedure SfmlPacketWriteFloat(Packet: PSfmlPacket; Value: Single); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeFloat';
   procedure SfmlPacketWriteDouble(Packet: PSfmlPacket; Value: Double); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeDouble';
   procedure SfmlPacketWriteString(Packet: PSfmlPacket; const &String: PAnsiChar); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeString';
-  procedure SfmlPacketWriteWideString(Packet: PSfmlPacket; const &String: PWideChar); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeWideString';
+  procedure SfmlPacketWriteWideString(Packet: PSfmlPacket; const &String: PUCS4CharArray); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeWideString';
 
   function SfmlSocketSelectorCreate: PSfmlSocketSelector; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_create';
   function SfmlSocketSelectorCopy(const Selector: PSfmlSocketSelector): PSfmlSocketSelector; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_copy';
@@ -693,7 +693,7 @@ type
     procedure WriteFloat(Value: Single);
     procedure WriteDouble(Value: Double);
     procedure WriteString(&String: AnsiString);
-    procedure WriteWideString(&String: PWideChar);
+    procedure WriteWideString(&String: PUCS4CharArray);
   end;
 
   TSfmlSocketSelector = class
@@ -1154,7 +1154,7 @@ end;
 
 procedure TSfmlPacket.ReadWideString(&String: string);
 begin
-  SfmlPacketReadWideString(FHandle, PWideChar(&String));
+  SfmlPacketReadWideString(FHandle, PUCS4CharArray(&String));
 end;
 
 procedure TSfmlPacket.WriteBool(Value: Boolean);
@@ -1207,9 +1207,9 @@ begin
   SfmlPacketWriteUint8(FHandle, Value);
 end;
 
-procedure TSfmlPacket.WriteWideString(&String: PWideChar);
+procedure TSfmlPacket.WriteWideString(&String: PUCS4CharArray);
 begin
-  SfmlPacketWriteWideString(FHandle, PWideChar(&String));
+  SfmlPacketWriteWideString(FHandle, PUCS4CharArray(&String));
 end;
 
 
