@@ -2043,6 +2043,10 @@ type
     property Viewport: TSfmlFloatRect read GetViewport write SetViewport;
   end;
 
+function SfmlVertex(Position: TSfmlVector2f; Color: TSfmlColor;
+  TexCoords: TSfmlVector2f): TSfmlVertex; overload;
+function SfmlVertex(Position: TSfmlVector2f; Color: TSfmlColor): TSfmlVertex; overload;
+
 implementation
 
 {$IFDEF DynLink}
@@ -2051,6 +2055,21 @@ uses
   Windows;
 {$ENDIF}
 {$ENDIF}
+
+function SfmlVertex(Position: TSfmlVector2f; Color: TSfmlColor;
+  TexCoords: TSfmlVector2f): TSfmlVertex;
+begin
+  Result.Position := Position;
+  Result.Color := Color;
+  Result.TexCoords := TexCoords;
+end;
+
+function SfmlVertex(Position: TSfmlVector2f; Color: TSfmlColor): TSfmlVertex;
+begin
+  Result.Position := Position;
+  Result.Color := Color;
+end;
+
 
 { TSfmlCircleShape }
 
@@ -4169,15 +4188,15 @@ begin
       SfmlBlendMultiply := BindFunction('sfBlendMultiply');
       SfmlBlendNone := BindFunction('sfBlendNone');
 
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlack'))^, SfmlBlack, 4);
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfWhite'))^, SfmlWhite, 4);
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRed'))^, SfmlRed, 4);
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfGreen'))^, SfmlGreen, 4);
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlue'))^, SfmlBlue, 4);
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfYellow'))^, SfmlYellow, 4);
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfMagenta'))^, SfmlMagenta, 4);
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCyan'))^, SfmlCyan, 4);
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransparent'))^, SfmlTransparent, 4);
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlack'))^, SfmlBlack, SizeOf(SfmlBlack));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfWhite'))^, SfmlWhite, SizeOf(SfmlWhite));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRed'))^, SfmlRed, SizeOf(SfmlRed));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfGreen'))^, SfmlGreen, SizeOf(SfmlGreen));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlue'))^, SfmlBlue, SizeOf(SfmlBlue));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfYellow'))^, SfmlYellow, SizeOf(SfmlYellow));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfMagenta'))^, SfmlMagenta, SizeOf(SfmlMagenta));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCyan'))^, SfmlCyan, SizeOf(SfmlCyan));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransparent'))^, SfmlTransparent, SizeOf(SfmlTransparent));
 
       SfmlColorFromRGB := BindFunction('sfColor_fromRGB');
       SfmlColorFromRGBA := BindFunction('sfColor_fromRGBA');

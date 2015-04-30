@@ -36,7 +36,6 @@ type
   TStormBlink = class(TEffect)
   private
     FPoints: TSfmlVertexArray;
-    FText: TSfmlText;
     FShader: TSfmlShader;
   public
     constructor Create;
@@ -160,25 +159,25 @@ begin
 end;
 
 function TStormBlink.OnLoad: Boolean;
+var
+  Index: Integer;
+  X, Y: Single;
+  R, G, B: Byte;
 begin
   // Create the points
-(*
-  FPoints.setPrimitiveType(TSfmlPoints);
-  for (int i = 0; i < 40000; ++i)
+  FPoints.PrimitiveType := sfPoints;
+  for Index := 1 to 40000 do
   begin
-    Single x = static_cast<Single>(std::rand() % 800);
-    Single y = static_cast<Single>(std::rand() % 600);
-    TSfmlUint8 r = std::rand() % 255;
-    TSfmlUint8 g = std::rand() % 255;
-    TSfmlUint8 b = std::rand() % 255;
-    FPoints.append(TSfmlVertex(TSfmlVector2f(x, y), TSfmlColor(r, g, b)));
+    x := 800 * Random;
+    y := 600 * Random;
+    R := Random(256);
+    G := Random(256);
+    B := Random(256);
+    FPoints.Append(SfmlVertex(SfmlVector2f(X, Y), SfmlColorFromRGB(r, g, b)));
   end;
 
   // Load the Shader
-  if (!FShader.loadFromFile('resources/storm.vert', 'resources/blink.frag'))
-      return false;
-*)
-
+  FShader := TSfmlShader.Create('../Resources/storm.vert', '../Resources/blink.frag');
   Result := True;
 end;
 

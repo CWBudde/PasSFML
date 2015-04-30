@@ -50,6 +50,7 @@ type
     MicroSeconds: Int64;
     function AsSeconds: Single;
   end;
+  PSfmlTime = ^TSfmlTime;
 
   TSfmlVector2i = record
     X, Y: LongInt;
@@ -93,8 +94,9 @@ type
   end;
   PSfmlInputStream = ^TSfmlInputStream;
 
+  TSfmlThreadEntryPoint = procedure (UserData: Pointer); cdecl;
+
 {$IFDEF DynLink}
-  TSfmlTimeZero = function: TSfmlTime; cdecl;
   TSfmlTimeAsSeconds = function (Time: TSfmlTime): Single; cdecl;
   TSfmlTimeAsMilliseconds = function (Time: TSfmlTime): LongInt; cdecl;
   TSfmlTimeAsMicroseconds = function (Time: TSfmlTime): Int64; cdecl;
@@ -118,14 +120,14 @@ type
 
   TSfmlSleep = procedure (Duration: TSfmlTime); cdecl;
 
-  TSfmlThreadCreate = function (FuncEntryPoint: Pointer; UserData: Pointer): PSfmlThread; cdecl;
+  TSfmlThreadCreate = function (ThreadEntryPoint: TSfmlThreadEntryPoint; UserData: Pointer): PSfmlThread; cdecl;
   TSfmlThreadDestroy = procedure (Thread: PSfmlThread); cdecl;
   TSfmlThreadLaunch = procedure (Thread: PSfmlThread); cdecl;
   TSfmlThreadWait = procedure (Thread: PSfmlThread); cdecl;
   TSfmlThreadTerminate = procedure (Thread: PSfmlThread); cdecl;
 
 var
-  SfmlTimeZero: TSfmlTimeZero;
+  SfmlTimeZero: TSfmlTime;
   SfmlTimeAsSeconds: TSfmlTimeAsSeconds;
   SfmlTimeAsMilliseconds: TSfmlTimeAsMilliseconds;
   SfmlTimeAsMicroseconds: TSfmlTimeAsMicroseconds;
@@ -152,8 +154,10 @@ var
   SfmlThreadWait: TSfmlThreadWait;
   SfmlThreadTerminate: TSfmlThreadTerminate;
 {$ELSE}
+const
+  SfmlTimeZero: TSfmlTime = (MicroSeconds: 0);
+
   // static linking
-  function SfmlTimeZero: TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfTime_Zero';
   function SfmlTimeAsSeconds(Time: TSfmlTime): Single; cdecl; external CSfmlSystemLibrary name 'sfTime_asSeconds';
   function SfmlTimeAsMilliseconds(Time: TSfmlTime): LongInt; cdecl; external CSfmlSystemLibrary name 'sfTime_asMilliseconds';
   function SfmlTimeAsMicroseconds(Time: TSfmlTime): Int64; cdecl; external CSfmlSystemLibrary name 'sfTime_asMicroseconds';
@@ -176,7 +180,7 @@ var
 
   procedure SfmlSleep(Duration: TSfmlTime); cdecl; external CSfmlSystemLibrary name 'sfSleep';
 
-  function SfmlThreadCreate(FuncEntryPoint: Pointer; UserData: Pointer): PSfmlThread; cdecl; external CSfmlSystemLibrary name 'sfThread_create';
+  function SfmlThreadCreate(ThreadEntryPoint: TSfmlThreadEntryPoint; UserData: Pointer): PSfmlThread; cdecl; external CSfmlSystemLibrary name 'sfThread_create';
   procedure SfmlThreadDestroy(Thread: PSfmlThread); cdecl; external CSfmlSystemLibrary name 'sfThread_destroy';
   procedure SfmlThreadLaunch(Thread: PSfmlThread); cdecl; external CSfmlSystemLibrary name 'sfThread_launch';
   procedure SfmlThreadWait(Thread: PSfmlThread); cdecl; external CSfmlSystemLibrary name 'sfThread_wait';
@@ -188,20 +192,22 @@ type
   private
     FHandle: PSfmlThread;
     constructor Create(Handle: PSfmlThread); overload;
+    function GetElapsedTime: TSfmlTime;
   public
     constructor Create; overload;
     destructor Destroy; override;
 
     function Copy: TSfmlClock;
-    function GetElapsedTime: TSfmlTime;
     function Restart: TSfmlTime;
+
+    property ElapsedTime: TSfmlTime read GetElapsedTime;
   end;
 
   TSfmlThread = class
   private
     FHandle: PSfmlThread;
   public
-    constructor Create(FuncEntryPoint: Pointer; UserData: Pointer);
+    constructor Create(ThreadEntryPoint: TSfmlThreadEntryPoint; UserData: Pointer);
     destructor Destroy; override;
 
     procedure Launch;
@@ -305,9 +311,9 @@ end;
 
 { TSfmlThread }
 
-constructor TSfmlThread.Create(FuncEntryPoint, UserData: Pointer);
+constructor TSfmlThread.Create(ThreadEntryPoint: TSfmlThreadEntryPoint; UserData: Pointer);
 begin
-  FHandle := SfmlThreadCreate(FuncEntryPoint, UserData)
+  FHandle := SfmlThreadCreate(ThreadEntryPoint, UserData)
 end;
 
 destructor TSfmlThread.Destroy;
@@ -346,7 +352,8 @@ begin
   CSfmlSystemHandle := LoadLibraryA(CSfmlSystemLibrary);
   if CSfmlSystemHandle <> 0 then
     try
-      SfmlTimeZero := BindFunction('sfTime_Zero');
+      Move(GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfTime_Zero'))^, SfmlTimeZero, SizeOf(SfmlTimeZero));
+
       SfmlTimeAsSeconds := BindFunction('sfTime_asSeconds');
       SfmlTimeAsMilliseconds := BindFunction('sfTime_asMilliseconds');
       SfmlTimeAsMicroseconds := BindFunction('sfTime_asMicroseconds');
