@@ -45,8 +45,8 @@ const
   CSflmJoystickAxisCount   = 8;
 
 type
-  PSfmlContext = Pointer;
-  PSfmlWindow = Pointer;
+  PSfmlContext = type Pointer;
+  PSfmlWindow = type Pointer;
 
   TSfmlVideoMode = record
     Width, Height, BitsPerPixel: Cardinal;
