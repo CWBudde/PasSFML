@@ -141,9 +141,12 @@ end;
 procedure TestTSfmlClock.TestCopy;
 var
   CopiedClock: TSfmlClock;
+  TimeStamp: array [0..1] of TSfmlTime;
 begin
   CopiedClock := FSfmlClock.Copy;
-  Check(CopiedClock.ElapsedTime.MicroSeconds >= FSfmlClock.ElapsedTime.MicroSeconds);
+  TimeStamp[0] := CopiedClock.ElapsedTime;
+  TimeStamp[1] := FSfmlClock.ElapsedTime;
+  CheckTrue(TimeStamp[1].MicroSeconds >= TimeStamp[0].MicroSeconds);
 end;
 
 procedure TestTSfmlClock.TestElapsedTime;
@@ -151,20 +154,21 @@ var
   TimeStamp: array [0..1] of TSfmlTime;
 begin
   TimeStamp[0] := FSfmlClock.ElapsedTime;
-  SfmlSleep(SfmlTime(1000000));
+  SfmlSleep(SfmlTime(100000));
   TimeStamp[1] := FSfmlClock.ElapsedTime;
 
-  Check(TimeStamp[1].MicroSeconds > TimeStamp[0].MicroSeconds);
+  CheckTrue(TimeStamp[1].MicroSeconds > TimeStamp[0].MicroSeconds);
 end;
 
 procedure TestTSfmlClock.TestRestart;
 var
   TimeStamp: array [0..1] of TSfmlTime;
 begin
+  SfmlSleep(SfmlTime(100000));
   TimeStamp[0] := FSfmlClock.Restart;
   TimeStamp[1] := FSfmlClock.Restart;
 
-  Check(TimeStamp[1].MicroSeconds < TimeStamp[0].MicroSeconds);
+  CheckTrue(TimeStamp[1].MicroSeconds < TimeStamp[0].MicroSeconds);
 end;
 
 

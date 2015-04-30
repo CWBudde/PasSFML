@@ -165,15 +165,28 @@ const
   function SfmlTimeAsMilliseconds(Time: TSfmlTime): LongInt; cdecl; external CSfmlSystemLibrary name 'sfTime_asMilliseconds';
   function SfmlTimeAsMicroseconds(Time: TSfmlTime): Int64; cdecl; external CSfmlSystemLibrary name 'sfTime_asMicroseconds';
 
+{$IFDEF FPC}
   function SfmlSeconds(Amount: Single): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfSeconds';
   function SfmlMilliseconds(Amount: LongInt): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfMilliseconds';
   function SfmlMicroseconds(Amount: Int64): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfMicroseconds';
+{$ELSE}
+  // Workaround for the Delphi compiler
+  function SfmlSeconds(Amount: Single): TSfmlTime; cdecl;
+  function SfmlMilliseconds(Amount: LongInt): TSfmlTime; cdecl;
+  function SfmlMicroseconds(Amount: Int64): TSfmlTime; cdecl;
+{$ENDIF}
 
   function SfmlClockCreate: PSfmlClock; cdecl; external CSfmlSystemLibrary name 'sfClock_create';
   function SfmlClockCopy(const Clock: PSfmlClock): PSfmlClock; cdecl; external CSfmlSystemLibrary name 'sfClock_copy';
   procedure SfmlClockDestroy(Clock: PSfmlClock); cdecl; external CSfmlSystemLibrary name 'sfClock_destroy';
+{$IFDEF FPC}
   function SfmlClockGetElapsedTime(const Clock: PSfmlClock): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfClock_getElapsedTime';
   function SfmlClockRestart(Clock: PSfmlClock): TSfmlTime; cdecl; external CSfmlSystemLibrary name 'sfClock_restart';
+{$ELSE}
+  // Workaround for the Delphi compiler
+  function SfmlClockGetElapsedTime(const Clock: PSfmlClock): TSfmlTime; cdecl;
+  function SfmlClockRestart(Clock: PSfmlClock): TSfmlTime; cdecl;
+{$ENDIF}
 
   function SfmlMutexCreate: PSfmlMutex; cdecl; external CSfmlSystemLibrary name 'sfMutex_create';
   procedure SfmlMutexDestroy(Mutex: PSfmlMutex); cdecl; external CSfmlSystemLibrary name 'sfMutex_destroy';
@@ -363,7 +376,44 @@ begin
   SfmlThreadWait(FHandle);
 end;
 
-{$IFDEF DynLink}
+{$IFNDEF DynLink}
+
+{$IFNDEF FPC}
+
+// Workarounds for the Delphi compiler
+
+function sfSeconds(Amount: Single): Int64; cdecl; external CSfmlSystemLibrary name 'sfSeconds';
+function SfmlSeconds(Amount: Single): TSfmlTime; cdecl;
+begin
+  Result.MicroSeconds := sfSeconds(Amount);
+end;
+
+function sfMilliseconds(Amount: LongInt): Int64; cdecl; external CSfmlSystemLibrary name 'sfMilliseconds';
+function SfmlMilliseconds(Amount: LongInt): TSfmlTime; cdecl;
+begin
+  Result.MicroSeconds := sfMilliseconds(Amount);
+end;
+
+function sfMicroseconds(Amount: Int64): Int64; cdecl; external CSfmlSystemLibrary name 'sfMicroseconds';
+function SfmlMicroseconds(Amount: Int64): TSfmlTime; cdecl;
+begin
+  Result.MicroSeconds := sfMicroseconds(Amount);
+end;
+
+function sfClock_getElapsedTime(const Clock: PSfmlClock): Int64; cdecl; external CSfmlSystemLibrary name 'sfClock_getElapsedTime';
+function SfmlClockGetElapsedTime(const Clock: PSfmlClock): TSfmlTime; cdecl;
+begin
+  Result.MicroSeconds := sfClock_getElapsedTime(Clock);
+end;
+
+function sfClock_restart(Clock: PSfmlClock): Int64; cdecl; external CSfmlSystemLibrary;
+function SfmlClockRestart(Clock: PSfmlClock): TSfmlTime; cdecl;
+begin
+  Result.MicroSeconds := sfClock_restart(Clock);
+end;
+{$ENDIF}
+
+{$ELSE}
 var
   CSfmlSystemHandle: HINST;
 
