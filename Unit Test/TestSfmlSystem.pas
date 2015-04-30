@@ -1,9 +1,18 @@
 unit TestSfmlSystem;
 
+{$IFDEF FPC}
+  {$MODE Delphi}
+{$ENDIF}
+
 interface
 
 uses
-  TestFramework, SfmlSystem;
+{$IFnDEF FPC}
+  TestFramework,
+{$ELSE}
+  FPCUnit, TestUtils, TestRegistry,
+{$ENDIF}
+  SfmlSystem;
 
 type
   TestTSfmlTime = class(TTestCase)
@@ -142,7 +151,7 @@ var
   TimeStamp: array [0..1] of TSfmlTime;
 begin
   TimeStamp[0] := FSfmlClock.ElapsedTime;
-  SfmlSleep(SfmlSeconds(1));
+  SfmlSleep(SfmlTime(1000000));
   TimeStamp[1] := FSfmlClock.ElapsedTime;
 
   Check(TimeStamp[1].MicroSeconds > TimeStamp[0].MicroSeconds);
@@ -155,7 +164,7 @@ begin
   TimeStamp[0] := FSfmlClock.Restart;
   TimeStamp[1] := FSfmlClock.Restart;
 
-  Check(TimeStamp[1].MicroSeconds < TimeStamp[1].MicroSeconds);
+  Check(TimeStamp[1].MicroSeconds < TimeStamp[0].MicroSeconds);
 end;
 
 
@@ -199,7 +208,13 @@ begin
 end;
 
 initialization
+{$IFDEF FPC}
+  RegisterTest(TestTSfmlTime);
+  RegisterTest(TestTSfmlClock);
+  RegisterTest(TestTSfmlThread);
+{$ELSE}
   RegisterTest(TestTSfmlTime.Suite);
   RegisterTest(TestTSfmlClock.Suite);
   RegisterTest(TestTSfmlThread.Suite);
+{$ENDIF}
 end.

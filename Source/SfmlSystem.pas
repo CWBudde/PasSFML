@@ -26,7 +26,7 @@ unit SfmlSystem;
 
 interface
 
-{$I Sfml.inc}
+{$I SFML.inc}
 
 const
 {$IF Defined(MSWINDOWS)}
@@ -48,9 +48,12 @@ type
 
   TSfmlTime = record
     MicroSeconds: Int64;
+    function AsMilliseconds: LongInt;
     function AsSeconds: Single;
+    {$IFDEF RecordConstructors}
+    constructor Create(MicroSeconds: LongInt);
+    {$ENDIF}
   end;
-  PSfmlTime = ^TSfmlTime;
 
   TSfmlVector2i = record
     X, Y: LongInt;
@@ -201,6 +204,7 @@ type
     function Restart: TSfmlTime;
 
     property ElapsedTime: TSfmlTime read GetElapsedTime;
+    property Handle: PSfmlThread read FHandle;
   end;
 
   TSfmlThread = class
@@ -215,6 +219,7 @@ type
     procedure Terminate;
   end;
 
+function SfmlTime(MicroSeconds: Int64): TSfmlTime;
 function SfmlVector2f(X, Y: Single): TSfmlVector2f;
 function SfmlVector3f(X, Y, Z: Single): TSfmlVector3f;
 
@@ -227,11 +232,34 @@ uses
 {$ENDIF}
 {$ENDIF}
 
+{ TSfmlTime }
+
+function TSfmlTime.AsMilliseconds: LongInt;
+begin
+  Result := SfmlTimeAsMilliseconds(Self);
+end;
+
+function TSfmlTime.AsSeconds: Single;
+begin
+  Result := SfmlTimeAsSeconds(Self);
+end;
+
+function SfmlTime(MicroSeconds: Int64): TSfmlTime;
+begin
+  Result.MicroSeconds := MicroSeconds;
+end;
+
+
+{ TSfmlVector2f }
+
 function SfmlVector2f(X, Y: Single): TSfmlVector2f;
 begin
   Result.X := X;
   Result.Y := Y;
 end;
+
+
+{ TSfmlVector3f }
 
 function SfmlVector3f(X, Y, Z: Single): TSfmlVector3f;
 begin
@@ -240,7 +268,14 @@ begin
   Result.Z := Z;
 end;
 
+
 {$IFDEF RecordConstructors}
+
+constructor Create(Microseconds: LongInt);
+begin
+  Self.MicroSeconds := Microseconds;
+end;
+
 constructor TSfmlVector2i.Create(X, Y: LongInt);
 begin
   Self.X := X;
@@ -266,14 +301,6 @@ begin
   Self.Z := Z;
 end;
 {$ENDIF}
-
-{ TSfmlTime }
-
-function TSfmlTime.AsSeconds: Single;
-begin
-  Result := SfmlTimeAsSeconds(Self);
-end;
-
 
 { TSfmlClock }
 

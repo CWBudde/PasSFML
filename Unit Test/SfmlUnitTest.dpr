@@ -1,28 +1,32 @@
 program SfmlUnitTest;
-{
 
-  Delphi DUnit-Testprojekt
-  -------------------------
-  Dieses Projekt enthält das DUnit-Test-Framework und die GUI/Konsolen-Test-Runner.
-  Fügen Sie den Bedingungen in den Projektoptionen "CONSOLE_TESTRUNNER" hinzu,
-  um den Konsolen-Test-Runner zu verwenden.  Ansonsten wird standardmäßig der
-  GUI-Test-Runner verwendet.
-
-}
+{$IFDEF FPC}
+  {$MODE Delphi}
+{$ENDIF}
 
 {$IFDEF CONSOLE_TESTRUNNER}
 {$APPTYPE CONSOLE}
 {$ENDIF}
 
 uses
+{$IFDEF FPC}
+  Interfaces, Forms, GuiTestRunner,
+{$ELSE}
   DUnitTestRunner,
+{$ENDIF}
   TestSfmlSystem in 'TestSfmlSystem.pas',
   SfmlSystem in '..\Source\SfmlSystem.pas';
 
-{$R *.RES}
+{$R *.res}
 
 begin
+{$IFDEF FPC}
+  Application.Initialize;
+  Application.CreateForm(TGuiTestRunner, TestRunner);
+  Application.Run;
+{$ELSE}
   DUnitTestRunner.RunRegisteredTests;
+{$ENDIF}
 end.
 
 
