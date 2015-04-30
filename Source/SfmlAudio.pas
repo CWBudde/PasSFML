@@ -56,12 +56,12 @@ type
   end;
   PSfmlSoundStreamChunk  = ^TSfmlSoundStreamChunk;
 
-  TSfmlSoundStreamGetDataCallback = function (Para1: PSfmlSoundStreamChunk; Para2: Pointer): Boolean; cdecl;
-  TSfmlSoundStreamSeekCallback = procedure (Para1: TSfmlTime; Para2: Pointer); cdecl;
+  TSfmlSoundStreamGetDataCallback = function (Chunk: PSfmlSoundStreamChunk; UserData: Pointer): Boolean; cdecl;
+  TSfmlSoundStreamSeekCallback = procedure (Time: TSfmlTime; UserData: Pointer); cdecl;
 
-  TSfmlSoundRecorderStartCallback = function (Para1: Pointer): Boolean; cdecl;
-  TSfmlSoundRecorderProcessCallback = function (Para1: PSmallInt; Para2: NativeUInt; Para3: Pointer): Boolean; cdecl;
-  TSfmlSoundRecorderStopCallback = procedure (Para1: Pointer); cdecl;
+  TSfmlSoundRecorderStartCallback = function (UserData: Pointer): Boolean; cdecl;
+  TSfmlSoundRecorderProcessCallback = function (Data: PSmallInt; SampleFrames: NativeUInt; UserData: Pointer): Boolean; cdecl;
+  TSfmlSoundRecorderStopCallback = procedure (UserData: Pointer); cdecl;
 
 {$IFDEF DynLink}
   TSfmlListenerSetGlobalVolume = procedure (Volume: Single); cdecl;
@@ -74,7 +74,7 @@ type
   TSfmlListenerGetUpVector = function : TSfmlVector3f; cdecl;
 
   TSfmlMusicCreateFromFile = function (const FileName: PAnsiChar): PSfmlMusic; cdecl;
-  TSfmlMusicCreateFromMemory = function (const data: Pointer; SizeInBytes: NativeUInt): PSfmlMusic; cdecl;
+  TSfmlMusicCreateFromMemory = function (const Data: Pointer; SizeInBytes: NativeUInt): PSfmlMusic; cdecl;
   TSfmlMusicCreateFromStream = function (Stream: PSfmlInputStream): PSfmlMusic; cdecl;
   TSfmlMusicDestroy = procedure (Music: PSfmlMusic); cdecl;
   TSfmlMusicSetLoop = procedure (Music: PSfmlMusic; Loop: Boolean); cdecl;
@@ -101,7 +101,7 @@ type
   TSfmlMusicGetMinDistance = function (const Music: PSfmlMusic): Single; cdecl;
   TSfmlMusicGetAttenuation = function (const Music: PSfmlMusic): Single; cdecl;
 
-  TSfmlSoundStreamCreate = function (OnGetData: TSfmlSoundStreamGetDataCallback; OnSeek: TSfmlSoundStreamSeekCallback; channelCount, sampleRate: Cardinal; userData: Pointer): PSfmlSoundStream; cdecl;
+  TSfmlSoundStreamCreate = function (OnGetData: TSfmlSoundStreamGetDataCallback; OnSeek: TSfmlSoundStreamSeekCallback; ChannelCount, SampleRate: Cardinal; UserData: Pointer): PSfmlSoundStream; cdecl;
   TSfmlSoundStreamDestroy = procedure (SoundStream: PSfmlSoundStream); cdecl;
   TSfmlSoundStreamPlay = procedure (SoundStream: PSfmlSoundStream); cdecl;
   TSfmlSoundStreamPause = procedure (SoundStream: PSfmlSoundStream); cdecl;
@@ -172,7 +172,7 @@ type
   TSfmlSoundBufferRecorderGetSampleRate = function (const soundBufferRecorder: PSfmlSoundBufferRecorder): Cardinal; cdecl;
   TSfmlSoundBufferRecorderGetBuffer = function (const soundBufferRecorder: PSfmlSoundBufferRecorder): PSfmlSoundBuffer; cdecl;
 
-  TSfmlSoundRecorderCreate = function (OnStart: TSfmlSoundRecorderStartCallback; OnProcess: TSfmlSoundRecorderProcessCallback; OnStop: TSfmlSoundRecorderStopCallback; userData: Pointer): PSfmlSoundRecorder; cdecl;
+  TSfmlSoundRecorderCreate = function (OnStart: TSfmlSoundRecorderStartCallback; OnProcess: TSfmlSoundRecorderProcessCallback; OnStop: TSfmlSoundRecorderStopCallback; UserData: Pointer): PSfmlSoundRecorder; cdecl;
   TSfmlSoundRecorderDestroy = procedure (SoundRecorder: PSfmlSoundRecorder); cdecl;
   TSfmlSoundRecorderStart = function (SoundRecorder: PSfmlSoundRecorder; SampleRate: Cardinal): Boolean; cdecl;
   TSfmlSoundRecorderStop = procedure (SoundRecorder: PSfmlSoundRecorder); cdecl;
@@ -343,7 +343,7 @@ var
   function SfmlMusicGetMinDistance(const Music: PSfmlMusic): Single; cdecl; external CSfmlAudioLibrary name 'sfMusic_getMinDistance';
   function SfmlMusicGetAttenuation(const Music: PSfmlMusic): Single; cdecl; external CSfmlAudioLibrary name 'sfMusic_getAttenuation';
 
-  function SfmlSoundStreamCreate(OnGetData: TSfmlSoundStreamGetDataCallback; OnSeek: TSfmlSoundStreamSeekCallback; channelCount, sampleRate: Cardinal; userData: Pointer): PSfmlSoundStream; cdecl; external CSfmlAudioLibrary name 'sfSoundStream_create';
+  function SfmlSoundStreamCreate(OnGetData: TSfmlSoundStreamGetDataCallback; OnSeek: TSfmlSoundStreamSeekCallback; ChannelCount, SampleRate: Cardinal; UserData: Pointer): PSfmlSoundStream; cdecl; external CSfmlAudioLibrary name 'sfSoundStream_create';
   procedure SfmlSoundStreamDestroy(SoundStream: PSfmlSoundStream); cdecl; external CSfmlAudioLibrary name 'sfSoundStream_destroy';
   procedure SfmlSoundStreamPlay(SoundStream: PSfmlSoundStream); cdecl; external CSfmlAudioLibrary name 'sfSoundStream_play';
   procedure SfmlSoundStreamPause(SoundStream: PSfmlSoundStream); cdecl; external CSfmlAudioLibrary name 'sfSoundStream_pause';
@@ -405,7 +405,11 @@ var
   function SfmlSoundBufferGetSampleCount(const SoundBuffer: PSfmlSoundBuffer): NativeUInt; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_getSampleCount';
   function SfmlSoundBufferGetSampleRate(const SoundBuffer: PSfmlSoundBuffer): Cardinal; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_getSampleRate';
   function SfmlSoundBufferGetChannelCount(const SoundBuffer: PSfmlSoundBuffer): Cardinal; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_getChannelCount';
+  {$IFDEF FPC}
   function SfmlSoundBufferGetDuration(const SoundBuffer: PSfmlSoundBuffer): TSfmlTime; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_getDuration';
+  {$ELSE}
+  function SfmlSoundBufferGetDuration(const SoundBuffer: PSfmlSoundBuffer): TSfmlTime; cdecl;
+  {$ENDIF}
 
   function SfmlSoundBufferRecorderCreate: PSfmlSoundBufferRecorder; cdecl; external CSfmlAudioLibrary name 'sfSoundBufferRecorder_create';
   procedure SfmlSoundBufferRecorderDestroy(soundBufferRecorder: PSfmlSoundBufferRecorder); cdecl; external CSfmlAudioLibrary name 'sfSoundBufferRecorder_destroy';
@@ -414,7 +418,7 @@ var
   function SfmlSoundBufferRecorderGetSampleRate(const soundBufferRecorder: PSfmlSoundBufferRecorder): Cardinal; cdecl; external CSfmlAudioLibrary name 'sfSoundBufferRecorder_getSampleRate';
   function SfmlSoundBufferRecorderGetBuffer(const soundBufferRecorder: PSfmlSoundBufferRecorder): PSfmlSoundBuffer; cdecl; external CSfmlAudioLibrary name 'sfSoundBufferRecorder_getBuffer';
 
-  function SfmlSoundRecorderCreate(OnStart: TSfmlSoundRecorderStartCallback; OnProcess: TSfmlSoundRecorderProcessCallback; OnStop: TSfmlSoundRecorderStopCallback; userData: Pointer): PSfmlSoundRecorder; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_create';
+  function SfmlSoundRecorderCreate(OnStart: TSfmlSoundRecorderStartCallback; OnProcess: TSfmlSoundRecorderProcessCallback; OnStop: TSfmlSoundRecorderStopCallback; UserData: Pointer): PSfmlSoundRecorder; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_create';
   procedure SfmlSoundRecorderDestroy(SoundRecorder: PSfmlSoundRecorder); cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_destroy';
   function SfmlSoundRecorderStart(SoundRecorder: PSfmlSoundRecorder; SampleRate: Cardinal): Boolean; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_start';
   procedure SfmlSoundRecorderStop(SoundRecorder: PSfmlSoundRecorder); cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_stop';
@@ -572,6 +576,7 @@ type
     procedure SetVolume(Volume: Single);
   public
     constructor Create; overload;
+    constructor Create(Buffer: TSfmlSoundBuffer); overload;
     destructor Destroy; override;
 
     function Copy: TSfmlSound;
@@ -989,6 +994,12 @@ begin
   FHandle := SfmlSoundCreate;
 end;
 
+constructor TSfmlSound.Create(Buffer: TSfmlSoundBuffer);
+begin
+  Create;
+  SetBuffer(Buffer);
+end;
+
 constructor TSfmlSound.Create(Handle: PSfmlSound);
 begin
   FHandle := Handle;
@@ -1120,6 +1131,7 @@ begin
   SfmlSoundStop(FHandle);
 end;
 
+
 { TSfmlSoundBufferRecorder }
 
 constructor TSfmlSoundBufferRecorder.Create;
@@ -1198,6 +1210,13 @@ begin
   SfmlSoundRecorderStop(FHandle);
 end;
 
+{$IFNDEF FPC}
+function sfSoundBuffer_getDuration(const SoundBuffer: PSfmlSoundBuffer): Int64; cdecl; external CSfmlAudioLibrary;
+function SfmlSoundBufferGetDuration(const SoundBuffer: PSfmlSoundBuffer): TSfmlTime; cdecl;
+begin
+  Result.MicroSeconds := sfSoundBuffer_getDuration(SoundBuffer);
+end;
+{$ENDIF}
 
 {$IFDEF DynLink}
 var

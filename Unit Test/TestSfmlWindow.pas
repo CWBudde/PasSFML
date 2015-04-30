@@ -108,7 +108,11 @@ procedure TestTSfmlWindow.TestSetUnicodeTitle;
 var
   Event: TSfmlEvent;
 begin
+{$IFDEF FPC}
+  FSfmlWindow.SetUnicodeTitle(UnicodeStringToUCS4String('Unicode Title'));
+{$ELSE}
   FSfmlWindow.SetUnicodeTitle(WideCharToUCS4String('Unicode Title'));
+{$ENDIF}
 
   while FSfmlWindow.IsOpen do
   begin
@@ -135,6 +139,7 @@ begin
   CheckTrue(VideoMode.Width > 0);
   CheckTrue(VideoMode.Height > 0);
   CheckTrue(VideoMode.BitsPerPixel > 0);
+  CheckTrue(SfmlVideoModeIsValid(VideoMode));
 end;
 
 procedure TestTSfmlVideoMode.TestFullscreenModes;
@@ -150,6 +155,7 @@ begin
     CheckTrue(VideoModes^.Width > 0);
     CheckTrue(VideoModes^.Height > 0);
     CheckTrue(VideoModes^.BitsPerPixel > 0);
+    CheckTrue(SfmlVideoModeIsValid(VideoModes^));
 
     Inc(VideoModes);
   end;
