@@ -308,7 +308,7 @@ type
   TSfmlRenderTextureDrawConvexShape = procedure (RenderTexture: PSfmlRenderTexture; const &Object: PSfmlConvexShape; const States: PSfmlRenderStates); cdecl;
   TSfmlRenderTextureDrawRectangleShape = procedure (RenderTexture: PSfmlRenderTexture; const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates); cdecl;
   TSfmlRenderTextureDrawVertexArray = procedure (RenderTexture: PSfmlRenderTexture; const &Object: PSfmlVertexArray; const States: PSfmlRenderStates); cdecl;
-  TSfmlRenderTextureDrawPrimitives = procedure (RenderTexture: PSfmlRenderTexture); cdecl;
+  TSfmlRenderTextureDrawPrimitives = procedure (RenderTexture: PSfmlRenderTexture; const Vertices: PSfmlVertex; VertexCount: Cardinal; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates); cdecl;
   TSfmlRenderTexturePushGLStates = procedure (RenderTexture: PSfmlRenderTexture); cdecl;
   TSfmlRenderTexturePopGLStates = procedure (RenderTexture: PSfmlRenderTexture); cdecl;
   TSfmlRenderTextureResetGLStates = procedure (RenderTexture: PSfmlRenderTexture); cdecl;
@@ -359,7 +359,7 @@ type
   TSfmlRenderWindowDrawConvexShape = procedure (RenderWindow: PSfmlRenderWindow; const &Object: PSfmlConvexShape; const States: PSfmlRenderStates); cdecl;
   TSfmlRenderWindowDrawRectangleShape = procedure (RenderWindow: PSfmlRenderWindow; const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates); cdecl;
   TSfmlRenderWindowDrawVertexArray = procedure (RenderWindow: PSfmlRenderWindow; const &Object: PSfmlVertexArray; const States: PSfmlRenderStates); cdecl;
-  TSfmlRenderWindowDrawPrimitives = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
+  TSfmlRenderWindowDrawPrimitives = procedure (RenderWindow: PSfmlRenderWindow; const Vertices: PSfmlVertex; VertexCount: Cardinal; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates); cdecl;
   TSfmlRenderWindowPushGLStates = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
   TSfmlRenderWindowPopGLStates = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
   TSfmlRenderWindowResetGLStates = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
@@ -1211,7 +1211,7 @@ const
   procedure SfmlRenderTextureDrawConvexShape(RenderTexture: PSfmlRenderTexture; const &Object: PSfmlConvexShape; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_drawConvexShape';
   procedure SfmlRenderTextureDrawRectangleShape(RenderTexture: PSfmlRenderTexture; const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_drawRectangleShape';
   procedure SfmlRenderTextureDrawVertexArray(RenderTexture: PSfmlRenderTexture; const &Object: PSfmlVertexArray; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_drawVertexArray';
-  procedure SfmlRenderTextureDrawPrimitives(RenderTexture: PSfmlRenderTexture); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_drawPrimitives';
+  procedure SfmlRenderTextureDrawPrimitives(RenderTexture: PSfmlRenderTexture; const Vertices: PSfmlVertex; VertexCount: Cardinal; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_drawPrimitives';
   procedure SfmlRenderTexturePushGLStates(RenderTexture: PSfmlRenderTexture); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_pushGLStates';
   procedure SfmlRenderTexturePopGLStates(RenderTexture: PSfmlRenderTexture); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_popGLStates';
   procedure SfmlRenderTextureResetGLStates(RenderTexture: PSfmlRenderTexture); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_resetGLStates';
@@ -1264,7 +1264,7 @@ const
   procedure SfmlRenderWindowDrawConvexShape(RenderWindow: PSfmlRenderWindow; const &Object: PSfmlConvexShape; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_drawConvexShape';
   procedure SfmlRenderWindowDrawRectangleShape(RenderWindow: PSfmlRenderWindow; const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_drawRectangleShape';
   procedure SfmlRenderWindowDrawVertexArray(RenderWindow: PSfmlRenderWindow; const &Object: PSfmlVertexArray; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_drawVertexArray';
-  procedure SfmlRenderWindowDrawPrimitives(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_drawPrimitives';
+  procedure SfmlRenderWindowDrawPrimitives(RenderWindow: PSfmlRenderWindow; const Vertices: PSfmlVertex; VertexCount: Cardinal; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_drawPrimitives';
   procedure SfmlRenderWindowPushGLStates(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_pushGLStates';
   procedure SfmlRenderWindowPopGLStates(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_popGLStates';
   procedure SfmlRenderWindowResetGLStates(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_resetGLStates';
@@ -2037,7 +2037,7 @@ type
 
     procedure DrawCircleShape(const &Object: PSfmlCircleShape; const States: PSfmlRenderStates = nil);
     procedure DrawConvexShape(const &Object: PSfmlConvexShape; const States: PSfmlRenderStates = nil);
-    procedure DrawPrimitives;
+    procedure DrawPrimitives(const Vertices: PSfmlVertex; VertexCount: Cardinal; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates = nil);
     procedure DrawRectangleShape(const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates = nil);
     procedure DrawShape(const &Object: PSfmlShape; const States: PSfmlRenderStates = nil);
     procedure DrawSprite(const &Object: PSfmlSprite; const States: PSfmlRenderStates = nil);
@@ -2099,14 +2099,14 @@ type
     procedure Draw(const &Object: TSfmlText; const States: PSfmlRenderStates = nil); overload; override;
     procedure Draw(const &Object: TSfmlVertexArray; const States: PSfmlRenderStates = nil); overload; override;
 
-    procedure DrawCircleShape(const &Object: PSfmlCircleShape; const States: PSfmlRenderStates);
-    procedure DrawConvexShape(const &Object: PSfmlConvexShape; const States: PSfmlRenderStates);
-    procedure DrawPrimitives;
-    procedure DrawRectangleShape(const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates);overload;
-    procedure DrawShape(const &Object: PSfmlShape; const States: PSfmlRenderStates);
-    procedure DrawSprite(const &Object: PSfmlSprite; const States: PSfmlRenderStates);
-    procedure DrawText(const &Object: PSfmlText; const States: PSfmlRenderStates);
-    procedure DrawVertexArray(const &Object: PSfmlVertexArray; const States: PSfmlRenderStates);
+    procedure DrawCircleShape(const &Object: PSfmlCircleShape; const States: PSfmlRenderStates = nil);
+    procedure DrawConvexShape(const &Object: PSfmlConvexShape; const States: PSfmlRenderStates = nil);
+    procedure DrawPrimitives(const Vertices: PSfmlVertex; VertexCount: Cardinal; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates = nil);
+    procedure DrawRectangleShape(const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates = nil);overload;
+    procedure DrawShape(const &Object: PSfmlShape; const States: PSfmlRenderStates = nil);
+    procedure DrawSprite(const &Object: PSfmlSprite; const States: PSfmlRenderStates = nil);
+    procedure DrawText(const &Object: PSfmlText; const States: PSfmlRenderStates = nil);
+    procedure DrawVertexArray(const &Object: PSfmlVertexArray; const States: PSfmlRenderStates = nil);
 
     procedure PopGLStates; override;
     procedure PushGLStates; override;
@@ -3037,9 +3037,11 @@ begin
   SfmlRenderTextureDrawConvexShape(FHandle, &Object, States);
 end;
 
-procedure TSfmlRenderTexture.DrawPrimitives;
+procedure TSfmlRenderTexture.DrawPrimitives(const Vertices: PSfmlVertex;
+  VertexCount: Cardinal; &Type: TSfmlPrimitiveType;
+  const States: PSfmlRenderStates = nil);
 begin
-  SfmlRenderTextureDrawPrimitives(FHandle);
+  SfmlRenderTextureDrawPrimitives(FHandle, Vertices, VertexCount, &Type, States);
 end;
 
 procedure TSfmlRenderTexture.DrawRectangleShape(
@@ -3217,90 +3219,91 @@ begin
 end;
 
 procedure TSfmlRenderWindow.DrawCircleShape(const &Object: PSfmlCircleShape;
-  const States: PSfmlRenderStates);
+  const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawCircleShape(FHandle, &Object, States);
 end;
 
 procedure TSfmlRenderWindow.DrawConvexShape(const &Object: PSfmlConvexShape;
-  const States: PSfmlRenderStates);
+  const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawConvexShape(FHandle, &Object, States);
 end;
 
-procedure TSfmlRenderWindow.DrawPrimitives;
+procedure TSfmlRenderWindow.DrawPrimitives(const Vertices: PSfmlVertex;
+  VertexCount: Cardinal; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates = nil);
 begin
-  SfmlRenderWindowDrawPrimitives(FHandle);
+  SfmlRenderWindowDrawPrimitives(FHandle, Vertices, VertexCount, &Type, States);
 end;
 
 procedure TSfmlRenderWindow.Draw(const &Object: TSfmlRectangleShape;
-  const States: PSfmlRenderStates);
+  const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawRectangleShape(FHandle, &Object.FHandle, States);
 end;
 
 procedure TSfmlRenderWindow.DrawRectangleShape(
-  const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates);
+  const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawRectangleShape(FHandle, &Object, States);
 end;
 
 procedure TSfmlRenderWindow.DrawShape(const &Object: PSfmlShape;
-  const States: PSfmlRenderStates);
+  const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawShape(FHandle, &Object, States);
 end;
 
 procedure TSfmlRenderWindow.DrawSprite(const &Object: PSfmlSprite;
-  const States: PSfmlRenderStates);
+  const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawSprite(FHandle, &Object, States);
 end;
 
 procedure TSfmlRenderWindow.DrawText(const &Object: PSfmlText;
-  const States: PSfmlRenderStates);
+  const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawText(FHandle, &Object, States);
 end;
 
 procedure TSfmlRenderWindow.DrawVertexArray(const &Object: PSfmlVertexArray;
-  const States: PSfmlRenderStates);
+  const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawVertexArray(FHandle, &Object, States);
 end;
 
 procedure TSfmlRenderWindow.Draw(const &Object: TSfmlCircleShape;
-  const States: PSfmlRenderStates);
+  const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawCircleShape(FHandle, &Object.Handle, States);
 end;
 
 procedure TSfmlRenderWindow.Draw(const &Object: TSfmlConvexShape;
-  const States: PSfmlRenderStates);
+  const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawConvexShape(FHandle, &Object.Handle, States);
 end;
 
 procedure TSfmlRenderWindow.Draw(const &Object: TSfmlShape;
-  const States: PSfmlRenderStates);
+  const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawShape(FHandle, &Object.Handle, States);
 end;
 
 procedure TSfmlRenderWindow.Draw(const &Object: TSfmlSprite;
-  const States: PSfmlRenderStates);
+  const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawSprite(FHandle, &Object.Handle, States);
 end;
 
 procedure TSfmlRenderWindow.Draw(const &Object: TSfmlText;
-  const States: PSfmlRenderStates);
+  const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawText(FHandle, &Object.Handle, States);
 end;
 
 procedure TSfmlRenderWindow.Draw(const &Object: TSfmlVertexArray;
-  const States: PSfmlRenderStates);
+  const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawVertexArray(FHandle, &Object.Handle, States);
 end;

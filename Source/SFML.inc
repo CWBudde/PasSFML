@@ -3,7 +3,7 @@
   {$PACKRECORDS C}
 {$ENDIF}
 
-{$DEFINE DynLink}
+{-$DEFINE DynLink}
 
 {-$DEFINE RecordConstructors}
 

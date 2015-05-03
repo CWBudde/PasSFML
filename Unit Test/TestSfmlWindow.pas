@@ -158,11 +158,6 @@ begin
 end;
 
 initialization
-{$IFDEF FPC}
-  RegisterTest(TestTSfmlVideoMode);
-  RegisterTest(TestTSfmlWindow);
-{$ELSE}
   RegisterTest('SfmlWindow', TestTSfmlVideoMode.Suite);
   RegisterTest('SfmlWindow', TestTSfmlWindow.Suite);
-{$ENDIF}
 end.

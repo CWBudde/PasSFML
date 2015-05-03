@@ -140,16 +140,9 @@ type
     procedure TestDrawText;
     procedure TestDrawVertexArray;
     procedure TestPushPopResetGLStates;
-    procedure TestSetFramerateLimit;
     procedure TestSetIcon;
-    procedure TestSetJoystickThreshold;
-    procedure TestSetKeyRepeatEnabled;
-    procedure TestSetMouseCursorVisible;
     procedure TestSetSize;
     procedure TestSetTitle;
-    procedure TestSetVerticalSyncEnabled;
-    procedure TestSetView;
-    procedure TestSetVisible;
   end;
 
   TestTSfmlShader = class(TTestCase)
@@ -257,6 +250,9 @@ type
   end;
 
 implementation
+
+uses
+  SysUtils;
 
 { TestTSfmlCircleShape }
 
@@ -407,6 +403,7 @@ procedure TestTSfmlCircleShape.TestSetTexture;
 var
   Texture: TSfmlTexture;
 begin
+  Assert(FileExists('../Resources/Sfml.png'));
   Texture := TSfmlTexture.Create('../Resources/Sfml.png');
 
   FSfmlCircleShape.SetTexture(Texture.Handle, True);
@@ -525,6 +522,7 @@ procedure TestTSfmlConvexShape.TestSetTexture;
 var
   Texture: TSfmlTexture;
 begin
+  Assert(FileExists('../Resources/Sfml.png'));
   Texture := TSfmlTexture.Create('../Resources/Sfml.png');
 
   FSfmlConvexShape.SetTexture(Texture.Handle, True);
@@ -536,6 +534,7 @@ end;
 
 procedure TestTSfmlFont.SetUp;
 begin
+  Assert(FileExists('../Resources/Sansation.ttf'));
   FSfmlFont := TSfmlFont.Create('../Resources/Sansation.ttf');
 end;
 
@@ -610,6 +609,7 @@ end;
 
 procedure TestTSfmlImage.SetUp;
 begin
+  Assert(FileExists('../Resources/Sfml.png'));
   FSfmlImage := TSfmlImage.Create('../Resources/Sfml.png');
 end;
 
@@ -643,6 +643,7 @@ procedure TestTSfmlImage.TestCopyImage;
 var
   Source: TSfmlImage;
 begin
+  Assert(FileExists('../Resources/Sfml.png'));
   Source := TSfmlImage.Create('../Resources/Sfml.png');
   FSfmlImage.CopyImage(Source, 0, 0, SfmlIntRect(0, 0, 32, 32), True);
   // TODO: Check results
@@ -816,6 +817,7 @@ procedure TestTSfmlRectangleShape.TestSetTexture;
 var
   Texture: TSfmlTexture;
 begin
+  Assert(FileExists('../Resources/Sfml.png'));
   Texture := TSfmlTexture.Create('../Resources/Sfml.png');
 
   FSfmlRectangleShape.SetTexture(Texture.Handle, True);
@@ -983,6 +985,7 @@ begin
 
   Sprite := TSfmlSprite.Create;
   try
+    Assert(FileExists('../Resources/Sfml.png'));
     Texture := TSfmlTexture.Create('../Resources/Sfml.png');
     try
       Sprite.SetTexture(Texture);
@@ -994,6 +997,7 @@ begin
     Sprite.Free;
   end;
 
+  Assert(FileExists('../Resources/Sansation.ttf'));
   Font := TSfmlFont.Create('../Resources/Sansation.ttf');
   try
     Text := TSfmlText.Create('Hello World', Font);
@@ -1073,8 +1077,14 @@ begin
 end;
 
 procedure TestTSfmlRenderTexture.TestDrawPrimitives;
+var
+  Vertices: array [0 .. 2] of TSfmlVertex;
 begin
-  FSfmlRenderTexture.DrawPrimitives;
+  Vertices[0].Position := SfmlVector2f(2, 2);
+  Vertices[1].Position := SfmlVector2f(4, 6);
+  Vertices[2].Position := SfmlVector2f(12, 3);
+
+  FSfmlRenderTexture.DrawPrimitives(@Vertices[0], Length(Vertices), sfLines);
   // TODO: Check results
 end;
 
@@ -1103,12 +1113,12 @@ begin
   // TODO: Check results
 end;
 
-function GetPointCountCallback(UserData: Pointer): Cardinal; cdecl;
+function TriangleGetPointCountCallback(UserData: Pointer): Cardinal; cdecl;
 begin
   Result := 3;
 end;
 
-function GetPointCallback(Index: Cardinal; UserData: Pointer): TSfmlVector2f; cdecl;
+function TriangleGetPointCallback(Index: Cardinal; UserData: Pointer): TSfmlVector2f; cdecl;
 begin
   case Index of
     0:
@@ -1141,7 +1151,8 @@ begin
   States.Transform.Matrix[4] := 1;
   States.Transform.Matrix[8] := 1;
 
-  Shape := TSfmlShape.Create(GetPointCountCallback, GetPointCallback, nil);
+  Shape := TSfmlShape.Create(TriangleGetPointCountCallback,
+    TriangleGetPointCallback, nil);
   try
     Shape.Position := SfmlVector2f(16, 16);
     Shape.FillColor := SfmlRed;
@@ -1171,6 +1182,7 @@ begin
   try
     Sprite.Position := SfmlVector2f(16, 16);
 
+    Assert(FileExists('../Resources/Sfml.png'));
     Texture := TSfmlTexture.Create('../Resources/Sfml.png');
     try
       Sprite.SetTexture(Texture);
@@ -1198,6 +1210,7 @@ begin
   States.Transform.Matrix[4] := 1;
   States.Transform.Matrix[8] := 1;
 
+  Assert(FileExists('../Resources/Sansation.ttf'));
   Font := TSfmlFont.Create('../Resources/Sansation.ttf');
   try
     Text := TSfmlText.Create('Hello World', Font);
@@ -1342,9 +1355,19 @@ end;
 procedure TestTSfmlRenderWindow.TestGetView;
 var
   ReturnValue: PSfmlView;
+  View: TSfmlView;
+  ViewportRect: TSfmlFloatRect;
 begin
+  View := TSfmlView.Create;
+
+  View.Size := SfmlVector2f(64, 64);
+  ViewportRect := SfmlFloatRect(0, 0, 200, 200);
+  View.Viewport := ViewportRect;
+
+  FSfmlRenderWindow.SetView(View.Handle);
   ReturnValue := FSfmlRenderWindow.GetView;
-  // TODO: Check results
+
+  CheckEquals(Integer(View.Handle), Integer(ReturnValue));
 end;
 
 procedure TestTSfmlRenderWindow.TestGetViewport;
@@ -1463,6 +1486,7 @@ begin
 
   Sprite := TSfmlSprite.Create;
   try
+    Assert(FileExists('../Resources/Sfml.png'));
     Texture := TSfmlTexture.Create('../Resources/Sfml.png');
     try
       Sprite.SetTexture(Texture);
@@ -1474,6 +1498,7 @@ begin
     Sprite.Free;
   end;
 
+  Assert(FileExists('../Resources/Sansation.ttf'));
   Font := TSfmlFont.Create('../Resources/Sansation.ttf');
   try
     Text := TSfmlText.Create('Hello World', Font);
@@ -1553,8 +1578,14 @@ begin
 end;
 
 procedure TestTSfmlRenderWindow.TestDrawPrimitives;
+var
+  Vertices: array [0 .. 2] of TSfmlVertex;
 begin
-  FSfmlRenderWindow.DrawPrimitives;
+  Vertices[0].Position := SfmlVector2f(2, 2);
+  Vertices[1].Position := SfmlVector2f(4, 6);
+  Vertices[2].Position := SfmlVector2f(12, 3);
+
+  FSfmlRenderWindow.DrawPrimitives(@Vertices[0], Length(Vertices), sfLines);
   // TODO: Check results
 end;
 
@@ -1595,7 +1626,8 @@ begin
   States.Transform.Matrix[4] := 1;
   States.Transform.Matrix[8] := 1;
 
-  Shape := TSfmlShape.Create;
+  Shape := TSfmlShape.Create(TriangleGetPointCountCallback,
+    TriangleGetPointCallback, nil);
   try
     Shape.Position := SfmlVector2f(16, 16);
     Shape.FillColor := SfmlRed;
@@ -1625,6 +1657,7 @@ begin
   try
     Sprite.Position := SfmlVector2f(16, 16);
 
+    Assert(FileExists('../Resources/Sfml.png'));
     Texture := TSfmlTexture.Create('../Resources/Sfml.png');
     try
       Sprite.SetTexture(Texture);
@@ -1652,6 +1685,7 @@ begin
   States.Transform.Matrix[4] := 1;
   States.Transform.Matrix[8] := 1;
 
+  Assert(FileExists('../Resources/Sansation.ttf'));
   Font := TSfmlFont.Create('../Resources/Sansation.ttf');
   try
     Text := TSfmlText.Create('Hello World', Font);
@@ -1705,50 +1739,12 @@ begin
   // TODO: Check results
 end;
 
-procedure TestTSfmlRenderWindow.TestSetFramerateLimit;
-var
-  Limit: Cardinal;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlRenderWindow.SetFramerateLimit(Limit);
-  // TODO: Check results
-end;
-
 procedure TestTSfmlRenderWindow.TestSetIcon;
 var
-  Pixels: PByte;
-  Height: Cardinal;
-  Width: Cardinal;
+  Image: TSfmlImage;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlRenderWindow.SetIcon(Width, Height, Pixels);
-  // TODO: Check results
-end;
-
-procedure TestTSfmlRenderWindow.TestSetJoystickThreshold;
-var
-  Threshold: Single;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlRenderWindow.SetJoystickThreshold(Threshold);
-  // TODO: Check results
-end;
-
-procedure TestTSfmlRenderWindow.TestSetKeyRepeatEnabled;
-var
-  Enabled: Boolean;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlRenderWindow.SetKeyRepeatEnabled(Enabled);
-  // TODO: Check results
-end;
-
-procedure TestTSfmlRenderWindow.TestSetMouseCursorVisible;
-var
-  Show: Boolean;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlRenderWindow.SetMouseCursorVisible(Show);
+  Image := TSfmlImage.Create('../Resources/Sfml.png');
+  FSfmlRenderWindow.SetIcon(Image.Size.X, Image.Size.Y, Image.GetPixelsPtr);
   // TODO: Check results
 end;
 
@@ -1785,39 +1781,14 @@ begin
   // TODO: Check results
 end;
 
-procedure TestTSfmlRenderWindow.TestSetVerticalSyncEnabled;
-var
-  Enabled: Boolean;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlRenderWindow.SetVerticalSyncEnabled(Enabled);
-  // TODO: Check results
-end;
-
-procedure TestTSfmlRenderWindow.TestSetView;
-var
-  View: PSfmlView;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlRenderWindow.SetView(View);
-  // TODO: Check results
-end;
-
-procedure TestTSfmlRenderWindow.TestSetVisible;
-var
-  Visible: Boolean;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlRenderWindow.SetVisible(Visible);
-  // TODO: Check results
-end;
-
 
 { TestTSfmlShader }
 
 procedure TestTSfmlShader.SetUp;
 begin
-  FSfmlShader := TSfmlShader.CreateFromFile('Wave.vert', 'Blur.frag');
+  Assert(FileExists('../Resources/Wave.vert'));
+  Assert(FileExists('../Resources/Blur.frag'));
+  FSfmlShader := TSfmlShader.CreateFromFile('../Resources/Wave.vert', '../Resources/Blur.frag');
 end;
 
 procedure TestTSfmlShader.TearDown;
@@ -1838,14 +1809,14 @@ end;
 
 { TestTSfmlShape }
 
-function TestTSfmlShapeGetPointCountCallback(UserData: Pointer): Cardinal; cdecl;
+function GetPointCountCallback(UserData: Pointer): Cardinal; cdecl;
 begin
   Assert(TObject(UserData) is TestTSfmlShape);
 
   Result := 1;
 end;
 
-function TestTSfmlShapeGetPointCallback(Index: Cardinal; UserData: Pointer): TSfmlVector2f; cdecl;
+function GetPointCallback(Index: Cardinal; UserData: Pointer): TSfmlVector2f; cdecl;
 begin
   Assert(TObject(UserData) is TestTSfmlShape);
 
@@ -1855,7 +1826,7 @@ end;
 
 procedure TestTSfmlShape.SetUp;
 begin
-  FSfmlShape := TSfmlShape.Create(TestTSfmlShapeGetPointCountCallback, TestTSfmlShapeGetPointCallback, Self);
+  FSfmlShape := TSfmlShape.Create(GetPointCountCallback, GetPointCallback, Self);
 end;
 
 procedure TestTSfmlShape.TearDown;
@@ -1920,6 +1891,7 @@ procedure TestTSfmlShape.TestSetTexture;
 var
   Texture: TSfmlTexture;
 begin
+  Assert(FileExists('../Resources/Sfml.png'));
   Texture := TSfmlTexture.Create('../Resources/Sfml.png');
 
   FSfmlShape.SetTexture(Texture.Handle, True);
@@ -2035,6 +2007,7 @@ procedure TestTSfmlSprite.TestSetTexture;
 var
   Texture: TSfmlTexture;
 begin
+  Assert(FileExists('../Resources/Sfml.png'));
   Texture := TSfmlTexture.Create('../Resources/Sfml.png');
 
   FSfmlSprite.SetTexture(Texture.Handle, True);
@@ -2154,6 +2127,7 @@ end;
 
 procedure TestTSfmlTexture.SetUp;
 begin
+  Assert(FileExists('../Resources/Sfml.png'));
   FSfmlTexture := TSfmlTexture.Create('../Resources/Sfml.png');
 end;
 
@@ -2184,6 +2158,7 @@ begin
   FSfmlTexture.Smooth := False;
   FSfmlTexture.Repeated := False;
   Image := FSfmlTexture.CopyToImage;
+  Assert(FileExists('../Resources/Sfml.png'));
   Original := TSfmlImage.Create('../Resources/Sfml.png');
 
   Data[0] := Original.GetPixelsPtr;
@@ -2206,6 +2181,7 @@ procedure TestTSfmlTexture.TestUpdateFromImageAndPixels;
 var
   Image: TSfmlImage;
 begin
+  Assert(FileExists('../Resources/Sfml.png'));
   Image := TSfmlImage.Create('../Resources/Sfml.png');
 
   FSfmlTexture.UpdateFromImage(Image, 0, 0);
@@ -2458,23 +2434,6 @@ begin
 end;
 
 initialization
-{$IFDEF FPC}
-  RegisterTest(TestTSfmlCircleShape);
-  RegisterTest(TestTSfmlConvexShape.Suite);
-  RegisterTest(TestTSfmlFont.Suite);
-  RegisterTest(TestTSfmlImage.Suite);
-  RegisterTest(TestTSfmlRectangleShape.Suite);
-  RegisterTest(TestTSfmlRenderTexture.Suite);
-  RegisterTest(TestTSfmlRenderWindow.Suite);
-  RegisterTest(TestTSfmlShader.Suite);
-  RegisterTest(TestTSfmlShape.Suite);
-  RegisterTest(TestTSfmlSprite.Suite);
-  RegisterTest(TestTSfmlText.Suite);
-  RegisterTest(TestTSfmlTexture.Suite);
-  RegisterTest(TestTSfmlTransformable.Suite);
-  RegisterTest(TestTSfmlVertexArray.Suite);
-  RegisterTest(TestTSfmlView.Suite);
-{$ELSE}
   RegisterTest('SfmlGraphics', TestTSfmlCircleShape.Suite);
   RegisterTest('SfmlGraphics', TestTSfmlConvexShape.Suite);
   RegisterTest('SfmlGraphics', TestTSfmlFont.Suite);
@@ -2490,5 +2449,4 @@ initialization
   RegisterTest('SfmlGraphics', TestTSfmlTransformable.Suite);
   RegisterTest('SfmlGraphics', TestTSfmlVertexArray.Suite);
   RegisterTest('SfmlGraphics', TestTSfmlView.Suite);
-{$ENDIF}
 end.

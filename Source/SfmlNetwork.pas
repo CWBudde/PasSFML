@@ -146,7 +146,7 @@ type
   );
 
   TSfmlIpAddress = record
-    Address : array [0 .. 15] of AnsiChar;
+    Address: array [0 .. 15] of AnsiChar;
   end;
 
   TSfmlSocketStatus = (sfSocketDone, sfSocketNotReady, sfSocketDisconnected,
@@ -204,11 +204,6 @@ type
   TSfmlHttpSetHost = procedure (Http: PSfmlHttp; const Host: PAnsiChar; Port: Byte); cdecl;
   TSfmlHttpSendRequest = function (Http: PSfmlHttp; const Request: PSfmlHttpRequest; Timeout: TSfmlTime): PSfmlHttpResponse; cdecl;
 
-(*
-  const TSfmlIpAddress sfIpAddress_None;
-  const TSfmlIpAddress sfIpAddress_LocalHost;
-  const TSfmlIpAddress sfIpAddress_Broadcast;
-*)
   TSfmlIpAddressFromString = function (const address: PAnsiChar): TSfmlIpAddress; cdecl;
   TSfmlIpAddressFromBytes = function (byte0, byte1, byte2, byte3: Byte): TSfmlIpAddress; cdecl;
   TSfmlIpAddressFromInteger = function (Address: Cardinal): TSfmlIpAddress; cdecl;
@@ -296,6 +291,10 @@ type
   TSfmlUdpSocketMaxDatagramSize = function : Cardinal; cdecl;
 
 var
+  SfmlIpAddressNone: TSfmlIpAddress;
+  SfmlIpAddressLocalHost: TSfmlIpAddress;
+  SfmlIpAddressBroadcast: TSfmlIpAddress;
+
   SfmlFtpListingResponseDestroy: TSfmlFtpListingResponseDestroy;
   SfmlFtpListingResponseIsOk: TSfmlFtpListingResponseIsOk;
   SfmlFtpListingResponseGetStatus: TSfmlFtpListingResponseGetStatus;
@@ -347,11 +346,6 @@ var
   SfmlHttpSetHost: TSfmlHttpSetHost;
   SfmlHttpSendRequest: TSfmlHttpSendRequest;
 
-(*
-  const TSfmlIpAddress sfIpAddress_None;
-  const TSfmlIpAddress sfIpAddress_LocalHost;
-  const TSfmlIpAddress sfIpAddress_Broadcast;
-*)
   SfmlIpAddressFromString: TSfmlIpAddressFromString;
   SfmlIpAddressFromBytes: TSfmlIpAddressFromBytes;
   SfmlIpAddressFromInteger: TSfmlIpAddressFromInteger;
@@ -438,6 +432,11 @@ var
   SfmlUdpSocketReceivePacket: TSfmlUdpSocketReceivePacket;
   SfmlUdpSocketMaxDatagramSize: TSfmlUdpSocketMaxDatagramSize;
 {$ELSE}
+const
+  SfmlIpAddressNone: TSfmlIpAddress = (Address: '0.0.0.0'#0#0#0#0#0#0#0#0#0);
+  SfmlIpAddressLocalHost: TSfmlIpAddress = (Address: '127.0.0.1'#0#0#0#0#0#0#0);
+  SfmlIpAddressBroadcast: TSfmlIpAddress = (Address: '255.255.255.255'#0);
+
   // static linking
   procedure SfmlFtpListingResponseDestroy(FtpListingResponse: PSfmlFtpListingResponse); cdecl; external CSfmlNetworkLibrary name 'sfFtpListingResponse_destroy';
   function SfmlFtpListingResponseIsOk(const FtpListingResponse: PSfmlFtpListingResponse): Boolean; cdecl; external CSfmlNetworkLibrary name 'sfFtpListingResponse_isOk';
@@ -490,11 +489,6 @@ var
   procedure SfmlHttpSetHost(Http: PSfmlHttp; const Host: PAnsiChar; Port: Byte); cdecl; external CSfmlNetworkLibrary name 'sfHttp_setHost';
   function SfmlHttpSendRequest(Http: PSfmlHttp; const Request: PSfmlHttpRequest; Timeout: TSfmlTime): PSfmlHttpResponse; cdecl; external CSfmlNetworkLibrary name 'sfHttp_sendRequest';
 
-(*
-  const TSfmlIpAddress sfIpAddress_None;
-  const TSfmlIpAddress sfIpAddress_LocalHost;
-  const TSfmlIpAddress sfIpAddress_Broadcast;
-*)
   function SfmlIpAddressFromString(const address: PAnsiChar): TSfmlIpAddress; cdecl; external CSfmlNetworkLibrary name 'sfIpAddress_fromString';
   function SfmlIpAddressFromBytes(byte0, byte1, byte2, byte3: Byte): TSfmlIpAddress; cdecl; external CSfmlNetworkLibrary name 'sfIpAddress_fromBytes';
   function SfmlIpAddressFromInteger(Address: Cardinal): TSfmlIpAddress; cdecl; external CSfmlNetworkLibrary name 'sfIpAddress_fromInteger';
@@ -583,37 +577,49 @@ var
 {$ENDIF}
 
 type
-  TSfmlFtpListingResponse = class
+  TSfmlFtpResponse = class
   private
-    FHandle: PSfmlFtpListingResponse;
+    FHandle: PSfmlFtpResponse;
+  protected
+    function GetStatus: TSfmlFtpStatus; virtual;
+    function GetMessage: AnsiString; virtual;
+    constructor Create(Handle: PSfmlFtpResponse);
   public
     destructor Destroy; override;
-    function IsOk: Boolean;
-    function GetStatus: TSfmlFtpStatus;
-    function GetMessage: AnsiString;
+
+    function IsOk: Boolean; virtual;
+
+    property Status: TSfmlFtpStatus read GetStatus;
+    property &Message: AnsiString read GetMessage;
+  end;
+
+  TSfmlFtpListingResponse = class(TSfmlFtpResponse)
+  private
+    FHandle: PSfmlFtpListingResponse;
+  protected
+    function GetStatus: TSfmlFtpStatus; override;
+    function GetMessage: AnsiString; override;
+    constructor Create(Handle: PSfmlFtpListingResponse);
+  public
+    destructor Destroy; override;
+
+    function IsOk: Boolean; override;
     function GetCount: NativeUInt;
     function GetName(Index: NativeUInt): AnsiString;
   end;
 
-  TSfmlFtpDirectoryResponse = class
+  TSfmlFtpDirectoryResponse = class(TSfmlFtpResponse)
   private
     FHandle: PSfmlFtpDirectoryResponse;
+  protected
+    function GetStatus: TSfmlFtpStatus; override;
+    function GetMessage: AnsiString; override;
+    constructor Create(Handle: PSfmlFtpDirectoryResponse);
   public
     destructor Destroy; override;
-    function IsOk: Boolean;
-    function GetStatus: TSfmlFtpStatus;
-    function GetMessage: AnsiString;
-    function GetDirectory: AnsiString;
-  end;
 
-  TSfmlFtpResponse = class
-  private
-    FHandle: PSfmlFtpResponse;
-  public
-    destructor Destroy; override;
-    function IsOk: Boolean;
-    function GetStatus: TSfmlFtpStatus;
-    function GetMessage: AnsiString;
+    function IsOk: Boolean; override;
+    function GetDirectory: AnsiString;
   end;
 
   TSfmlFtp = class
@@ -622,21 +628,22 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    function Connect(Server: TSfmlIpAddress; Port: Byte; Timeout: TSfmlTime): PSfmlFtpResponse;
-    function LoginAnonymous: PSfmlFtpResponse;
-    function Login(const UserName, Password: AnsiString): PSfmlFtpResponse;
-    function Disconnect: PSfmlFtpResponse;
-    function KeepAlive: PSfmlFtpResponse;
-    function GetWorkingDirectory: PSfmlFtpDirectoryResponse;
-    function GetDirectoryListing(Directory: AnsiString): PSfmlFtpListingResponse;
-    function ChangeDirectory(Directory: AnsiString): PSfmlFtpResponse;
-    function ParentDirectory: PSfmlFtpResponse;
-    function CreateDirectory(Name: AnsiString): PSfmlFtpResponse;
-    function DeleteDirectory(Name: AnsiString): PSfmlFtpResponse;
-    function RenameFile(&File: AnsiString; const NewName: AnsiString): PSfmlFtpResponse;
-    function DeleteFile(Name: AnsiString): PSfmlFtpResponse;
-    function Download(DistantFile: AnsiString; const DestPath: AnsiString; Mode: TSfmlFtpTransferMode): PSfmlFtpResponse;
-    function Upload(LocalFile: AnsiString; const DestPath: AnsiString; Mode: TSfmlFtpTransferMode): PSfmlFtpResponse;
+
+    function Connect(Server: TSfmlIpAddress; Port: Byte; Timeout: TSfmlTime): TSfmlFtpResponse;
+    function LoginAnonymous: TSfmlFtpResponse;
+    function Login(const UserName, Password: AnsiString): TSfmlFtpResponse;
+    function Disconnect: TSfmlFtpResponse;
+    function KeepAlive: TSfmlFtpResponse;
+    function GetWorkingDirectory: TSfmlFtpDirectoryResponse;
+    function GetDirectoryListing(Directory: AnsiString): TSfmlFtpListingResponse;
+    function ChangeDirectory(Directory: AnsiString): TSfmlFtpResponse;
+    function ParentDirectory: TSfmlFtpResponse;
+    function CreateDirectory(Name: AnsiString): TSfmlFtpResponse;
+    function DeleteDirectory(Name: AnsiString): TSfmlFtpResponse;
+    function RenameFile(&File: AnsiString; const NewName: AnsiString): TSfmlFtpResponse;
+    function DeleteFile(Name: AnsiString): TSfmlFtpResponse;
+    function Download(DistantFile: AnsiString; const DestPath: AnsiString; Mode: TSfmlFtpTransferMode): TSfmlFtpResponse;
+    function Upload(LocalFile: AnsiString; const DestPath: AnsiString; Mode: TSfmlFtpTransferMode): TSfmlFtpResponse;
   end;
 
   TSfmlHttpRequest = class
@@ -645,18 +652,23 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+
     procedure SetField(Field: AnsiString; const Value: AnsiString);
     procedure SetMethod(Method: TSfmlHttpMethod);
     procedure SetUri(Uri: AnsiString);
     procedure SetHttpVersion(Major, Minor: Cardinal);
     procedure SetBody(Body: AnsiString);
+
+    property Handle: PSfmlHttpRequest read FHandle;
   end;
 
   TSfmlHttpResponse = class
   private
     FHandle: PSfmlHttpResponse;
+    constructor Create(Handle: PSfmlHttpResponse);
   public
     destructor Destroy; override;
+
     function GetField(const Field: AnsiString): AnsiString;
     function GetStatus: TSfmlHttpStatus;
     function GetMajorVersion: Cardinal;
@@ -670,8 +682,10 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+
     procedure SetHost(const Host: AnsiString; Port: Byte);
-    function SendRequest(const Request: PSfmlHttpRequest; Timeout: TSfmlTime): PSfmlHttpResponse;
+    function SendRequest(const Request: PSfmlHttpRequest; Timeout: TSfmlTime): TSfmlHttpResponse; overload;
+    function SendRequest(const Request: TSfmlHttpRequest; Timeout: TSfmlTime): TSfmlHttpResponse; overload;
   end;
 
   TSfmlPacket = class
@@ -685,6 +699,7 @@ type
     function Copy: TSfmlPacket;
     procedure Append(Data: Pointer; SizeInBytes: NativeUInt);
     procedure Clear;
+
     function GetData: Pointer;
     function GetDataSize: NativeUInt;
     function EndOfPacket: Boolean;
@@ -731,30 +746,44 @@ type
     function IsUdpSocketReady(Socket: PSfmlUdpSocket): Boolean;
   end;
 
-  TSfmlTcpListener = class
+  TSfmlSocket = class
+  protected
+    procedure SetBlocking(Blocking: Boolean); virtual; abstract;
+    function GetBlocking: Boolean; virtual; abstract;
+    function GetLocalPort: Byte; virtual; abstract;
+  public
+    constructor Create; virtual; abstract;
+
+    property Blocking: Boolean read GetBlocking write SetBlocking;
+    property LocalPort: Byte read GetLocalPort;
+  end;
+
+  TSfmlTcpListener = class(TSfmlSocket)
   private
     FHandle: PSfmlTcpListener;
+  protected
+    procedure SetBlocking(Blocking: Boolean); override;
+    function GetBlocking: Boolean; override;
+    function GetLocalPort: Byte; override;
   public
-    constructor Create;
+    constructor Create; override;
     destructor Destroy; override;
 
-    procedure SetBlocking(Blocking: Boolean);
-    function IsBlocking: Boolean;
-    function GetLocalPort: Byte;
     function Listen(Port: Byte): TSfmlSocketStatus;
     function Accept(out Connected: PSfmlTcpSocket): TSfmlSocketStatus;
   end;
 
-  TSfmlTcpSocket = class
+  TSfmlTcpSocket = class(TSfmlSocket)
   private
     FHandle: PSfmlTcpSocket;
+  protected
+    procedure SetBlocking(Blocking: Boolean); override;
+    function GetBlocking: Boolean; override;
+    function GetLocalPort: Byte; override;
   public
-    constructor Create;
+    constructor Create; override;
     destructor Destroy; override;
 
-    procedure SetBlocking(Blocking: Boolean);
-    function IsBlocking: Boolean;
-    function GetLocalPort: Byte;
     function GetRemoteAddress: TSfmlIpAddress;
     function GetRemotePort: Byte;
     function Connect(Host: TSfmlIpAddress; Port: Byte; TimeOut: TSfmlTime): TSfmlSocketStatus;
@@ -765,16 +794,17 @@ type
     function ReceivePacket(Packet: PSfmlPacket): TSfmlSocketStatus;
   end;
 
-  TSfmlUdpSocket = class
+  TSfmlUdpSocket = class(TSfmlSocket)
   private
     FHandle: PSfmlUdpSocket;
+  protected
+    procedure SetBlocking(Blocking: Boolean); override;
+    function GetBlocking: Boolean; override;
+    function GetLocalPort: Byte; override;
   public
-    constructor Create;
+    constructor Create; override;
     destructor Destroy; override;
 
-    procedure SetBlocking(Blocking: Boolean);
-    function IsBlocking: Boolean;
-    function GetLocalPort: Byte;
     function Bind(Port: Byte): TSfmlSocketStatus;
     procedure Unbind;
     function Send(Data: Pointer; Size: NativeUInt; Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus;
@@ -793,6 +823,11 @@ uses
 {$ENDIF}
 
 { TSfmlFtpListingResponse }
+
+constructor TSfmlFtpListingResponse.Create(Handle: PSfmlFtpListingResponse);
+begin
+  FHandle := Handle;
+end;
 
 destructor TSfmlFtpListingResponse.Destroy;
 begin
@@ -828,6 +863,11 @@ end;
 
 { TSfmlFtpDirectoryResponse }
 
+constructor TSfmlFtpDirectoryResponse.Create(Handle: PSfmlFtpDirectoryResponse);
+begin
+  FHandle := Handle;
+end;
+
 destructor TSfmlFtpDirectoryResponse.Destroy;
 begin
   SfmlFtpDirectoryResponseDestroy(FHandle);
@@ -856,6 +896,11 @@ end;
 
 
 { TSfmlFtpResponse }
+
+constructor TSfmlFtpResponse.Create(Handle: PSfmlFtpResponse);
+begin
+  FHandle := Handle;
+end;
 
 destructor TSfmlFtpResponse.Destroy;
 begin
@@ -892,85 +937,94 @@ begin
   inherited;
 end;
 
-function TSfmlFtp.ChangeDirectory(Directory: AnsiString): PSfmlFtpResponse;
+function TSfmlFtp.ChangeDirectory(Directory: AnsiString): TSfmlFtpResponse;
 begin
-  Result := SfmlFtpChangeDirectory(FHandle, PAnsiChar(Directory));
+  Result := TSfmlFtpResponse.Create(SfmlFtpChangeDirectory(FHandle,
+    PAnsiChar(Directory)));
 end;
 
 function TSfmlFtp.Connect(Server: TSfmlIpAddress; Port: Byte;
-  Timeout: TSfmlTime): PSfmlFtpResponse;
+  Timeout: TSfmlTime): TSfmlFtpResponse;
 begin
-  Result := SfmlFtpConnect(FHandle, Server, Port, Timeout);
+  Result := TSfmlFtpResponse.Create(SfmlFtpConnect(FHandle, Server, Port,
+    Timeout));
 end;
 
-function TSfmlFtp.CreateDirectory(Name: AnsiString): PSfmlFtpResponse;
+function TSfmlFtp.CreateDirectory(Name: AnsiString): TSfmlFtpResponse;
 begin
-  Result := SfmlFtpCreateDirectory(FHandle, PAnsiChar(Name));
+  Result := TSfmlFtpResponse.Create(SfmlFtpCreateDirectory(FHandle,
+    PAnsiChar(Name)));
 end;
 
-function TSfmlFtp.DeleteDirectory(Name: AnsiString): PSfmlFtpResponse;
+function TSfmlFtp.DeleteDirectory(Name: AnsiString): TSfmlFtpResponse;
 begin
-  Result := SfmlFtpDeleteDirectory(FHandle, PAnsiChar(Name));
+  Result := TSfmlFtpResponse.Create(SfmlFtpDeleteDirectory(FHandle,
+    PAnsiChar(Name)));
 end;
 
-function TSfmlFtp.DeleteFile(Name: AnsiString): PSfmlFtpResponse;
+function TSfmlFtp.DeleteFile(Name: AnsiString): TSfmlFtpResponse;
 begin
-  Result := SfmlFtpDeleteFile(FHandle, PAnsiChar(Name));
+  Result := TSfmlFtpResponse.Create(SfmlFtpDeleteFile(FHandle,
+    PAnsiChar(Name)));
 end;
 
-function TSfmlFtp.Disconnect: PSfmlFtpResponse;
+function TSfmlFtp.Disconnect: TSfmlFtpResponse;
 begin
-  Result := SfmlFtpDisconnect(FHandle);
+  Result := TSfmlFtpResponse.Create(SfmlFtpDisconnect(FHandle));
 end;
 
 function TSfmlFtp.Download(DistantFile: AnsiString; const DestPath: AnsiString;
-  Mode: TSfmlFtpTransferMode): PSfmlFtpResponse;
+  Mode: TSfmlFtpTransferMode): TSfmlFtpResponse;
 begin
-  Result := SfmlFtpDownload(FHandle, PAnsiChar(DistantFile),
-    PAnsiChar(DestPath), Mode);
+  Result := TSfmlFtpResponse.Create(SfmlFtpDownload(FHandle,
+    PAnsiChar(DistantFile), PAnsiChar(DestPath), Mode));
 end;
 
 function TSfmlFtp.GetDirectoryListing(
-  Directory: AnsiString): PSfmlFtpListingResponse;
+  Directory: AnsiString): TSfmlFtpListingResponse;
 begin
-  Result := SfmlFtpGetDirectoryListing(FHandle, PAnsiChar(Directory));
+  Result := TSfmlFtpListingResponse.Create(SfmlFtpGetDirectoryListing(FHandle,
+    PAnsiChar(Directory)));
 end;
 
-function TSfmlFtp.GetWorkingDirectory: PSfmlFtpDirectoryResponse;
+function TSfmlFtp.GetWorkingDirectory: TSfmlFtpDirectoryResponse;
 begin
-  Result := SfmlFtpGetWorkingDirectory(FHandle);
+  Result := TSfmlFtpDirectoryResponse.Create(SfmlFtpGetWorkingDirectory(FHandle));
 end;
 
-function TSfmlFtp.KeepAlive: PSfmlFtpResponse;
+function TSfmlFtp.KeepAlive: TSfmlFtpResponse;
 begin
-  Result := SfmlFtpKeepAlive(FHandle);
+  Result := TSfmlFtpResponse.Create(SfmlFtpKeepAlive(FHandle));
 end;
 
-function TSfmlFtp.Login(const UserName, Password: AnsiString): PSfmlFtpResponse;
+function TSfmlFtp.Login(const UserName, Password: AnsiString): TSfmlFtpResponse;
 begin
-  Result := SfmlFtpLogin(FHandle, PAnsiChar(UserName), PAnsiChar(Password));
+  Result := TSfmlFtpResponse.Create(SfmlFtpLogin(FHandle, PAnsiChar(UserName),
+    PAnsiChar(Password)));
 end;
 
-function TSfmlFtp.LoginAnonymous: PSfmlFtpResponse;
+function TSfmlFtp.LoginAnonymous: TSfmlFtpResponse;
 begin
-  Result := SfmlFtpLoginAnonymous(FHandle);
+  Result := TSfmlFtpResponse.Create(SfmlFtpLoginAnonymous(FHandle));
 end;
 
-function TSfmlFtp.ParentDirectory: PSfmlFtpResponse;
+function TSfmlFtp.ParentDirectory: TSfmlFtpResponse;
 begin
-  Result := SfmlFtpParentDirectory(FHandle);
+  Result := TSfmlFtpResponse.Create(SfmlFtpParentDirectory(FHandle));
 end;
 
 function TSfmlFtp.RenameFile(&File: AnsiString;
-  const NewName: AnsiString): PSfmlFtpResponse;
+  const NewName: AnsiString): TSfmlFtpResponse;
 begin
-  Result := SfmlFtpRenameFile(FHandle, PAnsiChar(&File), PAnsiChar(NewName));
+  Result := TSfmlFtpResponse.Create(SfmlFtpRenameFile(FHandle, PAnsiChar(&File),
+    PAnsiChar(NewName)));
 end;
 
 function TSfmlFtp.Upload(LocalFile: AnsiString; const DestPath: AnsiString;
-  Mode: TSfmlFtpTransferMode): PSfmlFtpResponse;
+  Mode: TSfmlFtpTransferMode): TSfmlFtpResponse;
 begin
-  Result := SfmlFtpUpload(FHandle, PAnsiChar(LocalFile), PAnsiChar(DestPath), Mode);
+  Result := TSfmlFtpResponse.Create(SfmlFtpUpload(FHandle, PAnsiChar(LocalFile),
+    PAnsiChar(DestPath), Mode));
 end;
 
 
@@ -1014,6 +1068,11 @@ end;
 
 
 { TSfmlHttpResponse }
+
+constructor TSfmlHttpResponse.Create(Handle: PSfmlHttpResponse);
+begin
+  FHandle := Handle;
+end;
 
 destructor TSfmlHttpResponse.Destroy;
 begin
@@ -1061,9 +1120,17 @@ begin
 end;
 
 function TSfmlHttp.SendRequest(const Request: PSfmlHttpRequest;
-  Timeout: TSfmlTime): PSfmlHttpResponse;
+  Timeout: TSfmlTime): TSfmlHttpResponse;
 begin
-  Result := SfmlHttpSendRequest(FHandle, Request, TimeOut);
+  Result := TSfmlHttpResponse.Create(SfmlHttpSendRequest(FHandle, Request,
+    TimeOut));
+end;
+
+function TSfmlHttp.SendRequest(const Request: TSfmlHttpRequest;
+  Timeout: TSfmlTime): TSfmlHttpResponse;
+begin
+  Result := TSfmlHttpResponse.Create(SfmlHttpSendRequest(FHandle,
+    Request.Handle, TimeOut));
 end;
 
 procedure TSfmlHttp.SetHost(const Host: AnsiString; Port: Byte);
@@ -1320,7 +1387,7 @@ begin
   Result := SfmlTcpListenerGetLocalPort(FHandle);
 end;
 
-function TSfmlTcpListener.IsBlocking: Boolean;
+function TSfmlTcpListener.GetBlocking: Boolean;
 begin
   Result := SfmlTcpListenerIsBlocking(FHandle);
 end;
@@ -1375,7 +1442,7 @@ begin
   Result := SfmlTcpSocketGetRemotePort(FHandle);
 end;
 
-function TSfmlTcpSocket.IsBlocking: Boolean;
+function TSfmlTcpSocket.GetBlocking: Boolean;
 begin
   Result := SfmlTcpSocketIsBlocking(FHandle);
 end;
@@ -1431,7 +1498,7 @@ begin
   Result := SfmlUdpSocketGetLocalPort(FHandle);
 end;
 
-function TSfmlUdpSocket.IsBlocking: Boolean;
+function TSfmlUdpSocket.GetBlocking: Boolean;
 begin
   Result := SfmlUdpSocketIsBlocking(FHandle);
 end;
@@ -1488,6 +1555,10 @@ begin
   CSfmlNetworkHandle := LoadLibraryA(CSfmlNetworkLibrary);
   if CSfmlNetworkHandle <> 0 then
     try
+      Move(GetProcAddress(CSfmlNetworkHandle, PAnsiChar('sfIpAddress_None'))^, SfmlIpAddressNone, SizeOf(TSfmlIpAddress));
+      Move(GetProcAddress(CSfmlNetworkHandle, PAnsiChar('sfIpAddress_LocalHost'))^, SfmlIpAddressLocalHost, SizeOf(TSfmlIpAddress));
+      Move(GetProcAddress(CSfmlNetworkHandle, PAnsiChar('sfIpAddress_Broadcast'))^, SfmlIpAddressBroadcast, SizeOf(TSfmlIpAddress));
+
       SfmlFtpListingResponseDestroy := BindFunction('sfFtpListingResponse_destroy');
       SfmlFtpListingResponseIsOk := BindFunction('sfFtpListingResponse_isOk');
       SfmlFtpListingResponseGetStatus := BindFunction('sfFtpListingResponse_getStatus');

@@ -19,6 +19,7 @@ uses
   SfmlWindow in '..\Source\SfmlWindow.pas',
   TestSfmlAudio in 'TestSfmlAudio.pas',
   TestSfmlGraphics in 'TestSfmlGraphics.pas',
+  TestSfmlNetwork in 'TestSfmlNetwork.pas',
   TestSfmlSystem in 'TestSfmlSystem.pas',
   TestSfmlWindow in 'TestSfmlWindow.pas';
 

@@ -210,13 +210,7 @@ begin
 end;
 
 initialization
-{$IFDEF FPC}
-  RegisterTest(TestTSfmlTime);
-  RegisterTest(TestTSfmlClock);
-  RegisterTest(TestTSfmlThread);
-{$ELSE}
   RegisterTest('SfmlSystem', TestTSfmlTime.Suite);
   RegisterTest('SfmlSystem', TestTSfmlClock.Suite);
   RegisterTest('SfmlSystem', TestTSfmlThread.Suite);
-{$ENDIF}
 end.
