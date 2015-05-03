@@ -41,18 +41,33 @@ const
 {$IFEND}
 
 type
-  PSfmlFtpDirectoryResponse = Pointer;
-  PSfmlFtpListingResponse = Pointer;
-  PSfmlFtpResponse = Pointer;
-  PSfmlFtp = Pointer;
-  PSfmlHttpRequest = Pointer;
-  PSfmlHttpResponse = Pointer;
-  PSfmlHttp = Pointer;
-  PSfmlPacket = Pointer;
-  PSfmlSocketSelector = Pointer;
-  PSfmlTcpListener = Pointer;
-  PSfmlTcpSocket = Pointer;
-  PSfmlUdpSocket = Pointer;
+  // opaque structures
+  TSfmlFtpDirectoryResponseRecord = record end;
+  TSfmlFtpListingResponseRecord = record end;
+  TSfmlFtpResponseRecord = record end;
+  TSfmlFtpRecord = record end;
+  TSfmlHttpRequestRecord = record end;
+  TSfmlHttpResponseRecord = record end;
+  TSfmlHttpRecord = record end;
+  TSfmlPacketRecord = record end;
+  TSfmlSocketSelectorRecord = record end;
+  TSfmlTcpListenerRecord = record end;
+  TSfmlTcpSocketRecord = record end;
+  TSfmlUdpSocketRecord = record end;
+
+  // handles for opaque structures
+  PSfmlFtpDirectoryResponse = ^TSfmlFtpDirectoryResponseRecord;
+  PSfmlFtpListingResponse = ^TSfmlFtpListingResponseRecord;
+  PSfmlFtpResponse = ^TSfmlFtpResponseRecord;
+  PSfmlFtp = ^TSfmlFtpRecord;
+  PSfmlHttpRequest = ^TSfmlHttpRequestRecord;
+  PSfmlHttpResponse = ^TSfmlHttpResponseRecord;
+  PSfmlHttp = ^TSfmlHttpRecord;
+  PSfmlPacket = ^TSfmlPacketRecord;
+  PSfmlSocketSelector = ^TSfmlSocketSelectorRecord;
+  PSfmlTcpListener = ^TSfmlTcpListenerRecord;
+  PSfmlTcpSocket = ^TSfmlTcpSocketRecord;
+  PSfmlUdpSocket = ^TSfmlUdpSocketRecord;
 
   TSfmlFtpTransferMode = (sfFtpBinary, sfFtpAscii, sfFtpEbcdic);
 
@@ -662,9 +677,11 @@ type
   TSfmlPacket = class
   private
     FHandle: PSfmlPacket;
+    constructor Create(Handle: PSfmlPacket); overload;
   public
-    constructor Create;
+    constructor Create; overload;
     destructor Destroy; override;
+
     function Copy: TSfmlPacket;
     procedure Append(Data: Pointer; SizeInBytes: NativeUInt);
     procedure Clear;
@@ -699,8 +716,9 @@ type
   TSfmlSocketSelector = class
   private
     FHandle: PSfmlSocketSelector;
+    constructor Create(Handle: PSfmlSocketSelector); overload;
   public
-    constructor Create;
+    constructor Create; overload;
     destructor Destroy; override;
 
     function Copy: TSfmlSocketSelector;
@@ -1061,6 +1079,11 @@ begin
   FHandle := SfmlPacketCreate;
 end;
 
+constructor TSfmlPacket.Create(Handle: PSfmlPacket);
+begin
+  FHandle := Handle;
+end;
+
 destructor TSfmlPacket.Destroy;
 begin
   SfmlPacketDestroy(FHandle);
@@ -1084,7 +1107,7 @@ end;
 
 function TSfmlPacket.Copy: TSfmlPacket;
 begin
-  Result := SfmlPacketCopy(FHandle);
+  Result := TSfmlPacket.Create(SfmlPacketCopy(FHandle));
 end;
 
 function TSfmlPacket.EndOfPacket: Boolean;
@@ -1220,6 +1243,11 @@ begin
   FHandle := SfmlSocketSelectorCreate;
 end;
 
+constructor TSfmlSocketSelector.Create(Handle: PSfmlSocketSelector);
+begin
+  FHandle := Handle;
+end;
+
 destructor TSfmlSocketSelector.Destroy;
 begin
   SfmlSocketSelectorDestroy(FHandle);
@@ -1238,7 +1266,7 @@ end;
 
 function TSfmlSocketSelector.Copy: TSfmlSocketSelector;
 begin
-  Result := SfmlSocketSelectorCopy(FHandle);
+  Result := TSfmlSocketSelector.Create(SfmlSocketSelectorCopy(FHandle));
 end;
 
 function TSfmlSocketSelector.IsTcpListenerReady(

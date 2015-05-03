@@ -231,7 +231,7 @@ begin
   ReturnValue := FSfmlSound.Copy;
 
   CheckEquals(FSfmlSound.Attenuation, ReturnValue.Attenuation);
-  CheckEquals(FSfmlSound.GetBuffer, ReturnValue.GetBuffer);
+  CheckEquals(Pointer(FSfmlSound.GetBuffer), Pointer(ReturnValue.GetBuffer));
   CheckEquals(FSfmlSound.Loop, ReturnValue.Loop);
   CheckEquals(FSfmlSound.MinDistance, ReturnValue.MinDistance);
   CheckEquals(FSfmlSound.Pitch, ReturnValue.Pitch);
@@ -249,7 +249,7 @@ var
   ReturnValue: PSfmlSoundBuffer;
 begin
   ReturnValue := FSfmlSound.GetBuffer;
-  CheckEquals(FSfmlSoundBuffer.Handle, ReturnValue);
+  CheckEquals(Pointer(FSfmlSoundBuffer.Handle), Pointer(ReturnValue));
 end;
 
 procedure TestTSfmlSound.TestSetBuffer;
@@ -257,7 +257,7 @@ begin
   FSfmlSound.SetBuffer(nil);
 //  CheckEquals(nil, FSfmlSound.GetBuffer);
   FSfmlSound.SetBuffer(FSfmlSoundBuffer);
-  CheckEquals(FSfmlSoundBuffer.Handle, FSfmlSound.GetBuffer);
+  CheckEquals(Pointer(FSfmlSoundBuffer.Handle), Pointer(FSfmlSound.GetBuffer));
 end;
 
 procedure TestTSfmlSound.TestPlayPauseStop;
@@ -369,11 +369,11 @@ initialization
   RegisterTest(TestTSfmlSoundBufferRecorder);
   RegisterTest(TestTSfmlSoundRecorder);
 {$ELSE}
-  RegisterTest(TestTSfmlMusic.Suite);
-  RegisterTest(TestTSfmlSoundStream.Suite);
-  RegisterTest(TestTSfmlSoundBuffer.Suite);
-  RegisterTest(TestTSfmlSound.Suite);
-  RegisterTest(TestTSfmlSoundBufferRecorder.Suite);
-  RegisterTest(TestTSfmlSoundRecorder.Suite);
+  RegisterTest('SfmlAudio', TestTSfmlMusic.Suite);
+  RegisterTest('SfmlAudio', TestTSfmlSoundStream.Suite);
+  RegisterTest('SfmlAudio', TestTSfmlSoundBuffer.Suite);
+  RegisterTest('SfmlAudio', TestTSfmlSound.Suite);
+  RegisterTest('SfmlAudio', TestTSfmlSoundBufferRecorder.Suite);
+  RegisterTest('SfmlAudio', TestTSfmlSoundRecorder.Suite);
 {$ENDIF}
 end.

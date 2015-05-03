@@ -41,21 +41,39 @@ const
 {$IFEND}
 
 type
-  PSfmlCircleShape = Pointer;
-  PSfmlConvexShape = Pointer;
-  PSfmlFont = Pointer;
-  PSfmlImage = Pointer;
-  PSfmlShader = Pointer;
-  PSfmlRectangleShape = Pointer;
-  PSfmlRenderTexture = Pointer;
-  PSfmlRenderWindow = Pointer;
-  PSfmlShape = Pointer;
-  PSfmlSprite = Pointer;
-  PSfmlText = Pointer;
-  PSfmlTexture = Pointer;
-  PSfmlTransformable = Pointer;
-  PSfmlVertexArray = Pointer;
-  PSfmlView = Pointer;
+  // opaque structures
+  TSfmlCircleShapeRecord = record end;
+  TSfmlConvexShapeRecord = record end;
+  TSfmlFontRecord = record end;
+  TSfmlImageRecord = record end;
+  TSfmlShaderRecord = record end;
+  TSfmlRectangleShapeRecord = record end;
+  TSfmlRenderTextureRecord = record end;
+  TSfmlRenderWindowRecord = record end;
+  TSfmlShapeRecord = record end;
+  TSfmlSpriteRecord = record end;
+  TSfmlTextRecord = record end;
+  TSfmlTextureRecord = record end;
+  TSfmlTransformableRecord = record end;
+  TSfmlVertexArrayRecord = record end;
+  TSfmlViewRecord = record end;
+
+  // handles for opaque structures
+  PSfmlCircleShape = ^TSfmlCircleShapeRecord;
+  PSfmlConvexShape = ^TSfmlConvexShapeRecord;
+  PSfmlFont = ^TSfmlFontRecord;
+  PSfmlImage = ^TSfmlImageRecord;
+  PSfmlShader = ^TSfmlShaderRecord;
+  PSfmlRectangleShape = ^TSfmlRectangleShapeRecord;
+  PSfmlRenderTexture = ^TSfmlRenderTextureRecord;
+  PSfmlRenderWindow = ^TSfmlRenderWindowRecord;
+  PSfmlShape = ^TSfmlShapeRecord;
+  PSfmlSprite = ^TSfmlSpriteRecord;
+  PSfmlText = ^TSfmlTextRecord;
+  PSfmlTexture = ^TSfmlTextureRecord;
+  PSfmlTransformable = ^TSfmlTransformableRecord;
+  PSfmlVertexArray = ^TSfmlVertexArrayRecord;
+  PSfmlView = ^TSfmlViewRecord;
 
   TSfmlBlendFactor = (sfBlendFactorZero, sfBlendFactorOne,
     sfBlendFactorSrcColor, sfBlendFactorOneMinusSrcColor,
@@ -66,16 +84,18 @@ type
   TSfmlBlendEquation = (sfBlendEquationAdd, sfBlendEquationSubtract);
 
   TSfmlBlendMode = record
-    colorSrcFactor: TSfmlBlendFactor;
-    colorDstFactor: TSfmlBlendFactor;
-    colorEquation: TSfmlBlendEquation;
-    alphaSrcFactor: TSfmlBlendFactor;
-    alphaDstFactor: TSfmlBlendFactor;
-    alphaEquation: TSfmlBlendEquation;
+    ColorSrcFactor: TSfmlBlendFactor;
+    ColorDstFactor: TSfmlBlendFactor;
+    ColorEquation: TSfmlBlendEquation;
+    AlphaSrcFactor: TSfmlBlendFactor;
+    AlphaDstFactor: TSfmlBlendFactor;
+    AlphaEquation: TSfmlBlendEquation;
   end;
 
   TSfmlColor = packed record
-    r, g, b, a: Byte;
+  case LongInt of
+      0: (R, G, B, A: Byte);
+      1: (Value: LongInt);
   end;
 
   TSfmlFontInfo = record
@@ -113,8 +133,8 @@ type
   end;
   PSfmlRenderStates = ^TSfmlRenderStates;
 
-  TSfmlShapeGetPointCountCallback = function (Para1: Pointer): Cardinal; cdecl;
-  TSfmlShapeGetPointCallback = function (Para1: Cardinal; Para2: Pointer): TSfmlVector2f; cdecl;
+  TSfmlShapeGetPointCountCallback = function (UserData: Pointer): Cardinal; cdecl;
+  TSfmlShapeGetPointCallback = function (Index: Cardinal; UserData: Pointer): TSfmlVector2f; cdecl;
 
   TSfmlTextStyle = (sfTextBold, sfTextItalic, sfTextUnderlined,
     sfTextStrikeThrough);
@@ -128,11 +148,6 @@ type
   PSfmlVertex = ^TSfmlVertex;
 
 {$IFDEF DynLink}
-  TSfmlBlendAlpha = function : TSfmlBlendMode; cdecl;
-  TSfmlBlendAdd = function : TSfmlBlendMode; cdecl;
-  TSfmlBlendMultiply = function : TSfmlBlendMode; cdecl;
-  TSfmlBlendNone = function : TSfmlBlendMode; cdecl;
-
   TSfmlColorFromRGB = function (Red, Green, Blue: Byte): TSfmlColor; cdecl;
   TSfmlColorFromRGBA = function (Red, Green, Blue, Alpha: Byte): TSfmlColor; cdecl;
   TSfmlColorAdd = function (color1, color2: TSfmlColor): TSfmlColor; cdecl;
@@ -304,20 +319,20 @@ type
   TSfmlRenderTextureIsRepeated = function (const RenderTexture: PSfmlRenderTexture): Boolean; cdecl;
 
   TSfmlRenderWindowCreate = function (Mode: TSfmlVideoMode; const Title: PAnsiChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl;
-  TSfmlRenderWindowCreateUnicode = function (Mode: TSfmlVideoMode; const Title: PUCS4CharArray; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl;
+  TSfmlRenderWindowCreateUnicode = function (Mode: TSfmlVideoMode; const Title: PUCS4Char; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl;
   TSfmlRenderWindowCreateFromHandle = function (Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl;
   TSfmlRenderWindowDestroy = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
   TSfmlRenderWindowClose = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
   TSfmlRenderWindowIsOpen = function (const RenderWindow: PSfmlRenderWindow): Boolean; cdecl;
   TSfmlRenderWindowGetSettings = function (const RenderWindow: PSfmlRenderWindow): TSfmlContextSettings; cdecl;
-  TSfmlRenderWindowPollEvent = function (RenderWindow: PSfmlRenderWindow; out Event: SfmlEvent): Boolean; cdecl;
-  TSfmlRenderWindowWaitEvent = function (RenderWindow: PSfmlRenderWindow; out Event: SfmlEvent): Boolean; cdecl;
+  TSfmlRenderWindowPollEvent = function (RenderWindow: PSfmlRenderWindow; out Event: TSfmlEvent): Boolean; cdecl;
+  TSfmlRenderWindowWaitEvent = function (RenderWindow: PSfmlRenderWindow; out Event: TSfmlEvent): Boolean; cdecl;
   TSfmlRenderWindowGetPosition = function (const RenderWindow: PSfmlRenderWindow): TSfmlVector2i; cdecl;
   TSfmlRenderWindowSetPosition = procedure (RenderWindow: PSfmlRenderWindow; Position: TSfmlVector2i); cdecl;
   TSfmlRenderWindowGetSize = function (const RenderWindow: PSfmlRenderWindow): TSfmlVector2u; cdecl;
   TSfmlRenderWindowSetSize = procedure (RenderWindow: PSfmlRenderWindow; Size: TSfmlVector2u); cdecl;
   TSfmlRenderWindowSetTitle = procedure (RenderWindow: PSfmlRenderWindow; const Title: PAnsiChar); cdecl;
-  TSfmlRenderWindowSetUnicodeTitle = procedure (RenderWindow: PSfmlRenderWindow; const Title: PUCS4CharArray); cdecl;
+  TSfmlRenderWindowSetUnicodeTitle = procedure (RenderWindow: PSfmlRenderWindow; const Title: PUCS4Char); cdecl;
   TSfmlRenderWindowSetIcon = procedure (RenderWindow: PSfmlRenderWindow; Width, Height: Cardinal; const Pixels: PByte); cdecl;
   TSfmlRenderWindowSetVisible = procedure (RenderWindow: PSfmlRenderWindow; Visible: Boolean); cdecl;
   TSfmlRenderWindowSetMouseCursorVisible = procedure (RenderWindow: PSfmlRenderWindow; Show: Boolean); cdecl;
@@ -443,13 +458,13 @@ type
   TSfmlTextGetTransform = function (const Text: PSfmlText): TSfmlTransform; cdecl;
   TSfmlTextGetInverseTransform = function (const Text: PSfmlText): TSfmlTransform; cdecl;
   TSfmlTextSetString = procedure (Text: PSfmlText; const &String: PAnsiChar); cdecl;
-  TSfmlTextSetUnicodeString = procedure (Text: PSfmlText; const &String: PUCS4CharArray); cdecl;
+  TSfmlTextSetUnicodeString = procedure (Text: PSfmlText; const &String: PUCS4Char); cdecl;
   TSfmlTextSetFont = procedure (Text: PSfmlText; const Font: PSfmlFont); cdecl;
   TSfmlTextSetCharacterSize = procedure (Text: PSfmlText; Size: Cardinal); cdecl;
   TSfmlTextSetStyle = procedure (Text: PSfmlText; Style: Cardinal); cdecl;
   TSfmlTextSetColor = procedure (Text: PSfmlText; Color: TSfmlColor); cdecl;
   TSfmlTextGetString = function (const Text: PSfmlText): PAnsiChar; cdecl;
-  TSfmlTextGetUnicodeString = function (const Text: PSfmlText): PUCS4CharArray; cdecl;
+  TSfmlTextGetUnicodeString = function (const Text: PSfmlText): PUCS4Char; cdecl;
   TSfmlTextGetFont = function (const Text: PSfmlText): PSfmlFont; cdecl;
   TSfmlTextGetCharacterSize = function (const Text: PSfmlText): Cardinal; cdecl;
   TSfmlTextGetStyle = function (const Text: PSfmlText): Cardinal; cdecl;
@@ -538,10 +553,10 @@ type
   TSfmlViewZoom = procedure (View: PSfmlView; Factor: Single); cdecl;
 
 var
-  SfmlBlendAlpha: TSfmlBlendAlpha;
-  SfmlBlendAdd: TSfmlBlendAdd;
-  SfmlBlendMultiply: TSfmlBlendMultiply;
-  SfmlBlendNone: TSfmlBlendNone;
+  SfmlBlendAlpha: TSfmlBlendMode;
+  SfmlBlendAdd: TSfmlBlendMode;
+  SfmlBlendMultiply: TSfmlBlendMode;
+  SfmlBlendNone: TSfmlBlendMode;
 
   SfmlBlack: TSfmlColor;
   SfmlWhite: TSfmlColor;
@@ -565,10 +580,7 @@ var
   SfmlCircleShapeSetRotation: TSfmlCircleShapeSetRotation;
   SfmlCircleShapeSetScale: TSfmlCircleShapeSetScale;
   SfmlCircleShapeSetOrigin: TSfmlCircleShapeSetOrigin;
-  SfmlCircleShapeGetPosition: TSfmlCircleShapeGetPosition;
   SfmlCircleShapeGetRotation: TSfmlCircleShapeGetRotation;
-  SfmlCircleShapeGetScale: TSfmlCircleShapeGetScale;
-  SfmlCircleShapeGetOrigin: TSfmlCircleShapeGetOrigin;
   SfmlCircleShapeMove: TSfmlCircleShapeMove;
   SfmlCircleShapeRotate: TSfmlCircleShapeRotate;
   SfmlCircleShapeScale: TSfmlCircleShapeScale;
@@ -585,12 +597,17 @@ var
   SfmlCircleShapeGetOutlineColor: TSfmlCircleShapeGetOutlineColor;
   SfmlCircleShapeGetOutlineThickness: TSfmlCircleShapeGetOutlineThickness;
   SfmlCircleShapeGetPointCount: TSfmlCircleShapeGetPointCount;
-  SfmlCircleShapeGetPoint: TSfmlCircleShapeGetPoint;
   SfmlCircleShapeSetRadius: TSfmlCircleShapeSetRadius;
   SfmlCircleShapeGetRadius: TSfmlCircleShapeGetRadius;
   SfmlCircleShapeSetPointCount: TSfmlCircleShapeSetPointCount;
   SfmlCircleShapeGetLocalBounds: TSfmlCircleShapeGetLocalBounds;
   SfmlCircleShapeGetGlobalBounds: TSfmlCircleShapeGetGlobalBounds;
+{$IFNDEF INT64RETURNWORKAROUND}
+  SfmlCircleShapeGetOrigin: TSfmlCircleShapeGetOrigin;
+  SfmlCircleShapeGetPoint: TSfmlCircleShapeGetPoint;
+  SfmlCircleShapeGetPosition: TSfmlCircleShapeGetPosition;
+  SfmlCircleShapeGetScale: TSfmlCircleShapeGetScale;
+{$ENDIF}
 
   SfmlConvexShapeCreate: TSfmlConvexShapeCreate;
   SfmlConvexShapeCopy: TSfmlConvexShapeCopy;
@@ -599,10 +616,7 @@ var
   SfmlConvexShapeSetRotation: TSfmlConvexShapeSetRotation;
   SfmlConvexShapeSetScale: TSfmlConvexShapeSetScale;
   SfmlConvexShapeSetOrigin: TSfmlConvexShapeSetOrigin;
-  SfmlConvexShapeGetPosition: TSfmlConvexShapeGetPosition;
   SfmlConvexShapeGetRotation: TSfmlConvexShapeGetRotation;
-  SfmlConvexShapeGetScale: TSfmlConvexShapeGetScale;
-  SfmlConvexShapeGetOrigin: TSfmlConvexShapeGetOrigin;
   SfmlConvexShapeMove: TSfmlConvexShapeMove;
   SfmlConvexShapeRotate: TSfmlConvexShapeRotate;
   SfmlConvexShapeScale: TSfmlConvexShapeScale;
@@ -619,11 +633,16 @@ var
   SfmlConvexShapeGetOutlineColor: TSfmlConvexShapeGetOutlineColor;
   SfmlConvexShapeGetOutlineThickness: TSfmlConvexShapeGetOutlineThickness;
   SfmlConvexShapeGetPointCount: TSfmlConvexShapeGetPointCount;
-  SfmlConvexShapeGetPoint: TSfmlConvexShapeGetPoint;
   SfmlConvexShapeSetPointCount: TSfmlConvexShapeSetPointCount;
   SfmlConvexShapeSetPoint: TSfmlConvexShapeSetPoint;
   SfmlConvexShapeGetLocalBounds: TSfmlConvexShapeGetLocalBounds;
   SfmlConvexShapeGetGlobalBounds: TSfmlConvexShapeGetGlobalBounds;
+{$IFNDEF INT64RETURNWORKAROUND}
+  SfmlConvexShapeGetOrigin: TSfmlConvexShapeGetOrigin;
+  SfmlConvexShapeGetPoint: TSfmlConvexShapeGetPoint;
+  SfmlConvexShapeGetPosition: TSfmlConvexShapeGetPosition;
+  SfmlConvexShapeGetScale: TSfmlConvexShapeGetScale;
+{$ENDIF}
 
   SfmlFontCreateFromFile: TSfmlFontCreateFromFile;
   SfmlFontCreateFromMemory: TSfmlFontCreateFromMemory;
@@ -647,7 +666,6 @@ var
   SfmlImageCopy: TSfmlImageCopy;
   SfmlImageDestroy: TSfmlImageDestroy;
   SfmlImageSaveToFile: TSfmlImageSaveToFile;
-  SfmlImageGetSize: TSfmlImageGetSize;
   SfmlImageCreateMaskFromColor: TSfmlImageCreateMaskFromColor;
   SfmlImageCopyImage: TSfmlImageCopyImage;
   SfmlImageSetPixel: TSfmlImageSetPixel;
@@ -655,6 +673,9 @@ var
   SfmlImageGetPixelsPtr: TSfmlImageGetPixelsPtr;
   SfmlImageFlipHorizontally: TSfmlImageFlipHorizontally;
   SfmlImageFlipVertically: TSfmlImageFlipVertically;
+{$IFNDEF INT64RETURNWORKAROUND}
+  SfmlImageGetSize: TSfmlImageGetSize;
+{$ENDIF}
 
   SfmlFloatRectContains: TSfmlFloatRectContains;
   SfmlIntRectContains: TSfmlIntRectContains;
@@ -668,10 +689,7 @@ var
   SfmlRectangleShapeSetRotation: TSfmlRectangleShapeSetRotation;
   SfmlRectangleShapeSetScale: TSfmlRectangleShapeSetScale;
   SfmlRectangleShapeSetOrigin: TSfmlRectangleShapeSetOrigin;
-  SfmlRectangleShapeGetPosition: TSfmlRectangleShapeGetPosition;
   SfmlRectangleShapeGetRotation: TSfmlRectangleShapeGetRotation;
-  SfmlRectangleShapeGetScale: TSfmlRectangleShapeGetScale;
-  SfmlRectangleShapeGetOrigin: TSfmlRectangleShapeGetOrigin;
   SfmlRectangleShapeMove: TSfmlRectangleShapeMove;
   SfmlRectangleShapeRotate: TSfmlRectangleShapeRotate;
   SfmlRectangleShapeScale: TSfmlRectangleShapeScale;
@@ -688,11 +706,16 @@ var
   SfmlRectangleShapeGetOutlineColor: TSfmlRectangleShapeGetOutlineColor;
   SfmlRectangleShapeGetOutlineThickness: TSfmlRectangleShapeGetOutlineThickness;
   SfmlRectangleShapeGetPointCount: TSfmlRectangleShapeGetPointCount;
-  SfmlRectangleShapeGetPoint: TSfmlRectangleShapeGetPoint;
   SfmlRectangleShapeSetSize: TSfmlRectangleShapeSetSize;
-  SfmlRectangleShapeGetSize: TSfmlRectangleShapeGetSize;
   SfmlRectangleShapeGetLocalBounds: TSfmlRectangleShapeGetLocalBounds;
   SfmlRectangleShapeGetGlobalBounds: TSfmlRectangleShapeGetGlobalBounds;
+{$IFNDEF INT64RETURNWORKAROUND}
+  SfmlRectangleShapeGetOrigin: TSfmlRectangleShapeGetOrigin;
+  SfmlRectangleShapeGetPoint: TSfmlRectangleShapeGetPoint;
+  SfmlRectangleShapeGetPosition: TSfmlRectangleShapeGetPosition;
+  SfmlRectangleShapeGetScale: TSfmlRectangleShapeGetScale;
+  SfmlRectangleShapeGetSize: TSfmlRectangleShapeGetSize;
+{$ENDIF}
 
   SfmlRenderTextureCreate: TSfmlRenderTextureCreate;
   SfmlRenderTextureDestroy: TSfmlRenderTextureDestroy;
@@ -704,8 +727,6 @@ var
   SfmlRenderTextureGetView: TSfmlRenderTextureGetView;
   SfmlRenderTextureGetDefaultView: TSfmlRenderTextureGetDefaultView;
   SfmlRenderTextureGetViewport: TSfmlRenderTextureGetViewport;
-  SfmlRenderTextureMapPixelToCoords: TSfmlRenderTextureMapPixelToCoords;
-  SfmlRenderTextureMapCoordsToPixel: TSfmlRenderTextureMapCoordsToPixel;
   SfmlRenderTextureDrawSprite: TSfmlRenderTextureDrawSprite;
   SfmlRenderTextureDrawText: TSfmlRenderTextureDrawText;
   SfmlRenderTextureDrawShape: TSfmlRenderTextureDrawShape;
@@ -722,6 +743,10 @@ var
   SfmlRenderTextureIsSmooth: TSfmlRenderTextureIsSmooth;
   SfmlRenderTextureSetRepeated: TSfmlRenderTextureSetRepeated;
   SfmlRenderTextureIsRepeated: TSfmlRenderTextureIsRepeated;
+{$IFNDEF INT64RETURNWORKAROUND}
+  SfmlRenderTextureMapPixelToCoords: TSfmlRenderTextureMapPixelToCoords;
+  SfmlRenderTextureMapCoordsToPixel: TSfmlRenderTextureMapCoordsToPixel;
+{$ENDIF}
 
   SfmlRenderWindowCreate: TSfmlRenderWindowCreate;
   SfmlRenderWindowCreateUnicode: TSfmlRenderWindowCreateUnicode;
@@ -755,8 +780,6 @@ var
   SfmlRenderWindowGetView: TSfmlRenderWindowGetView;
   SfmlRenderWindowGetDefaultView: TSfmlRenderWindowGetDefaultView;
   SfmlRenderWindowGetViewport: TSfmlRenderWindowGetViewport;
-  SfmlRenderWindowMapPixelToCoords: TSfmlRenderWindowMapPixelToCoords;
-  SfmlRenderWindowMapCoordsToPixel: TSfmlRenderWindowMapCoordsToPixel;
   SfmlRenderWindowDrawSprite: TSfmlRenderWindowDrawSprite;
   SfmlRenderWindowDrawText: TSfmlRenderWindowDrawText;
   SfmlRenderWindowDrawShape: TSfmlRenderWindowDrawShape;
@@ -772,6 +795,10 @@ var
   SfmlMouseGetPositionRenderWindow: TSfmlMouseGetPositionRenderWindow;
   SfmlMouseSetPositionRenderWindow: TSfmlMouseSetPositionRenderWindow;
   SfmlTouchGetPositionRenderWindow: TSfmlTouchGetPositionRenderWindow;
+{$IFNDEF INT64RETURNWORKAROUND}
+  SfmlRenderWindowMapPixelToCoords: TSfmlRenderWindowMapPixelToCoords;
+  SfmlRenderWindowMapCoordsToPixel: TSfmlRenderWindowMapCoordsToPixel;
+{$ENDIF}
 
   SfmlShaderCreateFromFile: TSfmlShaderCreateFromFile;
   SfmlShaderCreateFromMemory: TSfmlShaderCreateFromMemory;
@@ -796,10 +823,7 @@ var
   SfmlShapeSetRotation: TSfmlShapeSetRotation;
   SfmlShapeSetScale: TSfmlShapeSetScale;
   SfmlShapeSetOrigin: TSfmlShapeSetOrigin;
-  SfmlShapeGetPosition: TSfmlShapeGetPosition;
   SfmlShapeGetRotation: TSfmlShapeGetRotation;
-  SfmlShapeGetScale: TSfmlShapeGetScale;
-  SfmlShapeGetOrigin: TSfmlShapeGetOrigin;
   SfmlShapeMove: TSfmlShapeMove;
   SfmlShapeRotate: TSfmlShapeRotate;
   SfmlShapeScale: TSfmlShapeScale;
@@ -816,10 +840,15 @@ var
   SfmlShapeGetOutlineColor: TSfmlShapeGetOutlineColor;
   SfmlShapeGetOutlineThickness: TSfmlShapeGetOutlineThickness;
   SfmlShapeGetPointCount: TSfmlShapeGetPointCount;
-  SfmlShapeGetPoint: TSfmlShapeGetPoint;
   SfmlShapeGetLocalBounds: TSfmlShapeGetLocalBounds;
   SfmlShapeGetGlobalBounds: TSfmlShapeGetGlobalBounds;
   SfmlShapeUpdate: TSfmlShapeUpdate;
+{$IFNDEF INT64RETURNWORKAROUND}
+  SfmlShapeGetOrigin: TSfmlShapeGetOrigin;
+  SfmlShapeGetPoint: TSfmlShapeGetPoint;
+  SfmlShapeGetPosition: TSfmlShapeGetPosition;
+  SfmlShapeGetScale: TSfmlShapeGetScale;
+{$ENDIF}
 
   SfmlSpriteCreate: TSfmlSpriteCreate;
   SfmlSpriteCopy: TSfmlSpriteCopy;
@@ -828,10 +857,7 @@ var
   SfmlSpriteSetRotation: TSfmlSpriteSetRotation;
   SfmlSpriteSetScale: TSfmlSpriteSetScale;
   SfmlSpriteSetOrigin: TSfmlSpriteSetOrigin;
-  SfmlSpriteGetPosition: TSfmlSpriteGetPosition;
   SfmlSpriteGetRotation: TSfmlSpriteGetRotation;
-  SfmlSpriteGetScale: TSfmlSpriteGetScale;
-  SfmlSpriteGetOrigin: TSfmlSpriteGetOrigin;
   SfmlSpriteMove: TSfmlSpriteMove;
   SfmlSpriteRotate: TSfmlSpriteRotate;
   SfmlSpriteScale: TSfmlSpriteScale;
@@ -845,6 +871,11 @@ var
   SfmlSpriteGetColor: TSfmlSpriteGetColor;
   SfmlSpriteGetLocalBounds: TSfmlSpriteGetLocalBounds;
   SfmlSpriteGetGlobalBounds: TSfmlSpriteGetGlobalBounds;
+{$IFNDEF INT64RETURNWORKAROUND}
+  SfmlSpriteGetOrigin: TSfmlSpriteGetOrigin;
+  SfmlSpriteGetPosition: TSfmlSpriteGetPosition;
+  SfmlSpriteGetScale: TSfmlSpriteGetScale;
+{$ENDIF}
 
   SfmlTextCreate: TSfmlTextCreate;
   SfmlTextCopy: TSfmlTextCopy;
@@ -853,10 +884,7 @@ var
   SfmlTextSetRotation: TSfmlTextSetRotation;
   SfmlTextSetScale: TSfmlTextSetScale;
   SfmlTextSetOrigin: TSfmlTextSetOrigin;
-  SfmlTextGetPosition: TSfmlTextGetPosition;
   SfmlTextGetRotation: TSfmlTextGetRotation;
-  SfmlTextGetScale: TSfmlTextGetScale;
-  SfmlTextGetOrigin: TSfmlTextGetOrigin;
   SfmlTextMove: TSfmlTextMove;
   SfmlTextRotate: TSfmlTextRotate;
   SfmlTextScale: TSfmlTextScale;
@@ -874,9 +902,14 @@ var
   SfmlTextGetCharacterSize: TSfmlTextGetCharacterSize;
   SfmlTextGetStyle: TSfmlTextGetStyle;
   SfmlTextGetColor: TSfmlTextGetColor;
-  SfmlTextFindCharacterPos: TSfmlTextFindCharacterPos;
   SfmlTextGetLocalBounds: TSfmlTextGetLocalBounds;
   SfmlTextGetGlobalBounds: TSfmlTextGetGlobalBounds;
+{$IFNDEF INT64RETURNWORKAROUND}
+  SfmlTextGetOrigin: TSfmlTextGetOrigin;
+  SfmlTextGetPosition: TSfmlTextGetPosition;
+  SfmlTextGetScale: TSfmlTextGetScale;
+  SfmlTextFindCharacterPos: TSfmlTextFindCharacterPos;
+{$ENDIF}
 
   SfmlTextureCreate: TSfmlTextureCreate;
   SfmlTextureCreateFromFile: TSfmlTextureCreateFromFile;
@@ -885,7 +918,6 @@ var
   SfmlTextureCreateFromImage: TSfmlTextureCreateFromImage;
   SfmlTextureCopy: TSfmlTextureCopy;
   SfmlTextureDestroy: TSfmlTextureDestroy;
-  SfmlTextureGetSize: TSfmlTextureGetSize;
   SfmlTextureCopyToImage: TSfmlTextureCopyToImage;
   SfmlTextureUpdateFromPixels: TSfmlTextureUpdateFromPixels;
   SfmlTextureUpdateFromImage: TSfmlTextureUpdateFromImage;
@@ -897,12 +929,14 @@ var
   SfmlTextureIsRepeated: TSfmlTextureIsRepeated;
   SfmlTextureBind: TSfmlTextureBind;
   SfmlTextureGetMaximumSize: TsfmlTextureGetMaximumSize;
+{$IFNDEF INT64RETURNWORKAROUND}
+  SfmlTextureGetSize: TSfmlTextureGetSize;
+{$ENDIF}
 
   SfmlTransformIdentity: TSfmlTransformIdentity;
   SfmlTransformFromMatrix: TSfmlTransformFromMatrix;
   SfmlTransformGetMatrix: TSfmlTransformGetMatrix;
   SfmlTransformGetInverse: TSfmlTransformGetInverse;
-  SfmlTransformTransformPoint: TSfmlTransformTransformPoint;
   SfmlTransformTransformRect: TSfmlTransformTransformRect;
   SfmlTransformCombine: TSfmlTransformCombine;
   SfmlTransformTranslate: TSfmlTransformTranslate;
@@ -910,6 +944,9 @@ var
   SfmlTransformRotateWithCenter: TSfmlTransformRotateWithCenter;
   SfmlTransformScale: TSfmlTransformScale;
   SfmlTransformScaleWithCenter: TSfmlTransformScaleWithCenter;
+{$IFNDEF INT64RETURNWORKAROUND}
+  SfmlTransformTransformPoint: TSfmlTransformTransformPoint;
+{$ENDIF}
 
   SfmlTransformableCreate: TSfmlTransformableCreate;
   SfmlTransformableCopy: TSfmlTransformableCopy;
@@ -918,15 +955,17 @@ var
   SfmlTransformableSetRotation: TSfmlTransformableSetRotation;
   SfmlTransformableSetScale: TSfmlTransformableSetScale;
   SfmlTransformableSetOrigin: TSfmlTransformableSetOrigin;
-  SfmlTransformableGetPosition: TSfmlTransformableGetPosition;
   SfmlTransformableGetRotation: TSfmlTransformableGetRotation;
-  SfmlTransformableGetScale: TSfmlTransformableGetScale;
-  SfmlTransformableGetOrigin: TSfmlTransformableGetOrigin;
   SfmlTransformableMove: TSfmlTransformableMove;
   SfmlTransformableRotate: TSfmlTransformableRotate;
   SfmlTransformableScale: TSfmlTransformableScale;
   SfmlTransformableGetTransform: TSfmlTransformableGetTransform;
   SfmlTransformableGetInverseTransform: TSfmlTransformableGetInverseTransform;
+{$IFNDEF INT64RETURNWORKAROUND}
+  SfmlTransformableGetOrigin: TSfmlTransformableGetOrigin;
+  SfmlTransformableGetPosition: TSfmlTransformableGetPosition;
+  SfmlTransformableGetScale: TSfmlTransformableGetScale;
+{$ENDIF}
 
   SfmlVertexArrayCreate: TSfmlVertexArrayCreate;
   SfmlVertexArrayCopy: TSfmlVertexArrayCopy;
@@ -949,31 +988,63 @@ var
   SfmlViewSetRotation: TSfmlViewSetRotation;
   SfmlViewSetViewport: TSfmlViewSetViewport;
   SfmlViewReset: TSfmlViewReset;
-  SfmlViewGetCenter: TSfmlViewGetCenter;
-  SfmlViewGetSize: TSfmlViewGetSize;
   SfmlViewGetRotation: TSfmlViewGetRotation;
   SfmlViewGetViewport: TSfmlViewGetViewport;
   SfmlViewMove: TSfmlViewMove;
   SfmlViewRotate: TSfmlViewRotate;
   SfmlViewZoom: TSfmlViewZoom;
+{$IFNDEF INT64RETURNWORKAROUND}
+  SfmlViewGetCenter: TSfmlViewGetCenter;
+  SfmlViewGetSize: TSfmlViewGetSize;
+{$ENDIF}
+
 {$ELSE}
+
 const
-  SfmlBlack: TSfmlColor = (r: 0; g: 0; b: 0; a: $FF);
-  SfmlWhite: TSfmlColor = (r: $FF; g: $FF; b: $FF; a: $FF);
-  SfmlRed: TSfmlColor = (r: $FF; g: 0; b: 0; a: $FF);
-  SfmlGreen: TSfmlColor = (r: 0; g: $FF; b: 0; a: $FF);
-  SfmlBlue: TSfmlColor = (r: 0; g: 0; b: $FF; a: $FF);
-  SfmlYellow: TSfmlColor = (r: $FF; g: $FF; b: 0; a: $FF);
-  SfmlMagenta: TSfmlColor = (r: $FF; g: 0; b: $FF; a: $FF);
-  SfmlCyan: TSfmlColor = (r: 0; g: $FF; b: $FF; a: $FF);
-  SfmlTransparent: TSfmlColor = (r: 0; g: 0; b: 0; a: 0);
+  SfmlBlack: TSfmlColor = (R: 0; G: 0; B: 0; A: $FF);
+  SfmlWhite: TSfmlColor = (R: $FF; G: $FF; B: $FF; A: $FF);
+  SfmlRed: TSfmlColor = (R: $FF; G: 0; B: 0; A: $FF);
+  SfmlGreen: TSfmlColor = (R: 0; G: $FF; B: 0; A: $FF);
+  SfmlBlue: TSfmlColor = (R: 0; G: 0; B: $FF; A: $FF);
+  SfmlYellow: TSfmlColor = (R: $FF; G: $FF; B: 0; A: $FF);
+  SfmlMagenta: TSfmlColor = (R: $FF; G: 0; B: $FF; A: $FF);
+  SfmlCyan: TSfmlColor = (R: 0; G: $FF; B: $FF; A: $FF);
+  SfmlTransparent: TSfmlColor = (R: 0; G: 0; B: 0; A: 0);
+
+  SfmlBlendAlpha: TSfmlBlendMode = (
+    ColorSrcFactor: sfBlendFactorSrcAlpha;
+    ColorDstFactor: sfBlendFactorOneMinusSrcAlpha;
+    ColorEquation: sfBlendEquationAdd;
+    AlphaSrcFactor: sfBlendFactorOne;
+    AlphaDstFactor: sfBlendFactorOneMinusSrcAlpha;
+    AlphaEquation: sfBlendEquationAdd;
+  );
+  SfmlBlendAdd: TSfmlBlendMode = (
+    ColorSrcFactor: sfBlendFactorSrcAlpha;
+    ColorDstFactor: sfBlendFactorOne;
+    ColorEquation: sfBlendEquationAdd;
+    AlphaSrcFactor: sfBlendFactorOne;
+    AlphaDstFactor: sfBlendFactorOne;
+    AlphaEquation: sfBlendEquationAdd;
+  );
+  SfmlBlendMultiply: TSfmlBlendMode = (
+    ColorSrcFactor: sfBlendFactorDstColor;
+    ColorDstFactor: sfBlendFactorZero;
+    ColorEquation: sfBlendEquationAdd;
+    AlphaSrcFactor: sfBlendFactorDstColor;
+    AlphaDstFactor: sfBlendFactorZero;
+    AlphaEquation: sfBlendEquationAdd;
+  );
+  SfmlBlendNone: TSfmlBlendMode = (
+    ColorSrcFactor: sfBlendFactorOne;
+    ColorDstFactor: sfBlendFactorZero;
+    ColorEquation: sfBlendEquationAdd;
+    AlphaSrcFactor: sfBlendFactorOne;
+    AlphaDstFactor: sfBlendFactorZero;
+    AlphaEquation: sfBlendEquationAdd;
+  );
 
   // static linking
-  function SfmlBlendAlpha: TSfmlBlendMode; cdecl; external CSfmlGraphicsLibrary name 'sfBlendAlpha';
-  function SfmlBlendAdd: TSfmlBlendMode; cdecl; external CSfmlGraphicsLibrary name 'sfBlendAdd';
-  function SfmlBlendMultiply: TSfmlBlendMode; cdecl; external CSfmlGraphicsLibrary name 'sfBlendMultiply';
-  function SfmlBlendNone: TSfmlBlendMode; cdecl; external CSfmlGraphicsLibrary name 'sfBlendNone';
-
   function SfmlColorFromRGB(Red, Green, Blue: Byte): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfColor_fromRGB';
   function SfmlColorFromRGBA(Red, Green, Blue, Alpha: Byte): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfColor_fromRGBA';
   function SfmlColorAdd(color1, color2: TSfmlColor): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfColor_add';
@@ -986,10 +1057,7 @@ const
   procedure SfmlCircleShapeSetRotation(Shape: PSfmlCircleShape; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setRotation';
   procedure SfmlCircleShapeSetScale(Shape: PSfmlCircleShape; Scale: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setScale';
   procedure SfmlCircleShapeSetOrigin(Shape: PSfmlCircleShape; Origin: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setOrigin';
-  function SfmlCircleShapeGetPosition(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getPosition';
   function SfmlCircleShapeGetRotation(const Shape: PSfmlCircleShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getRotation';
-  function SfmlCircleShapeGetScale(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getScale';
-  function SfmlCircleShapeGetOrigin(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getOrigin'; // changed!!!
   procedure SfmlCircleShapeMove(Shape: PSfmlCircleShape; Offset: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_move';
   procedure SfmlCircleShapeRotate(Shape: PSfmlCircleShape; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_rotate';
   procedure SfmlCircleShapeScale(Shape: PSfmlCircleShape; Factors: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_scale';
@@ -1006,12 +1074,17 @@ const
   function SfmlCircleShapeGetOutlineColor(const Shape: PSfmlCircleShape): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getOutlineColor';
   function SfmlCircleShapeGetOutlineThickness(const Shape: PSfmlCircleShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getOutlineThickness';
   function SfmlCircleShapeGetPointCount(const Shape: PSfmlCircleShape): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getPointCount';
-  function SfmlCircleShapeGetPoint(const Shape: PSfmlCircleShape; Index: Cardinal): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getPoint';
   procedure SfmlCircleShapeSetRadius(Shape: PSfmlCircleShape; Radius: Single); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setRadius';
   function SfmlCircleShapeGetRadius(const Shape: PSfmlCircleShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getRadius';
   procedure SfmlCircleShapeSetPointCount(Shape: PSfmlCircleShape; Count: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setPointCount';
   function SfmlCircleShapeGetLocalBounds(const Shape: PSfmlCircleShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getLocalBounds';
   function SfmlCircleShapeGetGlobalBounds(const Shape: PSfmlCircleShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getGlobalBounds';
+{$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlCircleShapeGetOrigin(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getOrigin';
+  function SfmlCircleShapeGetPoint(const Shape: PSfmlCircleShape; Index: Cardinal): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getPoint';
+  function SfmlCircleShapeGetPosition(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getPosition';
+  function SfmlCircleShapeGetScale(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getScale';
+{$ENDIF}
 
   function SfmlConvexShapeCreate: PSfmlConvexShape; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_create';
   function SfmlConvexShapeCopy(const Shape: PSfmlConvexShape): PSfmlConvexShape; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_copy';
@@ -1020,10 +1093,7 @@ const
   procedure SfmlConvexShapeSetRotation(Shape: PSfmlConvexShape; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_setRotation';
   procedure SfmlConvexShapeSetScale(Shape: PSfmlConvexShape; Scale: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_setScale';
   procedure SfmlConvexShapeSetOrigin(Shape: PSfmlConvexShape; Origin: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_setOrigin';
-  function SfmlConvexShapeGetPosition(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getPosition';
   function SfmlConvexShapeGetRotation(const Shape: PSfmlConvexShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getRotation';
-  function SfmlConvexShapeGetScale(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getScale';
-  function SfmlConvexShapeGetOrigin(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getOrigin';
   procedure SfmlConvexShapeMove(Shape: PSfmlConvexShape; Offset: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_move';
   procedure SfmlConvexShapeRotate(Shape: PSfmlConvexShape; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_rotate';
   procedure SfmlConvexShapeScale(Shape: PSfmlConvexShape; Factors: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_scale';
@@ -1040,11 +1110,16 @@ const
   function SfmlConvexShapeGetOutlineColor(const Shape: PSfmlConvexShape): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getOutlineColor';
   function SfmlConvexShapeGetOutlineThickness(const Shape: PSfmlConvexShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getOutlineThickness';
   function SfmlConvexShapeGetPointCount(const Shape: PSfmlConvexShape): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getPointCount';
-  function SfmlConvexShapeGetPoint(const Shape: PSfmlConvexShape; Index: Cardinal): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getPoint';
   procedure SfmlConvexShapeSetPointCount(Shape: PSfmlConvexShape; Count: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_setPointCount';
   procedure SfmlConvexShapeSetPoint(Shape: PSfmlConvexShape; Index: Cardinal; Point: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_setPoint';
   function SfmlConvexShapeGetLocalBounds(const Shape: PSfmlConvexShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getLocalBounds';
   function SfmlConvexShapeGetGlobalBounds(const Shape: PSfmlConvexShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getGlobalBounds';
+{$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlConvexShapeGetOrigin(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getOrigin';
+  function SfmlConvexShapeGetPoint(const Shape: PSfmlConvexShape; Index: Cardinal): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getPoint';
+  function SfmlConvexShapeGetPosition(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getPosition';
+  function SfmlConvexShapeGetScale(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getScale';
+{$ENDIF}
 
   function SfmlFontCreateFromFile(const FileName: PAnsiChar): PSfmlFont; cdecl; external CSfmlGraphicsLibrary name 'sfFont_createFromFile';
   function SfmlFontCreateFromMemory(const Data: Pointer; SizeInBytes: NativeUInt): PSfmlFont; cdecl; external CSfmlGraphicsLibrary name 'sfFont_createFromMemory';
@@ -1068,7 +1143,6 @@ const
   function SfmlImageCopy(const Image: PSfmlImage): PSfmlImage; cdecl; external CSfmlGraphicsLibrary name 'sfImage_copy';
   procedure SfmlImageDestroy(Image: PSfmlImage); cdecl; external CSfmlGraphicsLibrary name 'sfImage_destroy';
   function SfmlImageSaveToFile(const Image: PSfmlImage; const FileName: PAnsiChar): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfImage_saveToFile';
-  function SfmlImageGetSize(const Image: PSfmlImage): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfImage_getSize';
   procedure SfmlImageCreateMaskFromColor(Image: PSfmlImage; Color: TSfmlColor; Alpha: Byte); cdecl; external CSfmlGraphicsLibrary name 'sfImage_createMaskFromColor';
   procedure SfmlImageCopyImage(Image: PSfmlImage; const Source: PSfmlImage; DestX, DestY: Cardinal; SourceRect: TSfmlIntRect; ApplyAlpha: Boolean); cdecl; external CSfmlGraphicsLibrary name 'sfImage_copyImage';
   procedure SfmlImageSetPixel(Image: PSfmlImage; X, Y: Cardinal; Color: TSfmlColor); cdecl; external CSfmlGraphicsLibrary name 'sfImage_setPixel';
@@ -1076,6 +1150,9 @@ const
   function SfmlImageGetPixelsPtr(const Image: PSfmlImage): PByte; cdecl; external CSfmlGraphicsLibrary name 'sfImage_getPixelsPtr';
   procedure SfmlImageFlipHorizontally(Image: PSfmlImage); cdecl; external CSfmlGraphicsLibrary name 'sfImage_flipHorizontally';
   procedure SfmlImageFlipVertically(Image: PSfmlImage); cdecl; external CSfmlGraphicsLibrary name 'sfImage_flipVertically';
+{$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlImageGetSize(const Image: PSfmlImage): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfImage_getSize';
+{$ENDIF}
 
   function SfmlFloatRectContains(var Rect: TSfmlFloatRect; X, Y: Single): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfFloatRect_contains';
   function SfmlIntRectContains(var Rect: TSfmlIntRect; X, Y: LongInt): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfIntRect_contains';
@@ -1089,10 +1166,7 @@ const
   procedure SfmlRectangleShapeSetRotation(Shape: PSfmlRectangleShape; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_setRotation';
   procedure SfmlRectangleShapeSetScale(Shape: PSfmlRectangleShape; Scale: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_setScale';
   procedure SfmlRectangleShapeSetOrigin(Shape: PSfmlRectangleShape; Origin: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_setOrigin';
-  function SfmlRectangleShapeGetPosition(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getPosition';
   function SfmlRectangleShapeGetRotation(const Shape: PSfmlRectangleShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getRotation';
-  function SfmlRectangleShapeGetScale(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getScale';
-  function SfmlRectangleShapeGetOrigin(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getOrigin';
   procedure SfmlRectangleShapeMove(Shape: PSfmlRectangleShape; Offset: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_move';
   procedure SfmlRectangleShapeRotate(Shape: PSfmlRectangleShape; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_rotate';
   procedure SfmlRectangleShapeScale(Shape: PSfmlRectangleShape; Factors: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_scale';
@@ -1109,11 +1183,16 @@ const
   function SfmlRectangleShapeGetOutlineColor(const Shape: PSfmlRectangleShape): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getOutlineColor';
   function SfmlRectangleShapeGetOutlineThickness(const Shape: PSfmlRectangleShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getOutlineThickness';
   function SfmlRectangleShapeGetPointCount(const Shape: PSfmlRectangleShape): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getPointCount';
-  function SfmlRectangleShapeGetPoint(const Shape: PSfmlRectangleShape; Index: Cardinal): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getPoint';
   procedure SfmlRectangleShapeSetSize(Shape: PSfmlRectangleShape; Size: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_setSize';
-  function SfmlRectangleShapeGetSize(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getSize';
   function SfmlRectangleShapeGetLocalBounds(const Shape: PSfmlRectangleShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getLocalBounds';
   function SfmlRectangleShapeGetGlobalBounds(const Shape: PSfmlRectangleShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getGlobalBounds';
+{$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlRectangleShapeGetOrigin(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getOrigin';
+  function SfmlRectangleShapeGetPoint(const Shape: PSfmlRectangleShape; Index: Cardinal): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getPoint';
+  function SfmlRectangleShapeGetPosition(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getPosition';
+  function SfmlRectangleShapeGetScale(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getScale';
+  function SfmlRectangleShapeGetSize(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getSize';
+{$ENDIF}
 
   function SfmlRenderTextureCreate(Width, Height: Cardinal; DepthBuffer: Boolean): PSfmlRenderTexture; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_create';
   procedure SfmlRenderTextureDestroy(RenderTexture: PSfmlRenderTexture); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_destroy';
@@ -1125,8 +1204,6 @@ const
   function SfmlRenderTextureGetView(const RenderTexture: PSfmlRenderTexture): PSfmlView; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_getView';
   function SfmlRenderTextureGetDefaultView(const RenderTexture: PSfmlRenderTexture): PSfmlView; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_getDefaultView';
   function SfmlRenderTextureGetViewport(const RenderTexture: PSfmlRenderTexture; const View: PSfmlView): TSfmlIntRect; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_getViewport';
-  function SfmlRenderTextureMapPixelToCoords(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_mapPixelToCoords';
-  function SfmlRenderTextureMapCoordsToPixel(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_mapCoordsToPixel';
   procedure SfmlRenderTextureDrawSprite(RenderTexture: PSfmlRenderTexture; const &Object: PSfmlSprite; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_drawSprite';
   procedure SfmlRenderTextureDrawText(RenderTexture: PSfmlRenderTexture; const &Object: PSfmlText; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_drawText';
   procedure SfmlRenderTextureDrawShape(RenderTexture: PSfmlRenderTexture; const &Object: PSfmlShape; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_drawShape';
@@ -1143,9 +1220,13 @@ const
   function SfmlRenderTextureIsSmooth(const RenderTexture: PSfmlRenderTexture): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_isSmooth';
   procedure SfmlRenderTextureSetRepeated(RenderTexture: PSfmlRenderTexture; Repeated: Boolean); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_setRepeated';
   function SfmlRenderTextureIsRepeated(const RenderTexture: PSfmlRenderTexture): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_isRepeated';
+{$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlRenderTextureMapPixelToCoords(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_mapPixelToCoords';
+  function SfmlRenderTextureMapCoordsToPixel(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_mapCoordsToPixel';
+{$ENDIF}
 
   function SfmlRenderWindowCreate(Mode: TSfmlVideoMode; const Title: PAnsiChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_create';
-  function SfmlRenderWindowCreateUnicode(Mode: TSfmlVideoMode; const Title: PUCS4CharArray; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_createUnicode';
+  function SfmlRenderWindowCreateUnicode(Mode: TSfmlVideoMode; const Title: PUCS4Char; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_createUnicode';
   function SfmlRenderWindowCreateFromHandle(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_createFromHandle';
   procedure SfmlRenderWindowDestroy(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_destroy';
   procedure SfmlRenderWindowClose(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_close';
@@ -1158,7 +1239,7 @@ const
   function SfmlRenderWindowGetSize(const RenderWindow: PSfmlRenderWindow): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_getSize';
   procedure SfmlRenderWindowSetSize(RenderWindow: PSfmlRenderWindow; Size: TSfmlVector2u); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setSize';
   procedure SfmlRenderWindowSetTitle(RenderWindow: PSfmlRenderWindow; const Title: PAnsiChar); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setTitle';
-  procedure SfmlRenderWindowSetUnicodeTitle(RenderWindow: PSfmlRenderWindow; const Title: PUCS4CharArray); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setUnicodeTitle';
+  procedure SfmlRenderWindowSetUnicodeTitle(RenderWindow: PSfmlRenderWindow; const Title: PUCS4Char); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setUnicodeTitle';
   procedure SfmlRenderWindowSetIcon(RenderWindow: PSfmlRenderWindow; Width, Height: Cardinal; const Pixels: PByte); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setIcon';
   procedure SfmlRenderWindowSetVisible(RenderWindow: PSfmlRenderWindow; Visible: Boolean); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setVisible';
   procedure SfmlRenderWindowSetMouseCursorVisible(RenderWindow: PSfmlRenderWindow; Show: Boolean); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setMouseCursorVisible';
@@ -1176,8 +1257,6 @@ const
   function SfmlRenderWindowGetView(const RenderWindow: PSfmlRenderWindow): PSfmlView; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_getView';
   function SfmlRenderWindowGetDefaultView(const RenderWindow: PSfmlRenderWindow): PSfmlView; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_getDefaultView';
   function SfmlRenderWindowGetViewport(const RenderWindow: PSfmlRenderWindow; const View: PSfmlView): TSfmlIntRect; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_getViewport';
-  function SfmlRenderWindowMapPixelToCoords(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_mapPixelToCoords';
-  function SfmlRenderWindowMapCoordsToPixel(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_mapCoordsToPixel';
   procedure SfmlRenderWindowDrawSprite(RenderWindow: PSfmlRenderWindow; const &Object: PSfmlSprite; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_drawSprite';
   procedure SfmlRenderWindowDrawText(RenderWindow: PSfmlRenderWindow; const &Object: PSfmlText; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_drawText';
   procedure SfmlRenderWindowDrawShape(RenderWindow: PSfmlRenderWindow; const &Object: PSfmlShape; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_drawShape';
@@ -1190,6 +1269,11 @@ const
   procedure SfmlRenderWindowPopGLStates(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_popGLStates';
   procedure SfmlRenderWindowResetGLStates(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_resetGLStates';
   function SfmlRenderWindowCapture(const RenderWindow: PSfmlRenderWindow): PSfmlImage; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_capture';
+{$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlRenderWindowMapPixelToCoords(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_mapPixelToCoords';
+  function SfmlRenderWindowMapCoordsToPixel(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_mapCoordsToPixel';
+{$ENDIF}
+
   function SfmlMouseGetPositionRenderWindow(const relativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfMouseGetPosi_TionRenderWindow';
   procedure SfmlMouseSetPositionRenderWindow(position: TSfmlVector2i; const RelativeTo: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfMouseSetPosi_TionRenderWindow';
   function SfmlTouchGetPositionRenderWindow(Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfTouchGetPosi_TionRenderWindow';
@@ -1217,10 +1301,7 @@ const
   procedure SfmlShapeSetRotation(Shape: PSfmlShape; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfShape_setRotation';
   procedure SfmlShapeSetScale(Shape: PSfmlShape; Scale: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfShape_setScale';
   procedure SfmlShapeSetOrigin(Shape: PSfmlShape; Origin: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfShape_setOrigin';
-  function SfmlShapeGetPosition(const Shape: PSfmlShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getPosition';
   function SfmlShapeGetRotation(const Shape: PSfmlShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getRotation';
-  function SfmlShapeGetScale(const Shape: PSfmlShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getScale';
-  function SfmlShapeGetOrigin(const Shape: PSfmlShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getOrigin';
   procedure SfmlShapeMove(Shape: PSfmlShape; Offset: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfShape_move';
   procedure SfmlShapeRotate(Shape: PSfmlShape; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfShape_rotate';
   procedure SfmlShapeScale(Shape: PSfmlShape; Factors: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfShape_scale';
@@ -1237,10 +1318,15 @@ const
   function SfmlShapeGetOutlineColor(const Shape: PSfmlShape): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getOutlineColor';
   function SfmlShapeGetOutlineThickness(const Shape: PSfmlShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getOutlineThickness';
   function SfmlShapeGetPointCount(const Shape: PSfmlShape): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getPointCount';
-  function SfmlShapeGetPoint(const Shape: PSfmlShape; Index: Cardinal): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getPoint';
   function SfmlShapeGetLocalBounds(const Shape: PSfmlShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getLocalBounds';
   function SfmlShapeGetGlobalBounds(const Shape: PSfmlShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getGlobalBounds';
   procedure SfmlShapeUpdate(Shape: PSfmlShape); cdecl; external CSfmlGraphicsLibrary name 'sfShape_update';
+{$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlShapeGetOrigin(const Shape: PSfmlShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getOrigin';
+  function SfmlShapeGetPoint(const Shape: PSfmlShape; Index: Cardinal): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getPoint';
+  function SfmlShapeGetPosition(const Shape: PSfmlShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getPosition';
+  function SfmlShapeGetScale(const Shape: PSfmlShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getScale';
+{$ENDIF}
 
   function SfmlSpriteCreate: PSfmlSprite; cdecl; external CSfmlGraphicsLibrary name 'sfSprite_create';
   function SfmlSpriteCopy(const Sprite: PSfmlSprite): PSfmlSprite; cdecl; external CSfmlGraphicsLibrary name 'sfSprite_copy';
@@ -1249,10 +1335,7 @@ const
   procedure SfmlSpriteSetRotation(Sprite: PSfmlSprite; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfSprite_setRotation';
   procedure SfmlSpriteSetScale(Sprite: PSfmlSprite; Scale: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfSprite_setScale';
   procedure SfmlSpriteSetOrigin(Sprite: PSfmlSprite; Origin: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfSprite_setOrigin';
-  function SfmlSpriteGetPosition(const Sprite: PSfmlSprite): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfSprite_getPosition';
   function SfmlSpriteGetRotation(const Sprite: PSfmlSprite): Single; cdecl; external CSfmlGraphicsLibrary name 'sfSprite_getRotation';
-  function SfmlSpriteGetScale(const Sprite: PSfmlSprite): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfSprite_getScale';
-  function SfmlSpriteGetOrigin(const Sprite: PSfmlSprite): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfSprite_getOrigin';
   procedure SfmlSpriteMove(Sprite: PSfmlSprite; Offset: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfSprite_move';
   procedure SfmlSpriteRotate(Sprite: PSfmlSprite; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfSprite_rotate';
   procedure SfmlSpriteScale(Sprite: PSfmlSprite; Factors: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfSprite_scale';
@@ -1266,6 +1349,11 @@ const
   function SfmlSpriteGetColor(const Sprite: PSfmlSprite): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfSprite_getColor';
   function SfmlSpriteGetLocalBounds(const Sprite: PSfmlSprite): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfSprite_getLocalBounds';
   function SfmlSpriteGetGlobalBounds(const Sprite: PSfmlSprite): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfSprite_getGlobalBounds';
+{$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlSpriteGetOrigin(const Sprite: PSfmlSprite): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfSprite_getOrigin';
+  function SfmlSpriteGetPosition(const Sprite: PSfmlSprite): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfSprite_getPosition';
+  function SfmlSpriteGetScale(const Sprite: PSfmlSprite): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfSprite_getScale';
+{$ENDIF}
 
   function SfmlTextCreate: PSfmlText; cdecl; external CSfmlGraphicsLibrary name 'sfText_create';
   function SfmlTextCopy(const Text: PSfmlText): PSfmlText; cdecl; external CSfmlGraphicsLibrary name 'sfText_copy';
@@ -1274,30 +1362,32 @@ const
   procedure SfmlTextSetRotation(Text: PSfmlText; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfText_setRotation';
   procedure SfmlTextSetScale(Text: PSfmlText; Scale: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfText_setScale';
   procedure SfmlTextSetOrigin(Text: PSfmlText; Origin: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfText_setOrigin';
-  function SfmlTextGetPosition(const Text: PSfmlText): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfText_getPosition';
   function SfmlTextGetRotation(const Text: PSfmlText): Single; cdecl; external CSfmlGraphicsLibrary name 'sfText_getRotation';
-  function SfmlTextGetScale(const Text: PSfmlText): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfText_getScale';
-  function SfmlTextGetOrigin(const Text: PSfmlText): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfText_getOrigin';
   procedure SfmlTextMove(Text: PSfmlText; Offset: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfText_move';
   procedure SfmlTextRotate(Text: PSfmlText; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfText_rotate';
   procedure SfmlTextScale(Text: PSfmlText; Factors: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfText_scale';
   function SfmlTextGetTransform(const Text: PSfmlText): TSfmlTransform; cdecl; external CSfmlGraphicsLibrary name 'sfText_getTransform';
   function SfmlTextGetInverseTransform(const Text: PSfmlText): TSfmlTransform; cdecl; external CSfmlGraphicsLibrary name 'sfText_getInverseTransform';
   procedure SfmlTextSetString(Text: PSfmlText; const &String: PAnsiChar); cdecl; external CSfmlGraphicsLibrary name 'sfText_setString';
-  procedure SfmlTextSetUnicodeString(Text: PSfmlText; const &String: PUCS4CharArray); cdecl; external CSfmlGraphicsLibrary name 'sfText_setUnicodeString';
+  procedure SfmlTextSetUnicodeString(Text: PSfmlText; const &String: PUCS4Char); cdecl; external CSfmlGraphicsLibrary name 'sfText_setUnicodeString';
   procedure SfmlTextSetFont(Text: PSfmlText; const Font: PSfmlFont); cdecl; external CSfmlGraphicsLibrary name 'sfText_setFont';
   procedure SfmlTextSetCharacterSize(Text: PSfmlText; Size: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfText_setCharacterSize';
   procedure SfmlTextSetStyle(Text: PSfmlText; Style: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfText_setStyle';
   procedure SfmlTextSetColor(Text: PSfmlText; Color: TSfmlColor); cdecl; external CSfmlGraphicsLibrary name 'sfText_setColor';
   function SfmlTextGetString(const Text: PSfmlText): PAnsiChar; cdecl; external CSfmlGraphicsLibrary name 'sfText_getString';
-  function SfmlTextGetUnicodeString(const Text: PSfmlText): PUCS4CharArray; cdecl; external CSfmlGraphicsLibrary name 'sfText_getUnicodeString';
+  function SfmlTextGetUnicodeString(const Text: PSfmlText): PUCS4Char; cdecl; external CSfmlGraphicsLibrary name 'sfText_getUnicodeString';
   function SfmlTextGetFont(const Text: PSfmlText): PSfmlFont; cdecl; external CSfmlGraphicsLibrary name 'sfText_getFont';
   function SfmlTextGetCharacterSize(const Text: PSfmlText): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfText_getCharacterSize';
   function SfmlTextGetStyle(const Text: PSfmlText): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfText_getStyle';
   function SfmlTextGetColor(const Text: PSfmlText): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfText_getColor';
-  function SfmlTextFindCharacterPos(const Text: PSfmlText; Index: NativeUInt): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfText_findCharacterPos';
   function SfmlTextGetLocalBounds(const Text: PSfmlText): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfText_getLocalBounds';
   function SfmlTextGetGlobalBounds(const Text: PSfmlText): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfText_getGlobalBounds';
+{$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlTextFindCharacterPos(const Text: PSfmlText; Index: NativeUInt): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfText_findCharacterPos';
+  function SfmlTextGetOrigin(const Text: PSfmlText): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfText_getOrigin';
+  function SfmlTextGetPosition(const Text: PSfmlText): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfText_getPosition';
+  function SfmlTextGetScale(const Text: PSfmlText): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfText_getScale';
+{$ENDIF}
 
   function SfmlTextureCreate(Width, Height: Cardinal): PSfmlTexture; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_create';
   function SfmlTextureCreateFromFile(const FileName: PAnsiChar; const Area: PSfmlIntRect): PSfmlTexture; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_createFromFile';
@@ -1306,7 +1396,6 @@ const
   function SfmlTextureCreateFromImage(const Image: PSfmlImage; const Area: PSfmlIntRect): PSfmlTexture; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_createFromImage';
   function SfmlTextureCopy(const Texture: PSfmlTexture): PSfmlTexture; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_copy';
   procedure SfmlTextureDestroy(Texture: PSfmlTexture); cdecl; external CSfmlGraphicsLibrary name 'sfTexture_destroy';
-  function SfmlTextureGetSize(const Texture: PSfmlTexture): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_getSize';
   function SfmlTextureCopyToImage(const Texture: PSfmlTexture): PSfmlImage; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_copyToImage';
   procedure SfmlTextureUpdateFromPixels(Texture: PSfmlTexture; const Pixels: PByte; Width, Height, X, Y: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfTexture_updateFromPixels';
   procedure SfmlTextureUpdateFromImage(Texture: PSfmlTexture; const Image: PSfmlImage; X, Y: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfTexture_updateFromImage';
@@ -1318,12 +1407,14 @@ const
   function SfmlTextureIsRepeated(const Texture: PSfmlTexture): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_isRepeated';
   procedure SfmlTextureBind(const Texture: PSfmlTexture); cdecl; external CSfmlGraphicsLibrary name 'sfTexture_bind';
   function sfmlTextureGetMaximumSize: Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_getMaximumSize';
+{$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlTextureGetSize(const Texture: PSfmlTexture): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_getSize';
+{$ENDIF}
 
   function SfmlTransformIdentity: TSfmlTransform; cdecl; external CSfmlGraphicsLibrary name 'sfTransform_identity';
   function SfmlTransformFromMatrix(a00, a01, a02, a10, a11, a12, a20, a21, a22: Single): TSfmlTransform; cdecl; external CSfmlGraphicsLibrary name 'sfTransform_fromMatrix';
   procedure SfmlTransformGetMatrix(const Transform: PSfmlTransform; Matrix: PSingle); cdecl; external CSfmlGraphicsLibrary name 'sfTransform_getMatrix';
   function SfmlTransformGetInverse(const Transform: PSfmlTransform): TSfmlTransform; cdecl; external CSfmlGraphicsLibrary name 'sfTransform_getInverse';
-  function SfmlTransformTransformPoint(const Transform: PSfmlTransform; Point: TSfmlVector2f): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfTransform_transformPoint';
   function SfmlTransformTransformRect(const Transform: PSfmlTransform; Rectangle: TSfmlFloatRect): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfTransform_transformRect';
   procedure SfmlTransformCombine(Transform: PSfmlTransform; const Other: PSfmlTransform); cdecl; external CSfmlGraphicsLibrary name 'sfTransform_combine';
   procedure SfmlTransformTranslate(Transform: PSfmlTransform; X, Y: Single); cdecl; external CSfmlGraphicsLibrary name 'sfTransform_translate';
@@ -1331,6 +1422,9 @@ const
   procedure SfmlTransformRotateWithCenter(Transform: PSfmlTransform; Angle: Single; centerX, centerY: Single); cdecl; external CSfmlGraphicsLibrary name 'sfTransform_rotateWithCenter';
   procedure SfmlTransformScale(Transform: PSfmlTransform; ScaleX, ScaleY: Single); cdecl; external CSfmlGraphicsLibrary name 'sfTransform_scale';
   procedure SfmlTransformScaleWithCenter(Transform: PSfmlTransform; ScaleX, ScaleY, CenterX, CenterY: Single); cdecl; external CSfmlGraphicsLibrary name 'sfTransform_scaleWithCenter';
+{$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlTransformTransformPoint(const Transform: PSfmlTransform; Point: TSfmlVector2f): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfTransform_transformPoint';
+{$ENDIF}
 
   function SfmlTransformableCreate: PSfmlTransformable; cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_create';
   function SfmlTransformableCopy(const Transformable: PSfmlTransformable): PSfmlTransformable; cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_copy';
@@ -1339,15 +1433,17 @@ const
   procedure SfmlTransformableSetRotation(Transformable: PSfmlTransformable; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_setRotation';
   procedure SfmlTransformableSetScale(Transformable: PSfmlTransformable; Scale: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_setScale';
   procedure SfmlTransformableSetOrigin(Transformable: PSfmlTransformable; Origin: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_setOrigin';
-  function SfmlTransformableGetPosition(const Transformable: PSfmlTransformable): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_getPosition';
   function SfmlTransformableGetRotation(const Transformable: PSfmlTransformable): Single; cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_getRotation';
-  function SfmlTransformableGetScale(const Transformable: PSfmlTransformable): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_getScale';
-  function SfmlTransformableGetOrigin(const Transformable: PSfmlTransformable): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_getOrigin';
   procedure SfmlTransformableMove(Transformable: PSfmlTransformable; Offset: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_move';
   procedure SfmlTransformableRotate(Transformable: PSfmlTransformable; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_rotate';
   procedure SfmlTransformableScale(Transformable: PSfmlTransformable; Factors: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_scale';
   function SfmlTransformableGetTransform(const Transformable: PSfmlTransformable): TSfmlTransform; cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_getTransform';
   function SfmlTransformableGetInverseTransform(const Transformable: PSfmlTransformable): TSfmlTransform; cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_getInverseTransform';
+{$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlTransformableGetOrigin(const Transformable: PSfmlTransformable): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_getOrigin';
+  function SfmlTransformableGetPosition(const Transformable: PSfmlTransformable): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_getPosition';
+  function SfmlTransformableGetScale(const Transformable: PSfmlTransformable): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfTransformable_getScale';
+{$ENDIF}
 
   function SfmlVertexArrayCreate: PSfmlVertexArray; cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_create';
   function SfmlVertexArrayCopy(const VertexArray: PSfmlVertexArray): PSfmlVertexArray; cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_copy';
@@ -1370,162 +1466,261 @@ const
   procedure SfmlViewSetRotation(View: PSfmlView; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfView_setRotation';
   procedure SfmlViewSetViewport(View: PSfmlView; Viewport: TSfmlFloatRect); cdecl; external CSfmlGraphicsLibrary name 'sfView_setViewport';
   procedure SfmlViewReset(View: PSfmlView; Rectangle: TSfmlFloatRect); cdecl; external CSfmlGraphicsLibrary name 'sfView_reset';
-  function SfmlViewGetCenter(const View: PSfmlView): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfView_getCenter';
-  function SfmlViewGetSize(const View: PSfmlView): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfView_getSize';
   function SfmlViewGetRotation(const View: PSfmlView): Single; cdecl; external CSfmlGraphicsLibrary name 'sfView_getRotation';
   function SfmlViewGetViewport(const View: PSfmlView): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfView_getViewport';
   procedure SfmlViewMove(View: PSfmlView; Offset: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfView_move';
   procedure SfmlViewRotate(View: PSfmlView; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfView_rotate';
   procedure SfmlViewZoom(View: PSfmlView; Factor: Single); cdecl; external CSfmlGraphicsLibrary name 'sfView_zoom';
+{$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlViewGetCenter(const View: PSfmlView): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfView_getCenter';
+  function SfmlViewGetSize(const View: PSfmlView): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfView_getSize';
+{$ENDIF}
+
 {$ENDIF}
 
 type
-  TSfmlCircleShape = class
+  TSfmlDrawable = class(TInterfacedObject)
+  end;
+
+  TSfmlTransformable = class(TSfmlDrawable)
+  private
+    FHandle: PSfmlTransformable;
+
+    constructor Create(Handle: PSfmlTransformable); overload;
+    function GetInverseTransform: TSfmlTransform; virtual;
+    function GetOrigin: TSfmlVector2f; virtual;
+    function GetPosition: TSfmlVector2f; virtual;
+    function GetRotation: Single; virtual;
+    function GetScale: TSfmlVector2f; virtual;
+    function GetTransform: TSfmlTransform; virtual;
+    procedure SetOrigin(Origin: TSfmlVector2f); virtual;
+    procedure SetPosition(Position: TSfmlVector2f); virtual;
+    procedure SetRotation(Angle: Single); virtual;
+    procedure SetScale(Scale: TSfmlVector2f); virtual;
+  public
+    constructor Create; overload;
+    destructor Destroy; override;
+
+    function Copy: TSfmlTransformable;
+
+    procedure Move(Offset: TSfmlVector2f); overload; virtual;
+    procedure Move(X, Y: Single); overload;
+    procedure Rotate(Angle: Single); virtual;
+    procedure Scale(Factors: TSfmlVector2f); overload; virtual;
+    procedure Scale(X, Y: Single); overload;
+
+    property Handle: PSfmlTransformable read FHandle;
+    property InverseTransform: TSfmlTransform read GetInverseTransform;
+    property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
+    property Position: TSfmlVector2f read GetPosition write SetPosition;
+    property Rotation: Single read GetRotation write SetRotation;
+    property ScaleFactor: TSfmlVector2f read GetScale write SetScale;
+    property Transform: TSfmlTransform read GetTransform;
+  end;
+
+  TSfmlShape = class(TSfmlTransformable)
+  private
+    FHandle: PSfmlShape;
+  protected
+    function GetFillColor: TSfmlColor; virtual;
+    function GetGlobalBounds: TSfmlFloatRect; virtual;
+    function GetInverseTransform: TSfmlTransform; override;
+    function GetLocalBounds: TSfmlFloatRect; virtual;
+    function GetOrigin: TSfmlVector2f; override;
+    function GetOutlineColor: TSfmlColor; virtual;
+    function GetOutlineThickness: Single; virtual;
+    function GetPoint(Index: Cardinal): TSfmlVector2f; virtual;
+    function GetPointCount: Cardinal; virtual;
+    function GetPosition: TSfmlVector2f; override;
+    function GetRotation: Single; override;
+    function GetScale: TSfmlVector2f; override;
+    function GetTexture: PSfmlTexture; virtual;
+    function GetTextureRect: TSfmlIntRect; virtual;
+    function GetTransform: TSfmlTransform; override;
+    procedure SetFillColor(Color: TSfmlColor); virtual;
+    procedure SetOrigin(Origin: TSfmlVector2f); override;
+    procedure SetOutlineColor(Color: TSfmlColor); virtual;
+    procedure SetOutlineThickness(Thickness: Single); virtual;
+    procedure SetPosition(Position: TSfmlVector2f); override;
+    procedure SetRotation(Angle: Single); override;
+    procedure SetScale(Scale: TSfmlVector2f); override;
+    procedure SetTextureRect(Rect: TSfmlIntRect); virtual;
+  public
+    constructor Create(GetPointCount: TSfmlShapeGetPointCountCallback; GetPoint: TSfmlShapeGetPointCallback; UserData: Pointer); overload;
+    destructor Destroy; override;
+
+    procedure Move(Offset: TSfmlVector2f); override;
+    procedure Rotate(Angle: Single); override;
+    procedure Scale(Factors: TSfmlVector2f); override;
+
+    procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
+
+    procedure Update;
+
+    property FillColor: TSfmlColor read GetFillColor write SetFillColor;
+    property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
+    property Handle: PSfmlShape read FHandle;
+    property LocalBounds: TSfmlFloatRect read GetLocalBounds;
+    property OutlineColor: TSfmlColor read GetOutlineColor write SetOutlineColor;
+    property OutlineThickness: Single read GetOutlineThickness write SetOutlineThickness;
+    property Point[Index: Cardinal]: TSfmlVector2f read GetPoint;
+    property PointCount: Cardinal read GetPointCount;
+    property Texture: PSfmlTexture read GetTexture;
+    property TextureRect: TSfmlIntRect read GetTextureRect write SetTextureRect;
+  end;
+
+  TSfmlCircleShape = class(TSfmlShape)
   private
     FHandle: PSfmlCircleShape;
+
     constructor Create(Handle: PSfmlCircleShape); overload;
-    function GetFillColor: TSfmlColor;
-    function GetGlobalBounds: TSfmlFloatRect;
-    function GetInverseTransform: TSfmlTransform;
-    function GetLocalBounds: TSfmlFloatRect;
-    function GetOrigin: TSfmlVector2f;
-    function GetOutlineColor: TSfmlColor;
-    function GetOutlineThickness: Single;
-    function GetPointCount: Cardinal;
-    function GetPoint(Index: Cardinal): TSfmlVector2f;
-    function GetPosition: TSfmlVector2f;
     function GetRadius: Single;
-    function GetRotation: Single;
-    function GetScale: TSfmlVector2f;
-    function GetTexture: PSfmlTexture;
-    function GetTextureRect: TSfmlIntRect;
-    function GetTransform: TSfmlTransform;
-    procedure SetFillColor(Color: TSfmlColor);
-    procedure SetOrigin(Origin: TSfmlVector2f);
-    procedure SetOutlineColor(Color: TSfmlColor);
-    procedure SetOutlineThickness(Thickness: Single);
-    procedure SetPointCount(Count: Cardinal);
-    procedure SetPosition(Position: TSfmlVector2f);
     procedure SetRadius(Radius: Single);
-    procedure SetRotation(Angle: Single);
-    procedure SetScale(Scale: TSfmlVector2f);
-    procedure SetTextureRect(Rect: TSfmlIntRect);
+    procedure SetPointCount(Count: Cardinal);
+  protected
+    function GetFillColor: TSfmlColor; override;
+    function GetGlobalBounds: TSfmlFloatRect; override;
+    function GetInverseTransform: TSfmlTransform; override;
+    function GetLocalBounds: TSfmlFloatRect; override;
+    function GetOrigin: TSfmlVector2f; override;
+    function GetOutlineColor: TSfmlColor; override;
+    function GetOutlineThickness: Single; override;
+    function GetPoint(Index: Cardinal): TSfmlVector2f; override;
+    function GetPointCount: Cardinal; override;
+    function GetPosition: TSfmlVector2f; override;
+    function GetRotation: Single; override;
+    function GetScale: TSfmlVector2f; override;
+    function GetTexture: PSfmlTexture; override;
+    function GetTextureRect: TSfmlIntRect; override;
+    function GetTransform: TSfmlTransform; override;
+    procedure SetFillColor(Color: TSfmlColor); override;
+    procedure SetOrigin(Origin: TSfmlVector2f); override;
+    procedure SetOutlineColor(Color: TSfmlColor); override;
+    procedure SetOutlineThickness(Thickness: Single); override;
+    procedure SetPosition(Position: TSfmlVector2f); override;
+    procedure SetRotation(Angle: Single); override;
+    procedure SetScale(Scale: TSfmlVector2f); override;
+    procedure SetTextureRect(Rect: TSfmlIntRect); override;
   public
     constructor Create; overload;
     destructor Destroy; override;
 
     function Copy: TSfmlCircleShape;
 
-    procedure Move(Offset: TSfmlVector2f); overload;
-    procedure Move(X, Y: Single); overload;
-    procedure Rotate(Angle: Single);
-    procedure Scale(Factors: TSfmlVector2f);
+    procedure Move(Offset: TSfmlVector2f); override;
+    procedure Rotate(Angle: Single); override;
+    procedure Scale(Factors: TSfmlVector2f); override;
 
     procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
 
-    property FillColor: TSfmlColor read GetFillColor write SetFillColor;
-    property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
     property Handle: PSfmlCircleShape read FHandle;
-    property InverseTransform: TSfmlTransform read GetInverseTransform;
-    property LocalBounds: TSfmlFloatRect read GetLocalBounds;
-    property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
-    property OutlineColor: TSfmlColor read GetOutlineColor write SetOutlineColor;
-    property OutlineThickness: Single read GetOutlineThickness write SetOutlineThickness;
     property PointCount: Cardinal read GetPointCount write SetPointCount;
-    property Point[Index: Cardinal]: TSfmlVector2f read GetPoint;
-    property Position: TSfmlVector2f read GetPosition write SetPosition;
     property Radius: Single read GetRadius write SetRadius;
-    property Rotation: Single read GetRotation write SetRotation;
-    property ScaleVector: TSfmlVector2f read GetScale write SetScale;
-    property Texture: PSfmlTexture read GetTexture;
-    property TextureRect: TSfmlIntRect read GetTextureRect write SetTextureRect;
-    property Transform: TSfmlTransform read GetTransform;
   end;
 
-  TSfmlConvexShape = class
+  TSfmlConvexShape = class(TSfmlShape)
   private
     FHandle: PSfmlConvexShape;
-    function GetFillColor: TSfmlColor;
-    function GetGlobalBounds: TSfmlFloatRect;
-    function GetInverseTransform: TSfmlTransform;
-    function GetLocalBounds: TSfmlFloatRect;
-    function GetOrigin: TSfmlVector2f;
-    function GetOutlineColor: TSfmlColor;
-    function GetOutlineThickness: Single;
-    function GetPoint(Index: Cardinal): TSfmlVector2f;
-    function GetPointCount: Cardinal;
-    function GetPosition: TSfmlVector2f;
-    function GetRotation: Single;
-    function GetScale: TSfmlVector2f;
-    function GetTexture: PSfmlTexture;
-    function GetTextureRect: TSfmlIntRect;
-    function GetTransform: TSfmlTransform;
-    procedure SetFillColor(Color: TSfmlColor);
-    procedure SetOrigin(Origin: TSfmlVector2f);
-    procedure SetOutlineColor(Color: TSfmlColor);
-    procedure SetOutlineThickness(Thickness: Single);
+
+    constructor Create(Handle: PSfmlConvexShape); overload;
     procedure SetPoint(Index: Cardinal; Point: TSfmlVector2f);
     procedure SetPointCount(Count: Cardinal);
-    procedure SetPosition(Position: TSfmlVector2f);
-    procedure SetRotation(Angle: Single);
-    procedure SetScale(Scale: TSfmlVector2f);
-    procedure SetTextureRect(Rect: TSfmlIntRect);
+  protected
+    function GetFillColor: TSfmlColor; override;
+    function GetGlobalBounds: TSfmlFloatRect; override;
+    function GetInverseTransform: TSfmlTransform; override;
+    function GetLocalBounds: TSfmlFloatRect; override;
+    function GetOrigin: TSfmlVector2f; override;
+    function GetOutlineColor: TSfmlColor; override;
+    function GetOutlineThickness: Single; override;
+    function GetPoint(Index: Cardinal): TSfmlVector2f; override;
+    function GetPointCount: Cardinal; override;
+    function GetPosition: TSfmlVector2f; override;
+    function GetRotation: Single; override;
+    function GetScale: TSfmlVector2f; override;
+    function GetTexture: PSfmlTexture; override;
+    function GetTextureRect: TSfmlIntRect; override;
+    function GetTransform: TSfmlTransform; override;
+    procedure SetFillColor(Color: TSfmlColor); override;
+    procedure SetOrigin(Origin: TSfmlVector2f); override;
+    procedure SetOutlineColor(Color: TSfmlColor); override;
+    procedure SetOutlineThickness(Thickness: Single); override;
+    procedure SetPosition(Position: TSfmlVector2f); override;
+    procedure SetRotation(Angle: Single); override;
+    procedure SetScale(Scale: TSfmlVector2f); override;
+    procedure SetTextureRect(Rect: TSfmlIntRect); override;
   public
-    constructor Create;
+    constructor Create; overload;
     destructor Destroy; override;
 
     function Copy: TSfmlConvexShape;
 
-    procedure Move(Offset: TSfmlVector2f);
-    procedure Rotate(Angle: Single);
-    procedure Scale(Factors: TSfmlVector2f);
+    procedure Move(Offset: TSfmlVector2f); override;
+    procedure Rotate(Angle: Single); override;
+    procedure Scale(Factors: TSfmlVector2f); override;
 
     procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
 
-    property FillColor: TSfmlColor read GetFillColor write SetFillColor;
-    property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
     property Handle: PSfmlConvexShape read FHandle;
-    property InverseTransform: TSfmlTransform read GetInverseTransform;
-    property LocalBounds: TSfmlFloatRect read GetLocalBounds;
-    property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
-    property OutlineColor: TSfmlColor read GetOutlineColor write SetOutlineColor;
-    property OutlineThickness: Single read GetOutlineThickness write SetOutlineThickness;
-    property Point[Index: Cardinal]: TSfmlVector2f read GetPoint write SetPoint;
     property PointCount: Cardinal read GetPointCount write SetPointCount;
-    property Position: TSfmlVector2f read GetPosition write SetPosition;
-    property Rotation: Single read GetRotation write SetRotation;
-    property ScaleVector: TSfmlVector2f read GetScale write SetScale;
-    property Texture: PSfmlTexture read GetTexture;
-    property TextureRect: TSfmlIntRect read GetTextureRect write SetTextureRect;
-    property Transform: TSfmlTransform read GetTransform;
+    property Point[Index: Cardinal]: TSfmlVector2f read GetPoint write SetPoint;
   end;
 
-  TSfmlFont = class
+  TSfmlRectangleShape = class(TSfmlShape)
   private
-    FHandle: PSfmlFont;
+    FHandle: PSfmlRectangleShape;
+
+    constructor Create(Handle: PSfmlRectangleShape); overload;
+    function GetSize: TSfmlVector2f;
+    procedure SetSize(Size: TSfmlVector2f);
+  protected
+    function GetFillColor: TSfmlColor; override;
+    function GetGlobalBounds: TSfmlFloatRect; override;
+    function GetInverseTransform: TSfmlTransform; override;
+    function GetLocalBounds: TSfmlFloatRect; override;
+    function GetOrigin: TSfmlVector2f; override;
+    function GetOutlineColor: TSfmlColor; override;
+    function GetOutlineThickness: Single; override;
+    function GetPoint(Index: Cardinal): TSfmlVector2f; override;
+    function GetPointCount: Cardinal; override;
+    function GetPosition: TSfmlVector2f; override;
+    function GetRotation: Single; override;
+    function GetScale: TSfmlVector2f; override;
+    function GetTexture: PSfmlTexture; override;
+    function GetTextureRect: TSfmlIntRect; override;
+    function GetTransform: TSfmlTransform; override;
+    procedure SetFillColor(Color: TSfmlColor); override;
+    procedure SetOrigin(Origin: TSfmlVector2f); override;
+    procedure SetOutlineColor(Color: TSfmlColor); override;
+    procedure SetOutlineThickness(Thickness: Single); override;
+    procedure SetPosition(Position: TSfmlVector2f); override;
+    procedure SetRotation(Angle: Single); override;
+    procedure SetScale(Scale: TSfmlVector2f); override;
+    procedure SetTextureRect(Rect: TSfmlIntRect); override;
   public
-    constructor Create(const FileName: AnsiString); overload;
-    constructor Create(const Data: Pointer; SizeInBytes: NativeUInt); overload;
-    constructor Create(const Stream: PSfmlInputStream); overload;
+    constructor Create; overload;
     destructor Destroy; override;
 
-    function Copy: TSfmlFont;
-    function GetGlyph(CodePoint: Cardinal; CharacterSize: Cardinal; Bold: Boolean): TSfmlGlyph;
-    function GetKerning(First, Second: Cardinal; CharacterSize: Cardinal): Single;
-    function GetLineSpacing(CharacterSize: Cardinal): Single;
-    function GetUnderlinePosition(CharacterSize: Cardinal): Single;
-    function GetUnderlineThickness(CharacterSize: Cardinal): Single;
-    function GetTexture(CharacterSize: Cardinal): PSfmlTexture;
-    function GetInfo: TSfmlFontInfo;
+    function Copy: TSfmlRectangleShape;
+    procedure Move(Offset: TSfmlVector2f); override;
+    procedure Rotate(Angle: Single); override;
+    procedure Scale(Factors: TSfmlVector2f); override;
 
-    property Handle: PSfmlFont read FHandle;
+    procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
+
+    property Handle: PSfmlRectangleShape read FHandle;
+    property PointCount: Cardinal read GetPointCount;
+    property Size: TSfmlVector2f read GetSize write SetSize;
   end;
 
   TSfmlImage = class
   private
     FHandle: PSfmlImage;
+
+    constructor Create(Handle: PSfmlImage); overload;
     procedure SetPixel(X, Y: Cardinal; Color: TSfmlColor);
     function GetPixel(X, Y: Cardinal): TSfmlColor;
+    function GetSize: TSfmlVector2u;
   public
     constructor Create(Width, Height: Cardinal); overload;
     constructor Create(Width, Height: Cardinal; Color: TSfmlColor); overload;
@@ -1537,7 +1732,6 @@ type
 
     function Copy: TSfmlImage;
     function GetPixelsPtr: PByte;
-    function GetSize: TSfmlVector2u;
     function SaveToFile(const FileName: AnsiString): Boolean;
     procedure CopyImage(const Source: PSfmlImage; DestX, DestY: Cardinal; SourceRect: TSfmlIntRect; ApplyAlpha: Boolean); overload;
     procedure CopyImage(const Source: TSfmlImage; DestX, DestY: Cardinal; SourceRect: TSfmlIntRect; ApplyAlpha: Boolean); overload;
@@ -1547,165 +1741,363 @@ type
 
     property Handle: PSfmlImage read FHandle;
     property Pixel[X, Y: Cardinal]: TSfmlColor read GetPixel write SetPixel;
+    property Size: TSfmlVector2u read GetSize;
   end;
 
-  TSfmlRectangleShape = class
+  TSfmlTexture = class
   private
-    FHandle: PSfmlRectangleShape;
+    FHandle: PSfmlTexture;
 
-    function GetFillColor: TSfmlColor;
-    function GetGlobalBounds: TSfmlFloatRect;
-    function GetInverseTransform: TSfmlTransform;
-    function GetLocalBounds: TSfmlFloatRect;
-    function GetOrigin: TSfmlVector2f;
-    function GetOutlineColor: TSfmlColor;
-    function GetOutlineThickness: Single;
-    function GetPoint(Index: Cardinal): TSfmlVector2f;
-    function GetPointCount: Cardinal;
-    function GetPosition: TSfmlVector2f;
-    function GetRotation: Single;
-    function GetScale: TSfmlVector2f;
-    function GetSize: TSfmlVector2f;
-    function GetTexture: PSfmlTexture;
-    function GetTextureRect: TSfmlIntRect;
-    function GetTransform: TSfmlTransform;
-    procedure SetFillColor(Color: TSfmlColor);
-    procedure SetOrigin(Origin: TSfmlVector2f);
-    procedure SetOutlineColor(Color: TSfmlColor);
-    procedure SetOutlineThickness(Thickness: Single);
-    procedure SetPosition(Position: TSfmlVector2f);
-    procedure SetRotation(Angle: Single);
-    procedure SetScale(Scale: TSfmlVector2f);
-    procedure SetSize(Size: TSfmlVector2f);
-    procedure SetTextureRect(Rect: TSfmlIntRect);
+    constructor Create(Handle: PSfmlTexture); overload;
+    function GetRepeated: Boolean;
+    function GetSmooth: Boolean;
+    function GetSize: TSfmlVector2u;
+    procedure SetRepeated(Repeated: Boolean);
+    procedure SetSmooth(Smooth: Boolean);
   public
-    constructor Create;
+    constructor Create(Width, Height: Cardinal); overload;
+    constructor Create(const FileName: AnsiString; const Area: PSfmlIntRect = nil); overload;
+    constructor Create(const Data: Pointer; SizeInBytes: NativeUInt; const Area: PSfmlIntRect = nil); overload;
+    constructor Create(Stream: PSfmlInputStream; const Area: PSfmlIntRect = nil); overload;
+    constructor Create(const Image: PSfmlImage; const Area: PSfmlIntRect = nil); overload;
     destructor Destroy; override;
 
-    function Copy: TSfmlRectangleShape;
-    procedure Move(Offset: TSfmlVector2f); overload;
-    procedure Move(X, Y: Single); overload;
-    procedure Rotate(Angle: Single);
-    procedure Scale(Factors: TSfmlVector2f); overload;
-    procedure Scale(X, Y: Single); overload;
+    function Copy: TSfmlTexture;
+    function CopyToImage: TSfmlImage; overload;
+    procedure Bind;
 
-    procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
+    procedure UpdateFromImage(const Image: TSfmlImage; X, Y: Cardinal); overload;
+    procedure UpdateFromImage(const Image: PSfmlImage; X, Y: Cardinal); overload;
+    procedure UpdateFromPixels(const Pixels: PByte; Width, Height, X, Y: Cardinal);
+    procedure UpdateFromRenderWindow(const RenderWindow: PSfmlRenderWindow; X, Y: Cardinal);
+    procedure UpdateFromWindow(const Window: PSfmlWindow; X, Y: Cardinal);
 
-    property FillColor: TSfmlColor read GetFillColor write SetFillColor;
+    property Handle: PSfmlTexture read FHandle;
+    property Repeated: Boolean read GetRepeated write SetRepeated;
+    property Smooth: Boolean read GetSmooth write SetSmooth;
+    property Size: TSfmlVector2u read GetSize;
+  end;
+
+  TSfmlSprite = class(TSfmlTransformable)
+  private
+    FHandle: PSfmlSprite;
+
+    constructor Create(Handle: PSfmlSprite); overload;
+    function GetColor: TSfmlColor;
+    function GetGlobalBounds: TSfmlFloatRect;
+    function GetLocalBounds: TSfmlFloatRect;
+    function GetTexture: PSfmlTexture;
+    function GetTextureRect: TSfmlIntRect;
+    procedure SetColor(Color: TSfmlColor);
+  protected
+    function GetInverseTransform: TSfmlTransform; override;
+    function GetOrigin: TSfmlVector2f; override;
+    function GetPosition: TSfmlVector2f; override;
+    function GetRotation: Single; override;
+    function GetScale: TSfmlVector2f; override;
+    function GetTransform: TSfmlTransform; override;
+    procedure SetOrigin(Origin: TSfmlVector2f); override;
+    procedure SetPosition(Position: TSfmlVector2f); override;
+    procedure SetRotation(Angle: Single); override;
+    procedure SetScale(Scale: TSfmlVector2f); override;
+  public
+    constructor Create; overload;
+    destructor Destroy; override;
+
+    function Copy: TSfmlSprite;
+
+    procedure Move(Offset: TSfmlVector2f); override;
+    procedure Rotate(Angle: Single); override;
+    procedure Scale(Factors: TSfmlVector2f); override;
+
+    procedure SetTexture(const Texture: TSfmlTexture; ResetRect: Boolean = False); overload;
+    procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean = False); overload;
+    procedure SetTextureRect(Rectangle: TSfmlIntRect);
+
+    property Color: TSfmlColor read GetColor write SetColor;
     property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
-    property Handle: PSfmlRectangleShape read FHandle;
+    property Handle: PSfmlSprite read FHandle;
     property InverseTransform: TSfmlTransform read GetInverseTransform;
     property LocalBounds: TSfmlFloatRect read GetLocalBounds;
     property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
-    property OutlineColor: TSfmlColor read GetOutlineColor write SetOutlineColor;
-    property OutlineThickness: Single read GetOutlineThickness write SetOutlineThickness;
-    property Point[Index: Cardinal]: TSfmlVector2f read GetPoint;
-    property PointCount: Cardinal read GetPointCount;
     property Position: TSfmlVector2f read GetPosition write SetPosition;
     property Rotation: Single read GetRotation write SetRotation;
-    property ScaleVector: TSfmlVector2f read GetScale write SetScale;
-    property Size: TSfmlVector2f read GetSize write SetSize;
+    property ScaleFactor: TSfmlVector2f read GetScale write SetScale;
     property Texture: PSfmlTexture read GetTexture;
     property TextureRect: TSfmlIntRect read GetTextureRect write SetTextureRect;
     property Transform: TSfmlTransform read GetTransform;
   end;
 
-  TSfmlShape = class;
-  TSfmlSprite = class;
-  TSfmlText = class;
-  TSfmlVertexArray = class;
+  TSfmlFont = class
+  private
+    FHandle: PSfmlFont;
 
-  TSfmlRenderTexture = class
+    constructor Create(Handle: PSfmlFont); overload;
+    function GetLineSpacing(CharacterSize: Cardinal): Single;
+    function GetUnderlinePosition(CharacterSize: Cardinal): Single;
+    function GetUnderlineThickness(CharacterSize: Cardinal): Single;
+    function GetTexture(CharacterSize: Cardinal): PSfmlTexture;
+  public
+    constructor Create(const FileName: AnsiString); overload;
+    constructor Create(const Data: Pointer; SizeInBytes: NativeUInt); overload;
+    constructor Create(const Stream: PSfmlInputStream); overload;
+    destructor Destroy; override;
+
+    function Copy: TSfmlFont;
+    function GetGlyph(CodePoint: Cardinal; CharacterSize: Cardinal; Bold: Boolean): TSfmlGlyph;
+    function GetKerning(First, Second: Cardinal; CharacterSize: Cardinal): Single;
+    function GetInfo: TSfmlFontInfo;
+
+    property Handle: PSfmlFont read FHandle;
+    property LineSpacing[CharacterSize: Cardinal]: Single read GetLineSpacing;
+    property UnderlinePosition[CharacterSize: Cardinal]: Single read GetUnderlinePosition;
+    property UnderlineThickness[CharacterSize: Cardinal]: Single read GetUnderlineThickness;
+    property Texture[CharacterSize: Cardinal]: PSfmlTexture read GetTexture;
+  end;
+
+  TSfmlText = class(TSfmlTransformable)
+  private
+    FHandle: PSfmlText;
+
+    constructor Create(Handle: PSfmlText); overload;
+    function GetCharacterSize: Cardinal;
+    function GetColor: TSfmlColor;
+    function GetFont: PSfmlFont;
+    function GetGlobalBounds: TSfmlFloatRect;
+    function GetLocalBounds: TSfmlFloatRect;
+    function GetString: AnsiString;
+    function GetStyle: Cardinal;
+    function GetUnicodeString: UnicodeString;
+    procedure SetCharacterSize(Size: Cardinal);
+    procedure SetColor(Color: TSfmlColor);
+    procedure SetFont(const Font: PSfmlFont);
+    procedure SetString(const &String: AnsiString);
+    procedure SetStyle(Style: Cardinal);
+    procedure SetUnicodeString(const &String: UnicodeString);
+  protected
+    function GetInverseTransform: TSfmlTransform; override;
+    function GetOrigin: TSfmlVector2f; override;
+    function GetPosition: TSfmlVector2f; override;
+    function GetRotation: Single; override;
+    function GetScale: TSfmlVector2f; override;
+    function GetTransform: TSfmlTransform; override;
+    procedure SetOrigin(Origin: TSfmlVector2f); override;
+    procedure SetPosition(Position: TSfmlVector2f); override;
+    procedure SetRotation(Angle: Single); override;
+    procedure SetScale(Scale: TSfmlVector2f); override;
+  public
+    constructor Create; overload;
+    constructor Create(Text: UnicodeString); overload;
+    constructor Create(Text: UnicodeString; Font: TSfmlFont); overload;
+    constructor Create(Text: UnicodeString; Font: PSfmlFont); overload;
+    constructor Create(Text: UnicodeString; Font: TSfmlFont; CharacterSize: Cardinal); overload;
+    constructor Create(Text: UnicodeString; Font: PSfmlFont; CharacterSize: Cardinal); overload;
+    destructor Destroy; override;
+
+    function Copy: TSfmlText;
+    function FindCharacterPos(Index: NativeUInt): TSfmlVector2f;
+
+    procedure Move(Offset: TSfmlVector2f); override;
+    procedure Rotate(Angle: Single); override;
+    procedure Scale(Factors: TSfmlVector2f); override;
+
+    property CharacterSize: Cardinal read GetCharacterSize write SetCharacterSize;
+    property Color: TSfmlColor read GetColor write SetColor;
+    property Font: PSfmlFont read GetFont write SetFont;
+    property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
+    property Handle: PSfmlText read FHandle;
+    property InverseTransform: TSfmlTransform read GetInverseTransform;
+    property LocalBounds: TSfmlFloatRect read GetLocalBounds;
+    property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
+    property Position: TSfmlVector2f read GetPosition write SetPosition;
+    property Rotation: Single read GetRotation write SetRotation;
+    property ScaleFactor: TSfmlVector2f read GetScale write SetScale;
+    property &String: AnsiString read GetString write SetString;
+    property Style: Cardinal read GetStyle write SetStyle;
+    property Transform: TSfmlTransform read GetTransform;
+    property UnicodeString: UnicodeString read GetUnicodeString write SetUnicodeString;
+  end;
+
+  TSfmlVertexArray = class(TSfmlDrawable)
+  private
+    FHandle: PSfmlVertexArray;
+
+    constructor Create(Handle: PSfmlVertexArray); overload;
+    function GetBounds: TSfmlFloatRect;
+    function GetPrimitiveType: TSfmlPrimitiveType;
+    function GetVertex(Index: Cardinal): PSfmlVertex;
+    function GetVertexCount: Cardinal;
+    procedure SetPrimitiveType(&Type: TSfmlPrimitiveType);
+  public
+    constructor Create; overload;
+    destructor Destroy; override;
+
+    function Copy: TSfmlVertexArray;
+    procedure Append(Vertex: TSfmlVertex);
+    procedure Clear;
+    procedure Resize(VertexCount: Cardinal);
+
+    property Bounds: TSfmlFloatRect read GetBounds;
+    property Handle: PSfmlVertexArray read FHandle;
+    property PrimitiveType: TSfmlPrimitiveType read GetPrimitiveType write SetPrimitiveType;
+    property Vertex[Index: Cardinal]: PSfmlVertex read GetVertex;
+    property VertexCount: Cardinal read GetVertexCount;
+  end;
+
+  ISfmlRenderTarget = interface
+    function GetDefaultView: PSfmlView;
+    function GetView: PSfmlView;
+    function GetSize: TSfmlVector2u;
+    function GetViewport(const View: PSfmlView): TSfmlIntRect;
+    procedure SetView(const View: PSfmlView);
+
+    procedure Clear(Color: TSfmlColor);
+
+    procedure Draw(const &Object: TSfmlCircleShape; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlConvexShape; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlRectangleShape; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlShape; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlSprite; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlText; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlVertexArray; const States: PSfmlRenderStates = nil); overload;
+
+    procedure Display;
+
+    function MapCoordsToPixel(Point: TSfmlVector2i; const View: PSfmlView = nil): TSfmlVector2i;
+    function MapPixelToCoords(Point: TSfmlVector2i; const View: PSfmlView = nil): TSfmlVector2f;
+
+    procedure PopGLStates;
+    procedure PushGLStates;
+    procedure ResetGLStates;
+
+    property Size: TSfmlVector2u read GetSize;
+  end;
+
+  TSfmlRenderTarget = class(TInterfacedObject, ISfmlRenderTarget)
+  protected
+    function GetDefaultView: PSfmlView; virtual; abstract;
+    function GetView: PSfmlView; virtual; abstract;
+    function GetSize: TSfmlVector2u; virtual; abstract;
+    function GetViewport(const View: PSfmlView): TSfmlIntRect; virtual; abstract;
+    procedure SetView(const View: PSfmlView); virtual; abstract;
+  public
+    procedure Clear(Color: TSfmlColor); virtual; abstract;
+
+    procedure Draw(const &Object: TSfmlCircleShape; const States: PSfmlRenderStates = nil); overload; virtual; abstract;
+    procedure Draw(const &Object: TSfmlConvexShape; const States: PSfmlRenderStates = nil); overload; virtual; abstract;
+    procedure Draw(const &Object: TSfmlRectangleShape; const States: PSfmlRenderStates = nil); overload; virtual; abstract;
+    procedure Draw(const &Object: TSfmlShape; const States: PSfmlRenderStates = nil); overload; virtual; abstract;
+    procedure Draw(const &Object: TSfmlSprite; const States: PSfmlRenderStates = nil); overload; virtual; abstract;
+    procedure Draw(const &Object: TSfmlText; const States: PSfmlRenderStates = nil); overload; virtual; abstract;
+    procedure Draw(const &Object: TSfmlVertexArray; const States: PSfmlRenderStates = nil); overload; virtual; abstract;
+
+    procedure Display; virtual; abstract;
+
+    function MapCoordsToPixel(Point: TSfmlVector2i; const View: PSfmlView = nil): TSfmlVector2i; virtual; abstract;
+    function MapPixelToCoords(Point: TSfmlVector2i; const View: PSfmlView = nil): TSfmlVector2f; virtual; abstract;
+
+    procedure PopGLStates; virtual; abstract;
+    procedure PushGLStates; virtual; abstract;
+    procedure ResetGLStates; virtual; abstract;
+  public
+    property Size: TSfmlVector2u read GetSize;
+  end;
+
+  TSfmlRenderTexture = class(TSfmlRenderTarget)
   private
     FHandle: PSfmlRenderTexture;
     procedure SetRepeated(Repeated: Boolean);
     procedure SetSmooth(Smooth: Boolean);
     function GetRepeated: Boolean;
     function GetSmooth: Boolean;
+  protected
+    function GetSize: TSfmlVector2u; override;
   public
     constructor Create(Width, Height: Cardinal; DepthBuffer: Boolean = False);
     destructor Destroy; override;
 
-    function GetDefaultView: PSfmlView;
-    function GetSize: TSfmlVector2u;
+    function GetDefaultView: PSfmlView; override;
     function GetTexture: PSfmlTexture;
-    function GetView: PSfmlView;
-    function GetViewport(const View: PSfmlView): TSfmlIntRect;
-    function MapCoordsToPixel(Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i;
-    function MapPixelToCoords(Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f;
+    function GetView: PSfmlView; override;
+    function GetViewport(const View: PSfmlView): TSfmlIntRect; override;
+    function MapCoordsToPixel(Point: TSfmlVector2i; const View: PSfmlView = nil): TSfmlVector2i; override;
+    function MapPixelToCoords(Point: TSfmlVector2i; const View: PSfmlView = nil): TSfmlVector2f; override;
     function SetActive(Active: Boolean): Boolean;
 
-    procedure Clear(Color: TSfmlColor);
-    procedure Display;
+    procedure Clear(Color: TSfmlColor); override;
+    procedure Display; override;
 
-    procedure Draw(const &Object: TSfmlCircleShape; const States: PSfmlRenderStates = nil); overload;
-    procedure Draw(const &Object: TSfmlConvexShape; const States: PSfmlRenderStates = nil); overload;
-    procedure Draw(const &Object: TSfmlRectangleShape; const States: PSfmlRenderStates = nil);overload;
-    procedure Draw(const &Object: TSfmlShape; const States: PSfmlRenderStates = nil); overload;
-    procedure Draw(const &Object: TSfmlSprite; const States: PSfmlRenderStates = nil); overload;
-    procedure Draw(const &Object: TSfmlText; const States: PSfmlRenderStates = nil); overload;
-    procedure Draw(const &Object: TSfmlVertexArray; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlCircleShape; const States: PSfmlRenderStates = nil); overload; override;
+    procedure Draw(const &Object: TSfmlConvexShape; const States: PSfmlRenderStates = nil); overload; override;
+    procedure Draw(const &Object: TSfmlRectangleShape; const States: PSfmlRenderStates = nil);overload; override;
+    procedure Draw(const &Object: TSfmlShape; const States: PSfmlRenderStates = nil); overload; override;
+    procedure Draw(const &Object: TSfmlSprite; const States: PSfmlRenderStates = nil); overload; override;
+    procedure Draw(const &Object: TSfmlText; const States: PSfmlRenderStates = nil); overload; override;
+    procedure Draw(const &Object: TSfmlVertexArray; const States: PSfmlRenderStates = nil); overload; override;
 
-    procedure DrawCircleShape(const &Object: PSfmlCircleShape; const States: PSfmlRenderStates);
-    procedure DrawConvexShape(const &Object: PSfmlConvexShape; const States: PSfmlRenderStates);
+    procedure DrawCircleShape(const &Object: PSfmlCircleShape; const States: PSfmlRenderStates = nil);
+    procedure DrawConvexShape(const &Object: PSfmlConvexShape; const States: PSfmlRenderStates = nil);
     procedure DrawPrimitives;
-    procedure DrawRectangleShape(const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates);
-    procedure DrawShape(const &Object: PSfmlShape; const States: PSfmlRenderStates);
-    procedure DrawSprite(const &Object: PSfmlSprite; const States: PSfmlRenderStates);
-    procedure DrawText(const &Object: PSfmlText; const States: PSfmlRenderStates);
-    procedure DrawVertexArray(const &Object: PSfmlVertexArray; const States: PSfmlRenderStates);
+    procedure DrawRectangleShape(const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates = nil);
+    procedure DrawShape(const &Object: PSfmlShape; const States: PSfmlRenderStates = nil);
+    procedure DrawSprite(const &Object: PSfmlSprite; const States: PSfmlRenderStates = nil);
+    procedure DrawText(const &Object: PSfmlText; const States: PSfmlRenderStates = nil);
+    procedure DrawVertexArray(const &Object: PSfmlVertexArray; const States: PSfmlRenderStates = nil);
 
-    procedure PopGLStates;
-    procedure PushGLStates;
-    procedure ResetGLStates;
+    procedure PopGLStates; override;
+    procedure PushGLStates; override;
+    procedure ResetGLStates; override;
 
-    procedure SetView(const View: PSfmlView);
+    procedure SetView(const View: PSfmlView); override;
 
     property Handle: PSfmlRenderTexture read FHandle;
     property Repeated: Boolean read GetRepeated write SetRepeated;
     property Smooth: Boolean read GetSmooth write SetSmooth;
   end;
 
-  TSfmlRenderWindow = class
+  TSfmlRenderWindow = class(TSfmlRenderTarget, ISfmlWindow)
   private
     FHandle: PSfmlRenderWindow;
     function GetPosition: TSfmlVector2i;
     procedure SetPosition(Position: TSfmlVector2i);
+  protected
+    function GetSize: TSfmlVector2u; override;
   public
     constructor Create(Mode: TSfmlVideoMode; const Title: AnsiString; Style: TSfmlWindowStyles); overload;
-    constructor Create(Mode: TSfmlVideoMode; const Title: PUCS4CharArray; Style: TSfmlWindowStyles); overload;
+    constructor Create(Mode: TSfmlVideoMode; const Title: UnicodeString; Style: TSfmlWindowStyles); overload;
     constructor Create(Mode: TSfmlVideoMode; const Title: AnsiString; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings); overload;
-    constructor Create(Mode: TSfmlVideoMode; const Title: PUCS4CharArray; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings); overload;
+    constructor Create(Mode: TSfmlVideoMode; const Title: UnicodeString; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings); overload;
     constructor Create(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings); overload;
     destructor Destroy; override;
 
-    function Capture: PSfmlImage;
-    function GetDefaultView: PSfmlView;
+    function GetDefaultView: PSfmlView; override;
     function GetSettings: TSfmlContextSettings;
-    function GetSize: TSfmlVector2u;
     function GetSystemHandle: TSfmlWindowHandle;
-    function GetView: PSfmlView;
-    function GetViewport(const View: PSfmlView): TSfmlIntRect;
-    function MapCoordsToPixel(Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i;
-    function MapPixelToCoords(Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f;
+    function GetView: PSfmlView; override;
+    function GetViewport(const View: PSfmlView): TSfmlIntRect; override;
+
+    function MapCoordsToPixel(Point: TSfmlVector2i; const View: PSfmlView = nil): TSfmlVector2i; override;
+    function MapPixelToCoords(Point: TSfmlVector2i; const View: PSfmlView = nil): TSfmlVector2f; override;
     function PollEvent(out Event: TSfmlEvent): Boolean;
     function SetActive(Active: Boolean): Boolean;
     function WaitEvent(out Event: TSfmlEvent): Boolean;
 
-    procedure Clear(Color: TSfmlColor);
+    procedure Clear(Color: TSfmlColor); override;
+    procedure Display; override;
+
+    function Capture: PSfmlImage;
     procedure Close;
-    procedure Display;
     procedure RequestFocus;
     function IsOpen: Boolean;
     function HasFocus: Boolean;
 
-    procedure Draw(const &Object: TSfmlCircleShape; const States: PSfmlRenderStates = nil); overload;
-    procedure Draw(const &Object: TSfmlConvexShape; const States: PSfmlRenderStates = nil); overload;
-    procedure Draw(const &Object: TSfmlRectangleShape; const States: PSfmlRenderStates = nil);overload;
-    procedure Draw(const &Object: TSfmlShape; const States: PSfmlRenderStates = nil); overload;
-    procedure Draw(const &Object: TSfmlSprite; const States: PSfmlRenderStates = nil); overload;
-    procedure Draw(const &Object: TSfmlText; const States: PSfmlRenderStates = nil); overload;
-    procedure Draw(const &Object: TSfmlVertexArray; const States: PSfmlRenderStates = nil); overload;
+    procedure Draw(const &Object: TSfmlCircleShape; const States: PSfmlRenderStates = nil); overload; override;
+    procedure Draw(const &Object: TSfmlConvexShape; const States: PSfmlRenderStates = nil); overload; override;
+    procedure Draw(const &Object: TSfmlRectangleShape; const States: PSfmlRenderStates = nil);overload; override;
+    procedure Draw(const &Object: TSfmlShape; const States: PSfmlRenderStates = nil); overload; override;
+    procedure Draw(const &Object: TSfmlSprite; const States: PSfmlRenderStates = nil); overload; override;
+    procedure Draw(const &Object: TSfmlText; const States: PSfmlRenderStates = nil); overload; override;
+    procedure Draw(const &Object: TSfmlVertexArray; const States: PSfmlRenderStates = nil); overload; override;
 
     procedure DrawCircleShape(const &Object: PSfmlCircleShape; const States: PSfmlRenderStates);
     procedure DrawConvexShape(const &Object: PSfmlConvexShape; const States: PSfmlRenderStates);
@@ -1716,9 +2108,9 @@ type
     procedure DrawText(const &Object: PSfmlText; const States: PSfmlRenderStates);
     procedure DrawVertexArray(const &Object: PSfmlVertexArray; const States: PSfmlRenderStates);
 
-    procedure PopGLStates;
-    procedure PushGLStates;
-    procedure ResetGLStates;
+    procedure PopGLStates; override;
+    procedure PushGLStates; override;
+    procedure ResetGLStates; override;
 
     procedure SetFramerateLimit(Limit: Cardinal);
     procedure SetIcon(Width, Height: Cardinal; const Pixels: PByte);
@@ -1729,7 +2121,7 @@ type
     procedure SetTitle(const Title: AnsiString); overload;
     procedure SetTitle(const Title: UnicodeString); overload;
     procedure SetVerticalSyncEnabled(Enabled: Boolean);
-    procedure SetView(const View: PSfmlView);
+    procedure SetView(const View: PSfmlView); override;
     procedure SetVisible(Visible: Boolean);
 (*
     function SfmlMouseGetPositionRenderWindow(const relativeTo: PSfmlRenderWindow): TSfmlVector2i;
@@ -1765,258 +2157,11 @@ type
     property Handle: PSfmlShader read FHandle;
   end;
 
-  TSfmlShape = class
-  private
-    FHandle: PSfmlShape;
-    function GetFillColor: TSfmlColor;
-    function GetGlobalBounds: TSfmlFloatRect;
-    function GetInverseTransform: TSfmlTransform;
-    function GetLocalBounds: TSfmlFloatRect;
-    function GetOrigin: TSfmlVector2f;
-    function GetOutlineColor: TSfmlColor;
-    function GetOutlineThickness: Single;
-    function GetPoint(Index: Cardinal): TSfmlVector2f;
-    function GetPointCount: Cardinal;
-    function GetPosition: TSfmlVector2f;
-    function GetRotation: Single;
-    function GetScale: TSfmlVector2f;
-    function GetTexture: PSfmlTexture;
-    function GetTextureRect: TSfmlIntRect;
-    function GetTransform: TSfmlTransform;
-    procedure SetFillColor(Color: TSfmlColor);
-    procedure SetOrigin(Origin: TSfmlVector2f);
-    procedure SetOutlineColor(Color: TSfmlColor);
-    procedure SetOutlineThickness(Thickness: Single);
-    procedure SetPosition(Position: TSfmlVector2f);
-    procedure SetRotation(Angle: Single);
-    procedure SetScale(Scale: TSfmlVector2f);
-    procedure SetTextureRect(Rect: TSfmlIntRect);
-  public
-    constructor Create(GetPointCount: TSfmlShapeGetPointCountCallback; GetPoint: TSfmlShapeGetPointCallback; UserData: Pointer); overload;
-    destructor Destroy; override;
-
-    procedure Move(Offset: TSfmlVector2f);
-    procedure Rotate(Angle: Single);
-    procedure Scale(Factors: TSfmlVector2f);
-
-    procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
-
-    procedure Update;
-
-    property FillColor: TSfmlColor read GetFillColor write SetFillColor;
-    property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
-    property Handle: PSfmlShape read FHandle;
-    property InverseTransform: TSfmlTransform read GetInverseTransform;
-    property LocalBounds: TSfmlFloatRect read GetLocalBounds;
-    property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
-    property OutlineColor: TSfmlColor read GetOutlineColor write SetOutlineColor;
-    property OutlineThickness: Single read GetOutlineThickness write SetOutlineThickness;
-    property Point[Index: Cardinal]: TSfmlVector2f read GetPoint;
-    property PointCount: Cardinal read GetPointCount;
-    property Position: TSfmlVector2f read GetPosition write SetPosition;
-    property Rotation: Single read GetRotation write SetRotation;
-    property ScaleVector: TSfmlVector2f read GetScale write SetScale;
-    property Texture: PSfmlTexture read GetTexture;
-    property TextureRect: TSfmlIntRect read GetTextureRect write SetTextureRect;
-    property Transform: TSfmlTransform read GetTransform;
-  end;
-
-  TSfmlTexture = class;
-  TSfmlSprite = class
-  private
-    FHandle: PSfmlSprite;
-    function GetColor: TSfmlColor;
-    function GetGlobalBounds: TSfmlFloatRect;
-    function GetInverseTransform: TSfmlTransform;
-    function GetLocalBounds: TSfmlFloatRect;
-    function GetOrigin: TSfmlVector2f;
-    function GetPosition: TSfmlVector2f;
-    function GetRotation: Single;
-    function GetScale: TSfmlVector2f;
-    function GetTexture: PSfmlTexture;
-    function GetTextureRect: TSfmlIntRect;
-    function GetTransform: TSfmlTransform;
-    procedure SetColor(Color: TSfmlColor);
-    procedure SetOrigin(Origin: TSfmlVector2f);
-    procedure SetPosition(Position: TSfmlVector2f);
-    procedure SetRotation(Angle: Single);
-    procedure SetScale(Scale: TSfmlVector2f);
-  public
-    constructor Create;
-    destructor Destroy; override;
-
-    function Copy: TSfmlSprite;
-
-    procedure Move(Offset: TSfmlVector2f);
-    procedure Rotate(Angle: Single);
-    procedure Scale(Factors: TSfmlVector2f);
-
-    procedure SetTexture(const Texture: TSfmlTexture; ResetRect: Boolean = False); overload;
-    procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean = False); overload;
-    procedure SetTextureRect(Rectangle: TSfmlIntRect);
-
-    property Color: TSfmlColor read GetColor write SetColor;
-    property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
-    property Handle: PSfmlSprite read FHandle;
-    property InverseTransform: TSfmlTransform read GetInverseTransform;
-    property LocalBounds: TSfmlFloatRect read GetLocalBounds;
-    property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
-    property Position: TSfmlVector2f read GetPosition write SetPosition;
-    property Rotation: Single read GetRotation write SetRotation;
-    property ScaleVector: TSfmlVector2f read GetScale write SetScale;
-    property Texture: PSfmlTexture read GetTexture;
-    property TextureRect: TSfmlIntRect read GetTextureRect write SetTextureRect;
-    property Transform: TSfmlTransform read GetTransform;
-  end;
-
-  TSfmlText = class
-  private
-    FHandle: PSfmlText;
-    function GetCharacterSize: Cardinal;
-    function GetColor: TSfmlColor;
-    function GetFont: PSfmlFont;
-    function GetGlobalBounds: TSfmlFloatRect;
-    function GetInverseTransform: TSfmlTransform;
-    function GetLocalBounds: TSfmlFloatRect;
-    function GetOrigin: TSfmlVector2f;
-    function GetPosition: TSfmlVector2f;
-    function GetRotation: Single;
-    function GetScale: TSfmlVector2f;
-    function GetString: AnsiString;
-    function GetStyle: Cardinal;
-    function GetTransform: TSfmlTransform;
-    function GetUnicodeString: UnicodeString;
-    procedure SetCharacterSize(Size: Cardinal);
-    procedure SetColor(Color: TSfmlColor);
-    procedure SetFont(const Font: PSfmlFont);
-    procedure SetOrigin(Origin: TSfmlVector2f);
-    procedure SetPosition(Position: TSfmlVector2f);
-    procedure SetRotation(Angle: Single);
-    procedure SetScale(Scale: TSfmlVector2f);
-    procedure SetString(const &String: AnsiString);
-    procedure SetStyle(Style: Cardinal);
-    procedure SetUnicodeString(const &String: UnicodeString);
-  public
-    constructor Create; overload;
-    constructor Create(Text: UnicodeString); overload;
-    constructor Create(Text: UnicodeString; Font: TSfmlFont); overload;
-    constructor Create(Text: UnicodeString; Font: PSfmlFont); overload;
-    constructor Create(Text: UnicodeString; Font: TSfmlFont; CharacterSize: Cardinal); overload;
-    constructor Create(Text: UnicodeString; Font: PSfmlFont; CharacterSize: Cardinal); overload;
-    destructor Destroy; override;
-
-    function Copy: TSfmlText;
-    function FindCharacterPos(Index: NativeUInt): TSfmlVector2f;
-
-    procedure Move(Offset: TSfmlVector2f);
-    procedure Rotate(Angle: Single);
-    procedure Scale(Factors: TSfmlVector2f);
-
-    property CharacterSize: Cardinal read GetCharacterSize write SetCharacterSize;
-    property Color: TSfmlColor read GetColor write SetColor;
-    property Font: PSfmlFont read GetFont write SetFont;
-    property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
-    property Handle: PSfmlText read FHandle;
-    property InverseTransform: TSfmlTransform read GetInverseTransform;
-    property LocalBounds: TSfmlFloatRect read GetLocalBounds;
-    property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
-    property Position: TSfmlVector2f read GetPosition write SetPosition;
-    property Rotation: Single read GetRotation write SetRotation;
-    property ScaleVector: TSfmlVector2f read GetScale write SetScale;
-    property &String: AnsiString read GetString write SetString;
-    property Style: Cardinal read GetStyle write SetStyle;
-    property Transform: TSfmlTransform read GetTransform;
-    property UnicodeString: UnicodeString read GetUnicodeString write SetUnicodeString;
-  end;
-
-  TSfmlTexture = class
-  private
-    FHandle: PSfmlTexture;
-    function GetRepeated: Boolean;
-    function GetSmooth: Boolean;
-    procedure SetRepeated(Repeated: Boolean);
-    procedure SetSmooth(Smooth: Boolean);
-  public
-    constructor Create(Width, Height: Cardinal); overload;
-    constructor Create(const FileName: AnsiString; const Area: PSfmlIntRect = nil); overload;
-    constructor Create(const Data: Pointer; SizeInBytes: NativeUInt; const Area: PSfmlIntRect = nil); overload;
-    constructor Create(Stream: PSfmlInputStream; const Area: PSfmlIntRect = nil); overload;
-    constructor Create(const Image: PSfmlImage; const Area: PSfmlIntRect = nil); overload;
-    destructor Destroy; override;
-
-    function Copy: TSfmlTexture;
-    function CopyToImage: PSfmlImage;
-    function GetSize: TSfmlVector2u;
-    procedure Bind;
-
-    procedure UpdateFromImage(const Image: PSfmlImage; X, Y: Cardinal);
-    procedure UpdateFromPixels(const Pixels: PByte; Width, Height, X, Y: Cardinal);
-    procedure UpdateFromRenderWindow(const RenderWindow: PSfmlRenderWindow; X, Y: Cardinal);
-    procedure UpdateFromWindow(const Window: PSfmlWindow; X, Y: Cardinal);
-
-    property Handle: PSfmlTexture read FHandle;
-    property Repeated: Boolean read GetRepeated write SetRepeated;
-    property Smooth: Boolean read GetSmooth write SetSmooth;
-  end;
-
-  TSfmlTransformable = class
-  private
-    FHandle: PSfmlTransformable;
-    function GetInverseTransform: TSfmlTransform;
-    function GetOrigin: TSfmlVector2f;
-    function GetPosition: TSfmlVector2f;
-    function GetRotation: Single;
-    function GetScale: TSfmlVector2f;
-    function GetTransform: TSfmlTransform;
-    procedure SetOrigin(Origin: TSfmlVector2f);
-    procedure SetPosition(Position: TSfmlVector2f);
-    procedure SetRotation(Angle: Single);
-    procedure SetScale(Scale: TSfmlVector2f);
-  public
-    constructor Create;
-    destructor Destroy; override;
-
-    function Copy: TSfmlTransformable;
-    procedure Move(Offset: TSfmlVector2f);
-    procedure Rotate(Angle: Single);
-    procedure Scale(Factors: TSfmlVector2f);
-
-    property Handle: PSfmlTransformable read FHandle;
-    property InverseTransform: TSfmlTransform read GetInverseTransform;
-    property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
-    property Position: TSfmlVector2f read GetPosition write SetPosition;
-    property Rotation: Single read GetRotation write SetRotation;
-    property ScaleVector: TSfmlVector2f read GetScale write SetScale;
-    property Transform: TSfmlTransform read GetTransform;
-  end;
-
-  TSfmlVertexArray = class
-  private
-    FHandle: PSfmlVertexArray;
-    function GetBounds: TSfmlFloatRect;
-    function GetPrimitiveType: TSfmlPrimitiveType;
-    function GetVertex(Index: Cardinal): PSfmlVertex;
-    function GetVertexCount: Cardinal;
-    procedure SetPrimitiveType(&Type: TSfmlPrimitiveType);
-  public
-    constructor Create;
-    destructor Destroy; override;
-
-    function Copy: TSfmlVertexArray;
-    procedure Append(Vertex: TSfmlVertex);
-    procedure Clear;
-    procedure Resize(VertexCount: Cardinal);
-
-    property Bounds: TSfmlFloatRect read GetBounds;
-    property Handle: PSfmlVertexArray read FHandle;
-    property PrimitiveType: TSfmlPrimitiveType read GetPrimitiveType write SetPrimitiveType;
-    property Vertex[Index: Cardinal]: PSfmlVertex read GetVertex;
-    property VertexCount: Cardinal read GetVertexCount;
-  end;
-
   TSfmlView = class
   private
     FHandle: PSfmlView;
+
+    constructor Create(Handle: PSfmlView); overload;
     function GetCenter: TSfmlVector2f;
     function GetRotation: Single;
     function GetSize: TSfmlVector2f;
@@ -2043,6 +2188,48 @@ type
     property Viewport: TSfmlFloatRect read GetViewport write SetViewport;
   end;
 
+{$IFDEF INT64RETURNWORKAROUND}
+  function SfmlCircleShapeGetPoint(const Shape: PSfmlCircleShape; Index: Cardinal): TSfmlVector2f; cdecl;
+  function SfmlCircleShapeGetPosition(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl;
+  function SfmlCircleShapeGetOrigin(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl;
+  function SfmlCircleShapeGetScale(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl;
+  function SfmlConvexShapeGetOrigin(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl;
+  function SfmlConvexShapeGetPoint(const Shape: PSfmlConvexShape; Index: Cardinal): TSfmlVector2f; cdecl;
+  function SfmlConvexShapeGetPosition(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl;
+  function SfmlConvexShapeGetScale(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl;
+  function SfmlImageGetSize(const Image: PSfmlImage): TSfmlVector2u; cdecl;
+  function SfmlRectangleShapeGetOrigin(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
+  function SfmlRectangleShapeGetPoint(const Shape: PSfmlRectangleShape; Index: Cardinal): TSfmlVector2f; cdecl;
+  function SfmlRectangleShapeGetPosition(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
+  function SfmlRectangleShapeGetScale(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
+  function SfmlRectangleShapeGetSize(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
+  function SfmlRenderTextureMapPixelToCoords(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl;
+  function SfmlRenderTextureMapCoordsToPixel(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl;
+  function SfmlRenderWindowMapPixelToCoords(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl;
+  function SfmlRenderWindowMapCoordsToPixel(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl;
+  function SfmlShapeGetOrigin(const Shape: PSfmlShape): TSfmlVector2f; cdecl;
+  function SfmlShapeGetPoint(const Shape: PSfmlShape; Index: Cardinal): TSfmlVector2f; cdecl;
+  function SfmlShapeGetPosition(const Shape: PSfmlShape): TSfmlVector2f; cdecl;
+  function SfmlShapeGetScale(const Shape: PSfmlShape): TSfmlVector2f; cdecl;
+  function SfmlSpriteGetOrigin(const Sprite: PSfmlSprite): TSfmlVector2f; cdecl;
+  function SfmlSpriteGetPosition(const Sprite: PSfmlSprite): TSfmlVector2f; cdecl;
+  function SfmlSpriteGetScale(const Sprite: PSfmlSprite): TSfmlVector2f; cdecl;
+  function SfmlTextFindCharacterPos(const Text: PSfmlText; Index: NativeUInt): TSfmlVector2f; cdecl;
+  function SfmlTextGetOrigin(const Text: PSfmlText): TSfmlVector2f; cdecl;
+  function SfmlTextGetPosition(const Text: PSfmlText): TSfmlVector2f; cdecl;
+  function SfmlTextGetScale(const Text: PSfmlText): TSfmlVector2f; cdecl;
+  function SfmlTextureGetSize(const Texture: PSfmlTexture): TSfmlVector2u; cdecl;
+  function SfmlTransformTransformPoint(const Transform: PSfmlTransform; Point: TSfmlVector2f): TSfmlVector2f; cdecl;
+  function SfmlTransformableGetOrigin(const Transformable: PSfmlTransformable): TSfmlVector2f; cdecl;
+  function SfmlTransformableGetPosition(const Transformable: PSfmlTransformable): TSfmlVector2f; cdecl;
+  function SfmlTransformableGetScale(const Transformable: PSfmlTransformable): TSfmlVector2f; cdecl;
+  function SfmlViewGetCenter(const View: PSfmlView): TSfmlVector2f; cdecl;
+  function SfmlViewGetSize(const View: PSfmlView): TSfmlVector2f; cdecl;
+{$ENDIF}
+
+function SfmlFloatRect(Left, Top, Width, Height: Single): TSfmlFloatRect;
+function SfmlIntRect(Left, Top, Width, Height: LongInt): TSfmlIntRect;
+
 function SfmlVertex(Position: TSfmlVector2f; Color: TSfmlColor;
   TexCoords: TSfmlVector2f): TSfmlVertex; overload;
 function SfmlVertex(Position: TSfmlVector2f; Color: TSfmlColor): TSfmlVertex; overload;
@@ -2068,6 +2255,22 @@ function SfmlVertex(Position: TSfmlVector2f; Color: TSfmlColor): TSfmlVertex;
 begin
   Result.Position := Position;
   Result.Color := Color;
+end;
+
+function SfmlFloatRect(Left, Top, Width, Height: Single): TSfmlFloatRect;
+begin
+  Result.Left := Left;
+  Result.Top := Top;
+  Result.Width := Width;
+  Result.Height := Height;
+end;
+
+function SfmlIntRect(Left, Top, Width, Height: LongInt): TSfmlIntRect;
+begin
+  Result.Left := Left;
+  Result.Top := Top;
+  Result.Width := Width;
+  Result.Height := Height;
 end;
 
 
@@ -2174,11 +2377,6 @@ begin
   Result := SfmlCircleShapeGetTransform(FHandle);
 end;
 
-procedure TSfmlCircleShape.Move(X, Y: Single);
-begin
-  SfmlCircleShapeMove(FHandle, SfmlVector2f(X, Y));
-end;
-
 procedure TSfmlCircleShape.Move(Offset: TSfmlVector2f);
 begin
   SfmlCircleShapeMove(FHandle, Offset);
@@ -2258,6 +2456,11 @@ begin
   FHandle := SfmlConvexShapeCreate;
 end;
 
+constructor TSfmlConvexShape.Create(Handle: PSfmlConvexShape);
+begin
+  FHandle := Handle;
+end;
+
 destructor TSfmlConvexShape.Destroy;
 begin
   SfmlConvexShapeDestroy(FHandle);
@@ -2266,7 +2469,7 @@ end;
 
 function TSfmlConvexShape.Copy: TSfmlConvexShape;
 begin
-  Result := SfmlConvexShapeCopy(FHandle);
+  Result := TSfmlConvexShape.Create(SfmlConvexShapeCopy(FHandle));
 end;
 
 function TSfmlConvexShape.GetFillColor: TSfmlColor;
@@ -2428,6 +2631,11 @@ begin
   FHandle := SfmlFontCreateFromStream(Stream);
 end;
 
+constructor TSfmlFont.Create(Handle: PSfmlFont);
+begin
+  FHandle := Handle;
+end;
+
 constructor TSfmlFont.Create(const Data: Pointer; SizeInBytes: NativeUInt);
 begin
   FHandle := SfmlFontCreateFromMemory(Data, SizeInBytes);
@@ -2441,7 +2649,7 @@ end;
 
 function TSfmlFont.Copy: TSfmlFont;
 begin
-  Result := SfmlFontCopy(FHandle);
+  Result := TSfmlFont.Create(SfmlFontCopy(FHandle));
 end;
 
 function TSfmlFont.GetGlyph(CodePoint, CharacterSize: Cardinal;
@@ -2503,6 +2711,11 @@ begin
   FHandle := SfmlImageCreateFromStream(Stream);
 end;
 
+constructor TSfmlImage.Create(Handle: PSfmlImage);
+begin
+  FHandle := Handle;
+end;
+
 constructor TSfmlImage.Create(const Data: Pointer; Size: NativeUInt);
 begin
   FHandle := SfmlImageCreateFromMemory(Data, Size);
@@ -2526,7 +2739,7 @@ end;
 
 function TSfmlImage.Copy: TSfmlImage;
 begin
-  Result := SfmlImageCopy(FHandle);
+  Result := TSfmlImage.Create(SfmlImageCopy(FHandle));
 end;
 
 procedure TSfmlImage.CopyImage(const Source: PSfmlImage; DestX, DestY: Cardinal;
@@ -2584,6 +2797,11 @@ begin
   FHandle := SfmlRectangleShapeCreate;
 end;
 
+constructor TSfmlRectangleShape.Create(Handle: PSfmlRectangleShape);
+begin
+  FHandle := Handle;
+end;
+
 destructor TSfmlRectangleShape.Destroy;
 begin
   SfmlRectangleShapeDestroy(FHandle);
@@ -2592,7 +2810,7 @@ end;
 
 function TSfmlRectangleShape.Copy: TSfmlRectangleShape;
 begin
-  Result := SfmlRectangleShapeCopy(FHandle);
+  Result := TSfmlRectangleShape.Create(SfmlRectangleShapeCopy(FHandle));
 end;
 
 function TSfmlRectangleShape.GetFillColor: TSfmlColor;
@@ -2675,11 +2893,6 @@ begin
   Result := SfmlRectangleShapeGetTransform(FHandle);
 end;
 
-procedure TSfmlRectangleShape.Move(X, Y: Single);
-begin
-  SfmlRectangleShapeMove(FHandle, SfmlVector2f(X, Y));
-end;
-
 procedure TSfmlRectangleShape.Move(Offset: TSfmlVector2f);
 begin
   SfmlRectangleShapeMove(FHandle, Offset);
@@ -2693,11 +2906,6 @@ end;
 procedure TSfmlRectangleShape.Scale(Factors: TSfmlVector2f);
 begin
   SfmlRectangleShapeScale(FHandle, Factors);
-end;
-
-procedure TSfmlRectangleShape.Scale(X, Y: Single);
-begin
-  SfmlRectangleShapeScale(FHandle, SfmlVector2f(X, Y));
 end;
 
 procedure TSfmlRectangleShape.SetFillColor(Color: TSfmlColor);
@@ -2900,13 +3108,13 @@ begin
 end;
 
 function TSfmlRenderTexture.MapCoordsToPixel(Point: TSfmlVector2i;
-  const View: PSfmlView): TSfmlVector2i;
+  const View: PSfmlView = nil): TSfmlVector2i;
 begin
   Result := SfmlRenderTextureMapCoordsToPixel(FHandle, Point, View);
 end;
 
 function TSfmlRenderTexture.MapPixelToCoords(Point: TSfmlVector2i;
-  const View: PSfmlView): TSfmlVector2f;
+  const View: PSfmlView = nil): TSfmlVector2f;
 begin
   Result := SfmlRenderTextureMapPixelToCoords(FHandle, Point, View);
 end;
@@ -2957,10 +3165,11 @@ begin
 end;
 
 constructor TSfmlRenderWindow.Create(Mode: TSfmlVideoMode;
-  const Title: PUCS4CharArray; Style: TSfmlWindowStyles;
+  const Title: UnicodeString; Style: TSfmlWindowStyles;
   const Settings: PSfmlContextSettings);
 begin
-  FHandle := SfmlRenderWindowCreateUnicode(Mode, PUCS4CharArray(Title), Style, Settings);
+  FHandle := SfmlRenderWindowCreateUnicode(Mode,
+    PUCS4Char(UnicodeStringToUCS4String(Title)), Style, Settings);
 end;
 
 constructor TSfmlRenderWindow.Create(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings);
@@ -2975,9 +3184,10 @@ begin
 end;
 
 constructor TSfmlRenderWindow.Create(Mode: TSfmlVideoMode;
-  const Title: PUCS4CharArray; Style: TSfmlWindowStyles);
+  const Title: UnicodeString; Style: TSfmlWindowStyles);
 begin
-  FHandle := SfmlRenderWindowCreateUnicode(Mode, PUCS4CharArray(Title), Style, nil);
+  FHandle := SfmlRenderWindowCreateUnicode(Mode,
+    PUCS4Char(UnicodeStringToUCS4String(Title)), Style, nil);
 end;
 
 destructor TSfmlRenderWindow.Destroy;
@@ -3141,13 +3351,13 @@ begin
 end;
 
 function TSfmlRenderWindow.MapCoordsToPixel(Point: TSfmlVector2i;
-  const View: PSfmlView): TSfmlVector2i;
+  const View: PSfmlView = nil): TSfmlVector2i;
 begin
   Result := SfmlRenderWindowMapCoordsToPixel(FHandle, Point, View);
 end;
 
 function TSfmlRenderWindow.MapPixelToCoords(Point: TSfmlVector2i;
-  const View: PSfmlView): TSfmlVector2f;
+  const View: PSfmlView = nil): TSfmlVector2f;
 begin
   Result := SfmlRenderWindowMapPixelToCoords(FHandle, Point, View);
 end;
@@ -3225,7 +3435,8 @@ end;
 
 procedure TSfmlRenderWindow.SetTitle(const Title: UnicodeString);
 begin
-  SfmlRenderWindowSetUnicodeTitle(FHandle, PUCS4CharArray(Title));
+  SfmlRenderWindowSetUnicodeTitle(FHandle,
+    PUCS4Char(UnicodeStringToUCS4String(Title)));
 end;
 
 procedure TSfmlRenderWindow.SetVerticalSyncEnabled(Enabled: Boolean);
@@ -3359,7 +3570,8 @@ end;
 
 { TSfmlShape }
 
-constructor TSfmlShape.Create(GetPointCount: TSfmlShapeGetPointCountCallback; GetPoint: TSfmlShapeGetPointCallback; UserData: Pointer);
+constructor TSfmlShape.Create(GetPointCount: TSfmlShapeGetPointCountCallback;
+  GetPoint: TSfmlShapeGetPointCallback; UserData: Pointer);
 begin
   FHandle := SfmlShapeCreate(GetPointCount, GetPoint, UserData);
 end;
@@ -3519,6 +3731,11 @@ begin
   FHandle := SfmlSpriteCreate;
 end;
 
+constructor TSfmlSprite.Create(Handle: PSfmlSprite);
+begin
+  FHandle := Handle;
+end;
+
 destructor TSfmlSprite.Destroy;
 begin
   SfmlSpriteDestroy(FHandle);
@@ -3527,7 +3744,7 @@ end;
 
 function TSfmlSprite.Copy: TSfmlSprite;
 begin
-  Result := SfmlSpriteCopy(FHandle);
+  Result := TSfmlSprite.Create(SfmlSpriteCopy(FHandle));
 end;
 
 function TSfmlSprite.GetColor: TSfmlColor;
@@ -3669,7 +3886,7 @@ end;
 constructor TSfmlText.Create(Text: UnicodeString);
 begin
   Create;
-  SetUnicodeString(WideCharToUCS4String(Text));
+  SetUnicodeString(Text);
 end;
 
 constructor TSfmlText.Create(Text: UnicodeString; Font: PSfmlFont;
@@ -3679,6 +3896,11 @@ begin
   SetUnicodeString(Text);
   SetFont(Font);
   SetCharacterSize(CharacterSize);
+end;
+
+constructor TSfmlText.Create(Handle: PSfmlText);
+begin
+  FHandle := Handle;
 end;
 
 constructor TSfmlText.Create(Text: UnicodeString; Font: PSfmlFont);
@@ -3696,7 +3918,7 @@ end;
 
 function TSfmlText.Copy: TSfmlText;
 begin
-  Result := SfmlTextCopy(FHandle);
+  Result := TSfmlText.Create(SfmlTextCopy(FHandle));
 end;
 
 function TSfmlText.FindCharacterPos(Index: NativeUInt): TSfmlVector2f;
@@ -3771,7 +3993,8 @@ end;
 
 function TSfmlText.GetUnicodeString: UnicodeString;
 begin
-  Result := UCS4StringToUnicodeString(SfmlTextGetUnicodeString(FHandle));
+  Result := UCS4StringToUnicodeString(UCS4String(
+    SfmlTextGetUnicodeString(FHandle)));
 end;
 
 procedure TSfmlText.Move(Offset: TSfmlVector2f);
@@ -3836,7 +4059,7 @@ end;
 
 procedure TSfmlText.SetUnicodeString(const &String: UnicodeString);
 begin
-  SfmlTextSetUnicodeString(FHandle, PUCS4CharArray(&String));
+  SfmlTextSetUnicodeString(FHandle, PUCS4Char(UnicodeStringToUCS4String(&String)));
 end;
 
 
@@ -3871,6 +4094,11 @@ begin
   FHandle := SfmlTextureCreateFromMemory(Data, SizeInBytes, Area);
 end;
 
+constructor TSfmlTexture.Create(Handle: PSfmlTexture);
+begin
+  FHandle := Handle;
+end;
+
 destructor TSfmlTexture.Destroy;
 begin
   SfmlTextureDestroy(FHandle);
@@ -3884,12 +4112,12 @@ end;
 
 function TSfmlTexture.Copy: TSfmlTexture;
 begin
-  Result := SfmlTextureCopy(FHandle);
+  Result := TSfmlTexture.Create(SfmlTextureCopy(FHandle));
 end;
 
-function TSfmlTexture.CopyToImage: PSfmlImage;
+function TSfmlTexture.CopyToImage: TSfmlImage;
 begin
-  Result := SfmlTextureCopyToImage(FHandle);
+  Result := TSfmlImage.Create(SfmlTextureCopyToImage(FHandle));
 end;
 
 function TSfmlTexture.GetSize: TSfmlVector2u;
@@ -3922,6 +4150,11 @@ begin
   SfmlTextureUpdateFromImage(FHandle, Image, X, Y);
 end;
 
+procedure TSfmlTexture.UpdateFromImage(const Image: TSfmlImage; X, Y: Cardinal);
+begin
+  SfmlTextureUpdateFromImage(FHandle, Image.Handle, X, Y);
+end;
+
 procedure TSfmlTexture.UpdateFromPixels(const Pixels: PByte; Width, Height, X,
   Y: Cardinal);
 begin
@@ -3943,20 +4176,25 @@ end;
 
 { TSfmlTransformable }
 
-function TSfmlTransformable.Copy: TSfmlTransformable;
-begin
-  Result := SfmlTransformableCopy(FHandle);
-end;
-
 constructor TSfmlTransformable.Create;
 begin
   FHandle := SfmlTransformableCreate;
+end;
+
+constructor TSfmlTransformable.Create(Handle: PSfmlTransformable);
+begin
+  FHandle := Handle;
 end;
 
 destructor TSfmlTransformable.Destroy;
 begin
   SfmlTransformableDestroy(FHandle);
   inherited;
+end;
+
+function TSfmlTransformable.Copy: TSfmlTransformable;
+begin
+  Result := TSfmlTransformable.Create(SfmlTransformableCopy(FHandle));
 end;
 
 function TSfmlTransformable.GetInverseTransform: TSfmlTransform;
@@ -3989,6 +4227,11 @@ begin
   Result := SfmlTransformableGetTransform(FHandle);
 end;
 
+procedure TSfmlTransformable.Move(X, Y: Single);
+begin
+  Move(SfmlVector2f(X, Y));
+end;
+
 procedure TSfmlTransformable.Move(Offset: TSfmlVector2f);
 begin
   SfmlTransformableMove(FHandle, Offset);
@@ -4002,6 +4245,11 @@ end;
 procedure TSfmlTransformable.Scale(Factors: TSfmlVector2f);
 begin
   SfmlTransformableScale(FHandle, Factors);
+end;
+
+procedure TSfmlTransformable.Scale(X, Y: Single);
+begin
+  Scale(SfmlVector2f(X, Y));
 end;
 
 procedure TSfmlTransformable.SetOrigin(Origin: TSfmlVector2f);
@@ -4027,6 +4275,22 @@ end;
 
 { TSfmlVertexArray }
 
+constructor TSfmlVertexArray.Create;
+begin
+  FHandle := SfmlVertexArrayCreate;
+end;
+
+constructor TSfmlVertexArray.Create(Handle: PSfmlVertexArray);
+begin
+  FHandle := Handle;
+end;
+
+destructor TSfmlVertexArray.Destroy;
+begin
+  SfmlVertexArrayDestroy(FHandle);
+  inherited;
+end;
+
 procedure TSfmlVertexArray.Append(Vertex: TSfmlVertex);
 begin
   SfmlVertexArrayAppend(FHandle, Vertex);
@@ -4039,18 +4303,7 @@ end;
 
 function TSfmlVertexArray.Copy: TSfmlVertexArray;
 begin
-  Result := SfmlVertexArrayCopy(FHandle);
-end;
-
-constructor TSfmlVertexArray.Create;
-begin
-  FHandle := SfmlVertexArrayCreate;
-end;
-
-destructor TSfmlVertexArray.Destroy;
-begin
-  SfmlVertexArrayDestroy(FHandle);
-  inherited;
+  Result := TSfmlVertexArray.Create(SfmlVertexArrayCopy(FHandle));
 end;
 
 function TSfmlVertexArray.GetBounds: TSfmlFloatRect;
@@ -4096,6 +4349,11 @@ begin
   FHandle := SfmlViewCreate;
 end;
 
+constructor TSfmlView.Create(Handle: PSfmlView);
+begin
+  FHandle := Handle;
+end;
+
 destructor TSfmlView.Destroy;
 begin
   SfmlViewDestroy(FHandle);
@@ -4104,7 +4362,7 @@ end;
 
 function TSfmlView.Copy: TSfmlView;
 begin
-  Result := SfmlViewCopy(FHandle);
+  Result := TSfmlView.Create(SfmlViewCopy(FHandle));
 end;
 
 function TSfmlView.GetCenter: TSfmlVector2f;
@@ -4170,6 +4428,44 @@ end;
 {$IFDEF DynLink}
 var
   CSfmlGraphicsHandle: HINST;
+{$IFDEF INT64RETURNWORKAROUND}
+  sfCircleShape_getPoint: function (const Shape: PSfmlCircleShape; Index: Cardinal): Int64; cdecl;
+  sfCircleShape_getPosition: function (const Shape: PSfmlCircleShape): Int64; cdecl;
+  sfCircleShape_getOrigin: function (const Shape: PSfmlCircleShape): Int64; cdecl;
+  sfCircleShape_getScale: function (const Shape: PSfmlCircleShape): Int64; cdecl;
+  sfConvexShape_getOrigin: function (const Shape: PSfmlConvexShape): Int64; cdecl;
+  sfConvexShape_getPoint: function (const Shape: PSfmlConvexShape; Index: Cardinal): Int64; cdecl;
+  sfConvexShape_getPosition: function (const Shape: PSfmlConvexShape): Int64; cdecl;
+  sfConvexShape_getScale: function (const Shape: PSfmlConvexShape): Int64; cdecl;
+  sfImage_getSize: function (const Image: PSfmlImage): Int64; cdecl;
+  sfRectangleShape_getOrigin: function (const Shape: PSfmlRectangleShape): Int64; cdecl;
+  sfRectangleShape_getPoint: function (const Shape: PSfmlRectangleShape; Index: Cardinal): Int64; cdecl;
+  sfRectangleShape_getPosition: function (const Shape: PSfmlRectangleShape): Int64; cdecl;
+  sfRectangleShape_getScale: function (const Shape: PSfmlRectangleShape): Int64; cdecl;
+  sfRectangleShape_getSize: function (const Shape: PSfmlRectangleShape): Int64; cdecl;
+  sfRenderTexture_mapPixelToCoords: function (const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl;
+  sfRenderTexture_mapCoordsToPixel: function (const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl;
+  sfRenderWindow_mapPixelToCoords: function (const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl;
+  sfRenderWindow_mapCoordsToPixel: function (const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl;
+  sfShape_getOrigin: function (const Shape: PSfmlShape): Int64; cdecl;
+  sfShape_getPoint: function (const Shape: PSfmlShape; Index: Cardinal): Int64; cdecl;
+  sfShape_getPosition: function (const Shape: PSfmlShape): Int64; cdecl;
+  sfShape_getScale: function (const Shape: PSfmlShape): Int64; cdecl;
+  sfSprite_getOrigin: function (const Sprite: PSfmlSprite): Int64; cdecl;
+  sfSprite_getPosition: function (const Sprite: PSfmlSprite): Int64; cdecl;
+  sfSprite_getScale: function (const Sprite: PSfmlSprite): Int64; cdecl;
+  sfText_findCharacterPos: function (const Text: PSfmlText; Index: NativeUInt): Int64; cdecl;
+  sfText_getOrigin: function (const Text: PSfmlText): Int64; cdecl;
+  sfText_getPosition: function (const Text: PSfmlText): Int64; cdecl;
+  sfText_getScale: function (const Text: PSfmlText): Int64; cdecl;
+  sfTexture_getSize: function (const Texture: PSfmlTexture): Int64; cdecl;
+  sfTransform_transformPoint: function (const Transform: PSfmlTransform; Point: TSfmlVector2f): Int64; cdecl;
+  sfTransformable_getOrigin: function (const Transformable: PSfmlTransformable): Int64; cdecl;
+  sfTransformable_getPosition: function (const Transformable: PSfmlTransformable): Int64; cdecl;
+  sfTransformable_getScale: function (const Transformable: PSfmlTransformable): Int64; cdecl;
+  sfView_getCenter: function (const View: PSfmlView): Int64; cdecl;
+  sfView_getSize: function (const View: PSfmlView): Int64; cdecl;
+{$ENDIF}
 
 procedure InitDLL;
 
@@ -4183,20 +4479,20 @@ begin
   CSfmlGraphicsHandle := LoadLibraryA(CSfmlGraphicsLibrary);
   if CSfmlGraphicsHandle <> 0 then
     try
-      SfmlBlendAlpha := BindFunction('sfBlendAlpha');
-      SfmlBlendAdd := BindFunction('sfBlendAdd');
-      SfmlBlendMultiply := BindFunction('sfBlendMultiply');
-      SfmlBlendNone := BindFunction('sfBlendNone');
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlendAlpha'))^, SfmlBlendAlpha, SizeOf(TSfmlBlendMode));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlendAdd'))^, SfmlBlendAdd, SizeOf(TSfmlBlendMode));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlendMultiply'))^, SfmlBlendMultiply, SizeOf(TSfmlBlendMode));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlendNone'))^, SfmlBlendNone, SizeOf(TSfmlBlendMode));
 
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlack'))^, SfmlBlack, SizeOf(SfmlBlack));
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfWhite'))^, SfmlWhite, SizeOf(SfmlWhite));
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRed'))^, SfmlRed, SizeOf(SfmlRed));
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfGreen'))^, SfmlGreen, SizeOf(SfmlGreen));
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlue'))^, SfmlBlue, SizeOf(SfmlBlue));
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfYellow'))^, SfmlYellow, SizeOf(SfmlYellow));
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfMagenta'))^, SfmlMagenta, SizeOf(SfmlMagenta));
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCyan'))^, SfmlCyan, SizeOf(SfmlCyan));
-      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransparent'))^, SfmlTransparent, SizeOf(SfmlTransparent));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlack'))^, SfmlBlack, SizeOf(TSfmlColor));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfWhite'))^, SfmlWhite, SizeOf(TSfmlColor));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfRed'))^, SfmlRed, SizeOf(TSfmlColor));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfGreen'))^, SfmlGreen, SizeOf(TSfmlColor));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlue'))^, SfmlBlue, SizeOf(TSfmlColor));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfYellow'))^, SfmlYellow, SizeOf(TSfmlColor));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfMagenta'))^, SfmlMagenta, SizeOf(TSfmlColor));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCyan'))^, SfmlCyan, SizeOf(TSfmlColor));
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransparent'))^, SfmlTransparent, SizeOf(TSfmlColor));
 
       SfmlColorFromRGB := BindFunction('sfColor_fromRGB');
       SfmlColorFromRGBA := BindFunction('sfColor_fromRGBA');
@@ -4209,10 +4505,7 @@ begin
       SfmlCircleShapeSetRotation := BindFunction('sfCircleShape_setRotation');
       SfmlCircleShapeSetScale := BindFunction('sfCircleShape_setScale');
       SfmlCircleShapeSetOrigin := BindFunction('sfCircleShape_setOrigin');
-      SfmlCircleShapeGetPosition := BindFunction('sfCircleShape_getPosition');
       SfmlCircleShapeGetRotation := BindFunction('sfCircleShape_getRotation');
-      SfmlCircleShapeGetScale := BindFunction('sfCircleShape_getScale');
-      SfmlCircleShapeGetOrigin := BindFunction('sfCircleShape_getOrigin');
       SfmlCircleShapeMove := BindFunction('sfCircleShape_move');
       SfmlCircleShapeRotate := BindFunction('sfCircleShape_rotate');
       SfmlCircleShapeScale := BindFunction('sfCircleShape_scale');
@@ -4229,7 +4522,6 @@ begin
       SfmlCircleShapeGetOutlineColor := BindFunction('sfCircleShape_getOutlineColor');
       SfmlCircleShapeGetOutlineThickness := BindFunction('sfCircleShape_getOutlineThickness');
       SfmlCircleShapeGetPointCount := BindFunction('sfCircleShape_getPointCount');
-      SfmlCircleShapeGetPoint := BindFunction('sfCircleShape_getPoint');
       SfmlCircleShapeSetRadius := BindFunction('sfCircleShape_setRadius');
       SfmlCircleShapeGetRadius := BindFunction('sfCircleShape_getRadius');
       SfmlCircleShapeSetPointCount := BindFunction('sfCircleShape_setPointCount');
@@ -4242,10 +4534,8 @@ begin
       SfmlConvexShapeSetRotation := BindFunction('sfConvexShape_setRotation');
       SfmlConvexShapeSetScale := BindFunction('sfConvexShape_setScale');
       SfmlConvexShapeSetOrigin := BindFunction('sfConvexShape_setOrigin');
-      SfmlConvexShapeGetPosition := BindFunction('sfConvexShape_getPosition');
       SfmlConvexShapeGetRotation := BindFunction('sfConvexShape_getRotation');
-      SfmlConvexShapeGetScale := BindFunction('sfConvexShape_getScale');
-      SfmlConvexShapeGetOrigin := BindFunction('sfConvexShape_getOrigin');
+
       SfmlConvexShapeMove := BindFunction('sfConvexShape_move');
       SfmlConvexShapeRotate := BindFunction('sfConvexShape_rotate');
       SfmlConvexShapeScale := BindFunction('sfConvexShape_scale');
@@ -4262,7 +4552,6 @@ begin
       SfmlConvexShapeGetOutlineColor := BindFunction('sfConvexShape_getOutlineColor');
       SfmlConvexShapeGetOutlineThickness := BindFunction('sfConvexShape_getOutlineThickness');
       SfmlConvexShapeGetPointCount := BindFunction('sfConvexShape_getPointCount');
-      SfmlConvexShapeGetPoint := BindFunction('sfConvexShape_getPoint');
       SfmlConvexShapeSetPointCount := BindFunction('sfConvexShape_setPointCount');
       SfmlConvexShapeSetPoint := BindFunction('sfConvexShape_setPoint');
       SfmlConvexShapeGetLocalBounds := BindFunction('sfConvexShape_getLocalBounds');
@@ -4288,7 +4577,6 @@ begin
       SfmlImageCopy := BindFunction('sfImage_copy');
       SfmlImageDestroy := BindFunction('sfImage_destroy');
       SfmlImageSaveToFile := BindFunction('sfImage_saveToFile');
-      SfmlImageGetSize := BindFunction('sfImage_getSize');
       SfmlImageCreateMaskFromColor := BindFunction('sfImage_createMaskFromColor');
       SfmlImageCopyImage := BindFunction('sfImage_copyImage');
       SfmlImageSetPixel := BindFunction('sfImage_setPixel');
@@ -4307,10 +4595,7 @@ begin
       SfmlRectangleShapeSetRotation := BindFunction('sfRectangleShape_setRotation');
       SfmlRectangleShapeSetScale := BindFunction('sfRectangleShape_setScale');
       SfmlRectangleShapeSetOrigin := BindFunction('sfRectangleShape_setOrigin');
-      SfmlRectangleShapeGetPosition := BindFunction('sfRectangleShape_getPosition');
       SfmlRectangleShapeGetRotation := BindFunction('sfRectangleShape_getRotation');
-      SfmlRectangleShapeGetScale := BindFunction('sfRectangleShape_getScale');
-      SfmlRectangleShapeGetOrigin := BindFunction('sfRectangleShape_getOrigin');
       SfmlRectangleShapeMove := BindFunction('sfRectangleShape_move');
       SfmlRectangleShapeRotate := BindFunction('sfRectangleShape_rotate');
       SfmlRectangleShapeScale := BindFunction('sfRectangleShape_scale');
@@ -4327,9 +4612,7 @@ begin
       SfmlRectangleShapeGetOutlineColor := BindFunction('sfRectangleShape_getOutlineColor');
       SfmlRectangleShapeGetOutlineThickness := BindFunction('sfRectangleShape_getOutlineThickness');
       SfmlRectangleShapeGetPointCount := BindFunction('sfRectangleShape_getPointCount');
-      SfmlRectangleShapeGetPoint := BindFunction('sfRectangleShape_getPoint');
       SfmlRectangleShapeSetSize := BindFunction('sfRectangleShape_setSize');
-      SfmlRectangleShapeGetSize := BindFunction('sfRectangleShape_getSize');
       SfmlRectangleShapeGetLocalBounds := BindFunction('sfRectangleShape_getLocalBounds');
       SfmlRectangleShapeGetGlobalBounds := BindFunction('sfRectangleShape_getGlobalBounds');
       SfmlRenderTextureCreate := BindFunction('sfRenderTexture_create');
@@ -4342,8 +4625,6 @@ begin
       SfmlRenderTextureGetView := BindFunction('sfRenderTexture_getView');
       SfmlRenderTextureGetDefaultView := BindFunction('sfRenderTexture_getDefaultView');
       SfmlRenderTextureGetViewport := BindFunction('sfRenderTexture_getViewport');
-      SfmlRenderTextureMapPixelToCoords := BindFunction('sfRenderTexture_mapPixelToCoords');
-      SfmlRenderTextureMapCoordsToPixel := BindFunction('sfRenderTexture_mapCoordsToPixel');
       SfmlRenderTextureDrawSprite := BindFunction('sfRenderTexture_drawSprite');
       SfmlRenderTextureDrawText := BindFunction('sfRenderTexture_drawText');
       SfmlRenderTextureDrawShape := BindFunction('sfRenderTexture_drawShape');
@@ -4392,9 +4673,6 @@ begin
       SfmlRenderWindowGetView := BindFunction('sfRenderWindow_getView');
       SfmlRenderWindowGetDefaultView := BindFunction('sfRenderWindow_getDefaultView');
       SfmlRenderWindowGetViewport := BindFunction('sfRenderWindow_getViewport');
-      SfmlRenderWindowMapPixelToCoords := BindFunction('sfRenderWindow_mapPixelToCoords');
-      SfmlRenderWindowMapCoordsToPixel := BindFunction('sfRenderWindow_mapCoordsToPixel');
-      SfmlRenderWindowDrawSprite := BindFunction('sfRenderWindow_drawSprite');
       SfmlRenderWindowDrawText := BindFunction('sfRenderWindow_drawText');
       SfmlRenderWindowDrawShape := BindFunction('sfRenderWindow_drawShape');
       SfmlRenderWindowDrawCircleShape := BindFunction('sfRenderWindow_drawCircleShape');
@@ -4402,6 +4680,7 @@ begin
       SfmlRenderWindowDrawRectangleShape := BindFunction('sfRenderWindow_drawRectangleShape');
       SfmlRenderWindowDrawVertexArray := BindFunction('sfRenderWindow_drawVertexArray');
       SfmlRenderWindowDrawPrimitives := BindFunction('sfRenderWindow_drawPrimitives');
+      SfmlRenderWindowDrawSprite := BindFunction('sfRenderWindow_drawSprite');
       SfmlRenderWindowPushGLStates := BindFunction('sfRenderWindow_pushGLStates');
       SfmlRenderWindowPopGLStates := BindFunction('sfRenderWindow_popGLStates');
       SfmlRenderWindowResetGLStates := BindFunction('sfRenderWindow_resetGLStates');
@@ -4431,10 +4710,7 @@ begin
       SfmlShapeSetRotation := BindFunction('sfShape_setRotation');
       SfmlShapeSetScale := BindFunction('sfShape_setScale');
       SfmlShapeSetOrigin := BindFunction('sfShape_setOrigin');
-      SfmlShapeGetPosition := BindFunction('sfShape_getPosition');
       SfmlShapeGetRotation := BindFunction('sfShape_getRotation');
-      SfmlShapeGetScale := BindFunction('sfShape_getScale');
-      SfmlShapeGetOrigin := BindFunction('sfShape_getOrigin');
       SfmlShapeMove := BindFunction('sfShape_move');
       SfmlShapeRotate := BindFunction('sfShape_rotate');
       SfmlShapeScale := BindFunction('sfShape_scale');
@@ -4451,7 +4727,6 @@ begin
       SfmlShapeGetOutlineColor := BindFunction('sfShape_getOutlineColor');
       SfmlShapeGetOutlineThickness := BindFunction('sfShape_getOutlineThickness');
       SfmlShapeGetPointCount := BindFunction('sfShape_getPointCount');
-      SfmlShapeGetPoint := BindFunction('sfShape_getPoint');
       SfmlShapeGetLocalBounds := BindFunction('sfShape_getLocalBounds');
       SfmlShapeGetGlobalBounds := BindFunction('sfShape_getGlobalBounds');
       SfmlShapeUpdate := BindFunction('sfShape_update');
@@ -4462,10 +4737,7 @@ begin
       SfmlSpriteSetRotation := BindFunction('sfSprite_setRotation');
       SfmlSpriteSetScale := BindFunction('sfSprite_setScale');
       SfmlSpriteSetOrigin := BindFunction('sfSprite_setOrigin');
-      SfmlSpriteGetPosition := BindFunction('sfSprite_getPosition');
       SfmlSpriteGetRotation := BindFunction('sfSprite_getRotation');
-      SfmlSpriteGetScale := BindFunction('sfSprite_getScale');
-      SfmlSpriteGetOrigin := BindFunction('sfSprite_getOrigin');
       SfmlSpriteMove := BindFunction('sfSprite_move');
       SfmlSpriteRotate := BindFunction('sfSprite_rotate');
       SfmlSpriteScale := BindFunction('sfSprite_scale');
@@ -4486,10 +4758,7 @@ begin
       SfmlTextSetRotation := BindFunction('sfText_setRotation');
       SfmlTextSetScale := BindFunction('sfText_setScale');
       SfmlTextSetOrigin := BindFunction('sfText_setOrigin');
-      SfmlTextGetPosition := BindFunction('sfText_getPosition');
       SfmlTextGetRotation := BindFunction('sfText_getRotation');
-      SfmlTextGetScale := BindFunction('sfText_getScale');
-      SfmlTextGetOrigin := BindFunction('sfText_getOrigin');
       SfmlTextMove := BindFunction('sfText_move');
       SfmlTextRotate := BindFunction('sfText_rotate');
       SfmlTextScale := BindFunction('sfText_scale');
@@ -4507,7 +4776,6 @@ begin
       SfmlTextGetCharacterSize := BindFunction('sfText_getCharacterSize');
       SfmlTextGetStyle := BindFunction('sfText_getStyle');
       SfmlTextGetColor := BindFunction('sfText_getColor');
-      SfmlTextFindCharacterPos := BindFunction('sfText_findCharacterPos');
       SfmlTextGetLocalBounds := BindFunction('sfText_getLocalBounds');
       SfmlTextGetGlobalBounds := BindFunction('sfText_getGlobalBounds');
       SfmlTextureCreate := BindFunction('sfTexture_create');
@@ -4517,7 +4785,6 @@ begin
       SfmlTextureCreateFromImage := BindFunction('sfTexture_createFromImage');
       SfmlTextureCopy := BindFunction('sfTexture_copy');
       SfmlTextureDestroy := BindFunction('sfTexture_destroy');
-      SfmlTextureGetSize := BindFunction('sfTexture_getSize');
       SfmlTextureCopyToImage := BindFunction('sfTexture_copyToImage');
       SfmlTextureUpdateFromPixels := BindFunction('sfTexture_updateFromPixels');
       SfmlTextureUpdateFromImage := BindFunction('sfTexture_updateFromImage');
@@ -4533,7 +4800,6 @@ begin
       SfmlTransformFromMatrix := BindFunction('sfTransform_fromMatrix');
       SfmlTransformGetMatrix := BindFunction('sfTransform_getMatrix');
       SfmlTransformGetInverse := BindFunction('sfTransform_getInverse');
-      SfmlTransformTransformPoint := BindFunction('sfTransform_transformPoint');
       SfmlTransformTransformRect := BindFunction('sfTransform_transformRect');
       SfmlTransformCombine := BindFunction('sfTransform_combine');
       SfmlTransformTranslate := BindFunction('sfTransform_translate');
@@ -4548,10 +4814,7 @@ begin
       SfmlTransformableSetRotation := BindFunction('sfTransformable_setRotation');
       SfmlTransformableSetScale := BindFunction('sfTransformable_setScale');
       SfmlTransformableSetOrigin := BindFunction('sfTransformable_setOrigin');
-      SfmlTransformableGetPosition := BindFunction('sfTransformable_getPosition');
       SfmlTransformableGetRotation := BindFunction('sfTransformable_getRotation');
-      SfmlTransformableGetScale := BindFunction('sfTransformable_getScale');
-      SfmlTransformableGetOrigin := BindFunction('sfTransformable_getOrigin');
       SfmlTransformableMove := BindFunction('sfTransformable_move');
       SfmlTransformableRotate := BindFunction('sfTransformable_rotate');
       SfmlTransformableScale := BindFunction('sfTransformable_scale');
@@ -4577,13 +4840,87 @@ begin
       SfmlViewSetRotation := BindFunction('sfView_setRotation');
       SfmlViewSetViewport := BindFunction('sfView_setViewport');
       SfmlViewReset := BindFunction('sfView_reset');
-      SfmlViewGetCenter := BindFunction('sfView_getCenter');
-      SfmlViewGetSize := BindFunction('sfView_getSize');
       SfmlViewGetRotation := BindFunction('sfView_getRotation');
       SfmlViewGetViewport := BindFunction('sfView_getViewport');
       SfmlViewMove := BindFunction('sfView_move');
       SfmlViewRotate := BindFunction('sfView_rotate');
       SfmlViewZoom := BindFunction('sfView_zoom');
+
+{$IFDEF INT64RETURNWORKAROUND}
+      sfCircleShape_getPosition := BindFunction('sfCircleShape_getPosition');
+      sfCircleShape_getScale := BindFunction('sfCircleShape_getScale');
+      sfCircleShape_getOrigin := BindFunction('sfCircleShape_getOrigin');
+      sfCircleShape_getPoint := BindFunction('sfCircleShape_getPoint');
+      sfConvexShape_getPosition := BindFunction('sfConvexShape_getPosition');
+      sfConvexShape_getScale := BindFunction('sfConvexShape_getScale');
+      sfConvexShape_getOrigin := BindFunction('sfConvexShape_getOrigin');
+      sfConvexShape_getPoint := BindFunction('sfConvexShape_getPoint');
+      sfImage_getSize := BindFunction('sfImage_getSize');
+      sfRectangleShape_getPosition := BindFunction('sfRectangleShape_getPosition');
+      sfRectangleShape_getScale := BindFunction('sfRectangleShape_getScale');
+      sfRectangleShape_getOrigin := BindFunction('sfRectangleShape_getOrigin');
+      sfRectangleShape_getPoint := BindFunction('sfRectangleShape_getPoint');
+      sfRectangleShape_getSize := BindFunction('sfRectangleShape_getSize');
+      sfRenderTexture_mapPixelToCoords := BindFunction('sfRenderTexture_mapPixelToCoords');
+      sfRenderTexture_mapCoordsToPixel := BindFunction('sfRenderTexture_mapCoordsToPixel');
+      sfRenderWindow_mapPixelToCoords := BindFunction('sfRenderWindow_mapPixelToCoords');
+      sfRenderWindow_mapCoordsToPixel := BindFunction('sfRenderWindow_mapCoordsToPixel');
+      sfShape_getPosition := BindFunction('sfShape_getPosition');
+      sfShape_getScale := BindFunction('sfShape_getScale');
+      sfShape_getOrigin := BindFunction('sfShape_getOrigin');
+      sfShape_getPoint := BindFunction('sfShape_getPoint');
+      sfSprite_getPosition := BindFunction('sfSprite_getPosition');
+      sfSprite_getScale := BindFunction('sfSprite_getScale');
+      sfSprite_getOrigin := BindFunction('sfSprite_getOrigin');
+      sfText_getPosition := BindFunction('sfText_getPosition');
+      sfText_getScale := BindFunction('sfText_getScale');
+      sfText_getOrigin := BindFunction('sfText_getOrigin');
+      sfText_findCharacterPos := BindFunction('sfText_findCharacterPos');
+      sfTexture_getSize := BindFunction('sfTexture_getSize');
+      sfTransform_transformPoint := BindFunction('sfTransform_transformPoint');
+      sfTransformable_getPosition := BindFunction('sfTransformable_getPosition');
+      sfTransformable_getScale := BindFunction('sfTransformable_getScale');
+      sfTransformable_getOrigin := BindFunction('sfTransformable_getOrigin');
+      sfView_getCenter := BindFunction('sfView_getCenter');
+      sfView_getSize := BindFunction('sfView_getSize');
+{$ELSE}
+      SfmlCircleShapeGetPosition := BindFunction('sfCircleShape_getPosition');
+      SfmlCircleShapeGetScale := BindFunction('sfCircleShape_getScale');
+      SfmlCircleShapeGetOrigin := BindFunction('sfCircleShape_getOrigin');
+      SfmlCircleShapeGetPoint := BindFunction('sfCircleShape_getPoint');
+      SfmlConvexShapeGetPosition := BindFunction('sfConvexShape_getPosition');
+      SfmlConvexShapeGetScale := BindFunction('sfConvexShape_getScale');
+      SfmlConvexShapeGetOrigin := BindFunction('sfConvexShape_getOrigin');
+      SfmlConvexShapeGetPoint := BindFunction('sfConvexShape_getPoint');
+      SfmlImageGetSize := BindFunction('sfImage_getSize');
+      SfmlRectangleShapeGetPosition := BindFunction('sfRectangleShape_getPosition');
+      SfmlRectangleShapeGetScale := BindFunction('sfRectangleShape_getScale');
+      SfmlRectangleShapeGetOrigin := BindFunction('sfRectangleShape_getOrigin');
+      SfmlRectangleShapeGetPoint := BindFunction('sfRectangleShape_getPoint');
+      SfmlRectangleShapeGetSize := BindFunction('sfRectangleShape_getSize');
+      SfmlRenderTextureMapPixelToCoords := BindFunction('sfRenderTexture_mapPixelToCoords');
+      SfmlRenderTextureMapCoordsToPixel := BindFunction('sfRenderTexture_mapCoordsToPixel');
+      SfmlRenderWindowMapPixelToCoords := BindFunction('sfRenderWindow_mapPixelToCoords');
+      SfmlRenderWindowMapCoordsToPixel := BindFunction('sfRenderWindow_mapCoordsToPixel');
+      SfmlShapeGetPosition := BindFunction('sfShape_getPosition');
+      SfmlShapeGetScale := BindFunction('sfShape_getScale');
+      SfmlShapeGetOrigin := BindFunction('sfShape_getOrigin');
+      SfmlShapeGetPoint := BindFunction('sfShape_getPoint');
+      SfmlSpriteGetPosition := BindFunction('sfSprite_getPosition');
+      SfmlSpriteGetScale := BindFunction('sfSprite_getScale');
+      SfmlSpriteGetOrigin := BindFunction('sfSprite_getOrigin');
+      SfmlTextGetPosition := BindFunction('sfText_getPosition');
+      SfmlTextGetScale := BindFunction('sfText_getScale');
+      SfmlTextGetOrigin := BindFunction('sfText_getOrigin');
+      SfmlTextFindCharacterPos := BindFunction('sfText_findCharacterPos');
+      SfmlTextureGetSize := BindFunction('sfTexture_getSize');
+      SfmlTransformTransformPoint := BindFunction('sfTransform_transformPoint');
+      SfmlTransformableGetPosition := BindFunction('sfTransformable_getPosition');
+      SfmlTransformableGetScale := BindFunction('sfTransformable_getScale');
+      SfmlTransformableGetOrigin := BindFunction('sfTransformable_getOrigin');
+      SfmlViewGetCenter := BindFunction('sfView_getCenter');
+      SfmlViewGetSize := BindFunction('sfView_getSize');
+{$ENDIF}
     except
       FreeLibrary(CSfmlGraphicsHandle);
       CSfmlGraphicsHandle := 0;
@@ -4596,6 +4933,302 @@ begin
     FreeLibrary(CSfmlGraphicsHandle);
 end;
 
+{$ELSE}
+{$IFDEF INT64RETURNWORKAROUND}
+function sfCircleShape_getPoint(const Shape: PSfmlCircleShape; Index: Cardinal): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfCircleShape_getPosition(const Shape: PSfmlCircleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfCircleShape_getOrigin(const Shape: PSfmlCircleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfCircleShape_getScale(const Shape: PSfmlCircleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfConvexShape_getOrigin(const Shape: PSfmlConvexShape): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfConvexShape_getPoint(const Shape: PSfmlConvexShape; Index: Cardinal): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfConvexShape_getPosition(const Shape: PSfmlConvexShape): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfConvexShape_getScale(const Shape: PSfmlConvexShape): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfImage_getSize(const Image: PSfmlImage): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfRectangleShape_getOrigin(const Shape: PSfmlRectangleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfRectangleShape_getPoint(const Shape: PSfmlRectangleShape; Index: Cardinal): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfRectangleShape_getPosition(const Shape: PSfmlRectangleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfRectangleShape_getScale(const Shape: PSfmlRectangleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfRectangleShape_getSize(const Shape: PSfmlRectangleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfRenderTexture_mapPixelToCoords(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfRenderTexture_mapCoordsToPixel(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfRenderWindow_mapPixelToCoords(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfRenderWindow_mapCoordsToPixel(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfShape_getOrigin(const Shape: PSfmlShape): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfShape_getPoint(const Shape: PSfmlShape; Index: Cardinal): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfShape_getPosition(const Shape: PSfmlShape): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfShape_getScale(const Shape: PSfmlShape): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfSprite_getOrigin(const Sprite: PSfmlSprite): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfSprite_getPosition(const Sprite: PSfmlSprite): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfSprite_getScale(const Sprite: PSfmlSprite): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfText_findCharacterPos(const Text: PSfmlText; Index: NativeUInt): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfText_getOrigin(const Text: PSfmlText): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfText_getPosition(const Text: PSfmlText): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfText_getScale(const Text: PSfmlText): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfTexture_getSize(const Texture: PSfmlTexture): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfTransform_transformPoint(const Transform: PSfmlTransform; Point: TSfmlVector2f): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfTransformable_getOrigin(const Transformable: PSfmlTransformable): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfTransformable_getPosition(const Transformable: PSfmlTransformable): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfTransformable_getScale(const Transformable: PSfmlTransformable): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfView_getCenter(const View: PSfmlView): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfView_getSize(const View: PSfmlView): Int64; cdecl; external CSfmlGraphicsLibrary;
+{$ENDIF}
+{$ENDIF}
+
+{$IFDEF INT64RETURNWORKAROUND}
+function SfmlCircleShapeGetPoint(const Shape: PSfmlCircleShape; Index: Cardinal): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfCircleShape_getPoint(Shape, Index);
+end;
+
+function SfmlCircleShapeGetPosition(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfCircleShape_getPosition(Shape);
+end;
+
+function SfmlCircleShapeGetOrigin(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfCircleShape_getOrigin(Shape);
+end;
+
+function SfmlCircleShapeGetScale(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfCircleShape_getScale(Shape);
+end;
+
+function SfmlConvexShapeGetOrigin(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfConvexShape_getOrigin(Shape);
+end;
+
+function SfmlConvexShapeGetPoint(const Shape: PSfmlConvexShape; Index: Cardinal): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfConvexShape_getPoint(Shape, Index);
+end;
+
+function SfmlConvexShapeGetPosition(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfConvexShape_getPosition(Shape);
+end;
+
+function SfmlConvexShapeGetScale(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfConvexShape_getScale(Shape);
+end;
+
+function SfmlImageGetSize(const Image: PSfmlImage): TSfmlVector2u; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfImage_getSize(Image);
+end;
+
+function SfmlRectangleShapeGetOrigin(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfRectangleShape_getOrigin(Shape);
+end;
+
+function SfmlRectangleShapeGetPoint(const Shape: PSfmlRectangleShape; Index: Cardinal): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfRectangleShape_getPoint(Shape, Index);
+end;
+
+function SfmlRectangleShapeGetPosition(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfRectangleShape_getPosition(Shape);
+end;
+
+function SfmlRectangleShapeGetScale(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfRectangleShape_getScale(Shape);
+end;
+
+function SfmlRectangleShapeGetSize(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfRectangleShape_getSize(Shape);
+end;
+
+function SfmlRenderTextureMapPixelToCoords(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfRenderTexture_mapPixelToCoords(RenderTexture, Point, View);
+end;
+
+function SfmlRenderTextureMapCoordsToPixel(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfRenderTexture_mapCoordsToPixel(RenderTexture, Point, View);
+end;
+
+function SfmlRenderWindowMapPixelToCoords(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfRenderWindow_mapPixelToCoords(RenderWindow, Point, View);
+end;
+
+function SfmlRenderWindowMapCoordsToPixel(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfRenderWindow_mapCoordsToPixel(RenderWindow, Point, View);
+end;
+
+function SfmlShapeGetOrigin(const Shape: PSfmlShape): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfShape_getOrigin(Shape);
+end;
+
+function SfmlShapeGetPoint(const Shape: PSfmlShape; Index: Cardinal): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfShape_getPoint(Shape, Index);
+end;
+
+function SfmlShapeGetPosition(const Shape: PSfmlShape): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfShape_getPosition(Shape);
+end;
+
+function SfmlShapeGetScale(const Shape: PSfmlShape): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfShape_getScale(Shape);
+end;
+
+function SfmlSpriteGetOrigin(const Sprite: PSfmlSprite): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfSprite_getOrigin(Sprite);
+end;
+
+function SfmlSpriteGetPosition(const Sprite: PSfmlSprite): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfSprite_getPosition(Sprite);
+end;
+
+function SfmlSpriteGetScale(const Sprite: PSfmlSprite): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfSprite_getScale(Sprite);
+end;
+
+function SfmlTextFindCharacterPos(const Text: PSfmlText; Index: NativeUInt): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfText_findCharacterPos(Text, Index);
+end;
+
+function SfmlTextGetOrigin(const Text: PSfmlText): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfText_getOrigin(Text);
+end;
+
+function SfmlTextGetPosition(const Text: PSfmlText): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfText_getPosition(Text);
+end;
+
+function SfmlTextGetScale(const Text: PSfmlText): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfText_getScale(Text);
+end;
+
+function SfmlTextureGetSize(const Texture: PSfmlTexture): TSfmlVector2u; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfTexture_getSize(Texture);
+end;
+
+function SfmlTransformTransformPoint(const Transform: PSfmlTransform; Point: TSfmlVector2f): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfTransform_transformPoint(Transform, Point);
+end;
+
+function SfmlTransformableGetOrigin(const Transformable: PSfmlTransformable): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfTransformable_getOrigin(Transformable);
+end;
+
+function SfmlTransformableGetPosition(const Transformable: PSfmlTransformable): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfTransformable_getPosition(Transformable);
+end;
+
+function SfmlTransformableGetScale(const Transformable: PSfmlTransformable): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfTransformable_getScale(Transformable);
+end;
+
+function SfmlViewGetCenter(const View: PSfmlView): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfView_getCenter(View);
+end;
+
+function SfmlViewGetSize(const View: PSfmlView): TSfmlVector2f; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfView_getSize(View);
+end;
+{$ENDIF}
+
+{$IFDEF DynLink}
 initialization
 
 InitDLL;

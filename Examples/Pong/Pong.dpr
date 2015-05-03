@@ -141,7 +141,7 @@ begin
         RightPaddle.Move(0, RightPaddleSpeed * DeltaTime);
 
       // Update the computer's paddle direction according to the ball position
-      if AITimer.getElapsedTime.MicroSeconds > AITime.MicroSeconds then
+      if AITimer.ElapsedTime.MicroSeconds > AITime.MicroSeconds then
       begin
         AITimer.Restart;
         if (Ball.Position.Y + BallRadius > RightPaddle.Position.Y + 0.5 * PaddleSize.Y) then

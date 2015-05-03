@@ -37,8 +37,8 @@ implementation
 
 procedure TestTSfmlWindow.SetUp;
 begin
-  FSfmlWindow := TSfmlWindow.Create(SfmlVideoMode(800, 600), 'Test',
-    [sfTitleBar, sfResize, sfClose]);
+  FSfmlWindow := TSfmlWindow.Create(SfmlVideoMode(800, 600),
+    'Test', [sfTitleBar, sfResize, sfClose]);
 end;
 
 procedure TestTSfmlWindow.TearDown;
@@ -87,7 +87,7 @@ procedure TestTSfmlWindow.TestSetTitle;
 var
   Event: TSfmlEvent;
 begin
-  FSfmlWindow.SetTitle('ASCII Title');
+  FSfmlWindow.SetTitle(AnsiString('ANSI Title'));
 
   while FSfmlWindow.IsOpen do
   begin
@@ -108,11 +108,7 @@ procedure TestTSfmlWindow.TestSetUnicodeTitle;
 var
   Event: TSfmlEvent;
 begin
-{$IFDEF FPC}
-  FSfmlWindow.SetUnicodeTitle(UnicodeStringToUCS4String('Unicode Title'));
-{$ELSE}
-  FSfmlWindow.SetUnicodeTitle(WideCharToUCS4String('Unicode Title'));
-{$ENDIF}
+  FSfmlWindow.SetTitle(UnicodeString('Unicode Title'));
 
   while FSfmlWindow.IsOpen do
   begin
@@ -166,7 +162,7 @@ initialization
   RegisterTest(TestTSfmlVideoMode);
   RegisterTest(TestTSfmlWindow);
 {$ELSE}
-  RegisterTest(TestTSfmlVideoMode.Suite);
-  RegisterTest(TestTSfmlWindow.Suite);
+  RegisterTest('SfmlWindow', TestTSfmlVideoMode.Suite);
+  RegisterTest('SfmlWindow', TestTSfmlWindow.Suite);
 {$ENDIF}
 end.

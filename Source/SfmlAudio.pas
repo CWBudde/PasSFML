@@ -41,12 +41,21 @@ const
 {$IFEND}
 
 type
-  PSfmlMusic = type Pointer;
-  PSfmlSound = type Pointer;
-  PSfmlSoundBuffer = type Pointer;
-  PSfmlSoundBufferRecorder = type Pointer;
-  PSfmlSoundRecorder = type Pointer;
-  PSfmlSoundStream = type Pointer;
+  // opaque structures
+  TSfmlMusicRecord = record end;
+  TSfmlSoundRecord = record end;
+  TSfmlSoundBufferRecord = record end;
+  TSfmlSoundBufferRecorderRecord = record end;
+  TSfmlSoundRecorderRecord = record end;
+  TSfmlSoundStreamRecord = record end;
+
+  // handles for opaque structures
+  PSfmlMusic = ^TSfmlMusicRecord;
+  PSfmlSound = ^TSfmlSoundRecord;
+  PSfmlSoundBuffer = ^TSfmlSoundBufferRecord;
+  PSfmlSoundBufferRecorder = ^TSfmlSoundBufferRecorderRecord;
+  PSfmlSoundRecorder = ^TSfmlSoundRecorderRecord;
+  PSfmlSoundStream = ^TSfmlSoundStreamRecord;
 
   TSfmlSoundStatus = (sfStopped, sfPaused, sfPlaying);
 
@@ -200,14 +209,12 @@ var
   SfmlMusicDestroy: TSfmlMusicDestroy;
   SfmlMusicSetLoop: TSfmlMusicSetLoop;
   SfmlMusicGetLoop: TSfmlMusicGetLoop;
-  SfmlMusicGetDuration: TSfmlMusicGetDuration;
   SfmlMusicPlay: TSfmlMusicPlay;
   SfmlMusicPause: TSfmlMusicPause;
   SfmlMusicStop: TSfmlMusicStop;
   SfmlMusicGetChannelCount: TSfmlMusicGetChannelCount;
   SfmlMusicGetSampleRate: TSfmlMusicGetSampleRate;
   SfmlMusicGetStatus: TSfmlMusicGetStatus;
-  SfmlMusicGetPlayingOffset: TSfmlMusicGetPlayingOffset;
   SfmlMusicSetPitch: TSfmlMusicSetPitch;
   SfmlMusicSetVolume: TSfmlMusicSetVolume;
   SfmlMusicSetPosition: TSfmlMusicSetPosition;
@@ -245,7 +252,6 @@ var
   SfmlSoundStreamGetMinDistance: TSfmlSoundStreamGetMinDistance;
   SfmlSoundStreamGetAttenuation: TSfmlSoundStreamGetAttenuation;
   SfmlSoundStreamGetLoop: TSfmlSoundStreamGetLoop;
-  SfmlSoundStreamGetPlayingOffset: TSfmlSoundStreamGetPlayingOffset;
 
   SfmlSoundCreate: TSfmlSoundCreate;
   SfmlSoundCopy: TSfmlSoundCopy;
@@ -271,7 +277,6 @@ var
   SfmlSoundIsRelativeToListener: TSfmlSoundIsRelativeToListener;
   SfmlSoundGetMinDistance: TSfmlSoundGetMinDistance;
   SfmlSoundGetAttenuation: TSfmlSoundGetAttenuation;
-  SfmlSoundGetPlayingOffset: TSfmlSoundGetPlayingOffset;
 
   SfmlSoundBufferCreateFromFile: TSfmlSoundBufferCreateFromFile;
   SfmlSoundBufferCreateFromMemory: TSfmlSoundBufferCreateFromMemory;
@@ -284,7 +289,6 @@ var
   SfmlSoundBufferGetSampleCount: TSfmlSoundBufferGetSampleCount;
   SfmlSoundBufferGetSampleRate: TSfmlSoundBufferGetSampleRate;
   SfmlSoundBufferGetChannelCount: TSfmlSoundBufferGetChannelCount;
-  SfmlSoundBufferGetDuration: TSfmlSoundBufferGetDuration;
 
   SfmlSoundBufferRecorderCreate: TSfmlSoundBufferRecorderCreate;
   SfmlSoundBufferRecorderDestroy: TSfmlSoundBufferRecorderDestroy;
@@ -304,6 +308,14 @@ var
   SfmlSoundRecorderGetDefaultDevice: TSfmlSoundRecorderGetDefaultDevice;
   SfmlSoundRecorderSetDevice: TSfmlSoundRecorderSetDevice;
   SfmlSoundRecorderGetDevice: TSfmlSoundRecorderGetDevice;
+
+{$IFNDEF INT64RETURNWORKAROUND}
+  SfmlMusicGetDuration: TSfmlMusicGetDuration;
+  SfmlMusicGetPlayingOffset: TSfmlMusicGetPlayingOffset;
+  SfmlSoundStreamGetPlayingOffset: TSfmlSoundStreamGetPlayingOffset;
+  SfmlSoundGetPlayingOffset: TSfmlSoundGetPlayingOffset;
+  SfmlSoundBufferGetDuration: TSfmlSoundBufferGetDuration;
+{$ENDIF}
 {$ELSE}
   // static linking
   procedure SfmlListenerSetGlobalVolume(Volume: Single); cdecl; external CSfmlAudioLibrary name 'sfListener_setGlobalVolume';
@@ -321,10 +333,8 @@ var
   procedure SfmlMusicDestroy(Music: PSfmlMusic); cdecl; external CSfmlAudioLibrary name 'sfMusic_destroy';
   procedure SfmlMusicSetLoop(Music: PSfmlMusic; Loop: Boolean); cdecl; external CSfmlAudioLibrary name 'sfMusic_setLoop';
   function SfmlMusicGetLoop(const Music: PSfmlMusic): Boolean; cdecl; external CSfmlAudioLibrary name 'sfMusic_getLoop';
-  {$IFDEF FPC}
+  {$IFNDEF INT64RETURNWORKAROUND}
   function SfmlMusicGetDuration(const Music: PSfmlMusic): TSfmlTime; cdecl; external CSfmlAudioLibrary name 'sfMusic_getDuration';
-  {$ELSE}
-  function SfmlMusicGetDuration(const Music: PSfmlMusic): TSfmlTime; cdecl;
   {$ENDIF}
   procedure SfmlMusicPlay(Music: PSfmlMusic); cdecl; external CSfmlAudioLibrary name 'sfMusic_play';
   procedure SfmlMusicPause(Music: PSfmlMusic); cdecl; external CSfmlAudioLibrary name 'sfMusic_pause';
@@ -332,10 +342,8 @@ var
   function SfmlMusicGetChannelCount(const Music: PSfmlMusic): Cardinal; cdecl; external CSfmlAudioLibrary name 'sfMusic_getChannelCount';
   function SfmlMusicGetSampleRate(const Music: PSfmlMusic): Cardinal; cdecl; external CSfmlAudioLibrary name 'sfMusic_getSampleRate';
   function SfmlMusicGetStatus(const Music: PSfmlMusic): TSfmlSoundStatus; cdecl; external CSfmlAudioLibrary name 'sfMusic_getStatus';
-  {$IFDEF FPC}
+  {$IFNDEF INT64RETURNWORKAROUND}
   function SfmlMusicGetPlayingOffset(const Music: PSfmlMusic): TSfmlTime; cdecl; external CSfmlAudioLibrary name 'sfMusic_getPlayingOffset';
-  {$ELSE}
-  function SfmlMusicGetPlayingOffset(const Music: PSfmlMusic): TSfmlTime; cdecl;
   {$ENDIF}
   procedure SfmlMusicSetPitch(Music: PSfmlMusic; Pitch: Single); cdecl; external CSfmlAudioLibrary name 'sfMusic_setPitch';
   procedure SfmlMusicSetVolume(Music: PSfmlMusic; Volume: Single); cdecl; external CSfmlAudioLibrary name 'sfMusic_setVolume';
@@ -374,10 +382,8 @@ var
   function SfmlSoundStreamGetMinDistance(const SoundStream: PSfmlSoundStream): Single; cdecl; external CSfmlAudioLibrary name 'sfSoundStream_getMinDistance';
   function SfmlSoundStreamGetAttenuation(const SoundStream: PSfmlSoundStream): Single; cdecl; external CSfmlAudioLibrary name 'sfSoundStream_getAttenuation';
   function SfmlSoundStreamGetLoop(const SoundStream: PSfmlSoundStream): Boolean; cdecl; external CSfmlAudioLibrary name 'sfSoundStream_getLoop';
-  {$IFDEF FPC}
+  {$IFNDEF INT64RETURNWORKAROUND}
   function SfmlSoundStreamGetPlayingOffset(const SoundStream: PSfmlSoundStream): TSfmlTime; cdecl; external CSfmlAudioLibrary name 'sfSoundStream_getPlayingOffset';
-  {$ELSE}
-  function SfmlSoundStreamGetPlayingOffset(const SoundStream: PSfmlSoundStream): TSfmlTime; cdecl;
   {$ENDIF}
 
   function SfmlSoundCreate: PSfmlSound; cdecl; external CSfmlAudioLibrary name 'sfSound_create';
@@ -404,11 +410,9 @@ var
   function SfmlSoundIsRelativeToListener(const Sound: PSfmlSound): Boolean; cdecl; external CSfmlAudioLibrary name 'sfSound_isRelativeToListener';
   function SfmlSoundGetMinDistance(const Sound: PSfmlSound): Single; cdecl; external CSfmlAudioLibrary name 'sfSound_getMinDistance';
   function SfmlSoundGetAttenuation(const Sound: PSfmlSound): Single; cdecl; external CSfmlAudioLibrary name 'sfSound_getAttenuation';
-  {$IFDEF FPC}
+{$IFNDEF INT64RETURNWORKAROUND}
   function SfmlSoundGetPlayingOffset(const Sound: PSfmlSound): TSfmlTime; cdecl; external CSfmlAudioLibrary name 'sfSound_getPlayingOffset';
-  {$ELSE}
-  function SfmlSoundGetPlayingOffset(const Sound: PSfmlSound): TSfmlTime; cdecl;
-  {$ENDIF}
+{$ENDIF}
 
   function SfmlSoundBufferCreateFromFile(const FileName: PAnsiChar): PSfmlSoundBuffer; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_createFromFile';
   function SfmlSoundBufferCreateFromMemory(const Data: Pointer; SizeInBytes: NativeUInt): PSfmlSoundBuffer; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_createFromMemory';
@@ -421,10 +425,8 @@ var
   function SfmlSoundBufferGetSampleCount(const SoundBuffer: PSfmlSoundBuffer): NativeUInt; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_getSampleCount';
   function SfmlSoundBufferGetSampleRate(const SoundBuffer: PSfmlSoundBuffer): Cardinal; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_getSampleRate';
   function SfmlSoundBufferGetChannelCount(const SoundBuffer: PSfmlSoundBuffer): Cardinal; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_getChannelCount';
-  {$IFDEF FPC}
+  {$IFNDEF INT64RETURNWORKAROUND}
   function SfmlSoundBufferGetDuration(const SoundBuffer: PSfmlSoundBuffer): TSfmlTime; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_getDuration';
-  {$ELSE}
-  function SfmlSoundBufferGetDuration(const SoundBuffer: PSfmlSoundBuffer): TSfmlTime; cdecl;
   {$ENDIF}
 
   function SfmlSoundBufferRecorderCreate: PSfmlSoundBufferRecorder; cdecl; external CSfmlAudioLibrary name 'sfSoundBufferRecorder_create';
@@ -654,6 +656,15 @@ type
     property Device: AnsiString read GetDevice write SetDevice;
     property SampleRate: Cardinal read GetSampleRate;
   end;
+
+{$IFDEF INT64RETURNWORKAROUND}
+  // Workarounds for the Delphi compiler
+  function SfmlMusicGetDuration(const Music: PSfmlMusic): TSfmlTime; cdecl;
+  function SfmlMusicGetPlayingOffset(const Music: PSfmlMusic): TSfmlTime; cdecl;
+  function SfmlSoundStreamGetPlayingOffset(const SoundStream: PSfmlSoundStream): TSfmlTime; cdecl;
+  function SfmlSoundGetPlayingOffset(const Sound: PSfmlSound): TSfmlTime; cdecl;
+  function SfmlSoundBufferGetDuration(const SoundBuffer: PSfmlSoundBuffer): TSfmlTime; cdecl;
+{$ENDIF}
 
 implementation
 
@@ -1059,12 +1070,12 @@ end;
 
 function TSfmlSound.GetPlayingOffset: TSfmlTime;
 begin
-  SfmlSoundGetPlayingOffset(FHandle);
+  Result := SfmlSoundGetPlayingOffset(FHandle);
 end;
 
 function TSfmlSound.GetPosition: TSfmlVector3f;
 begin
-  SfmlSoundGetPosition(FHandle);
+  Result := SfmlSoundGetPosition(FHandle);
 end;
 
 function TSfmlSound.GetStatus: TSfmlSoundStatus;
@@ -1181,6 +1192,7 @@ begin
   SfmlSoundBufferRecorderStop(FHandle);
 end;
 
+
 { TSfmlSoundRecorder }
 
 constructor TSfmlSoundRecorder.Create(OnStart: TSfmlSoundRecorderStartCallback;
@@ -1226,43 +1238,16 @@ begin
   SfmlSoundRecorderStop(FHandle);
 end;
 
-{$IFNDEF DynLink}
-{$IFNDEF FPC}
-function sfMusic_getDuration(const Music: PSfmlMusic): Int64; cdecl; external CSfmlAudioLibrary;
-function SfmlMusicGetDuration(const Music: PSfmlMusic): TSfmlTime; cdecl;
-begin
-  Result.MicroSeconds := sfMusic_getDuration(Music);
-end;
-
-function sfMusic_getPlayingOffset(const Music: PSfmlMusic): Int64; cdecl; external CSfmlAudioLibrary;
-function SfmlMusicGetPlayingOffset(const Music: PSfmlMusic): TSfmlTime; cdecl;
-begin
-  Result.MicroSeconds := sfMusic_getPlayingOffset(Music);
-end;
-
-function sfSoundStream_getPlayingOffset(const SoundStream: PSfmlSoundStream): Int64; cdecl; external CSfmlAudioLibrary;
-function SfmlSoundStreamGetPlayingOffset(const SoundStream: PSfmlSoundStream): TSfmlTime; cdecl;
-begin
-  Result.MicroSeconds := sfSoundStream_getPlayingOffset(SoundStream);
-end;
-
-function sfSound_getPlayingOffset(const Sound: PSfmlSound): Int64; cdecl; external CSfmlAudioLibrary;
-function SfmlSoundGetPlayingOffset(const Sound: PSfmlSound): TSfmlTime; cdecl;
-begin
-  Result.MicroSeconds := sfSoundStream_getPlayingOffset(Sound);
-end;
-
-function sfSoundBuffer_getDuration(const SoundBuffer: PSfmlSoundBuffer): Int64; cdecl; external CSfmlAudioLibrary;
-function SfmlSoundBufferGetDuration(const SoundBuffer: PSfmlSoundBuffer): TSfmlTime; cdecl;
-begin
-  Result.MicroSeconds := sfSoundBuffer_getDuration(SoundBuffer);
-end;
-{$ENDIF}
-
-{$ELSE}
-
+{$IFDEF DynLink}
 var
   CSfmlAudioHandle: HINST;
+{$IFDEF INT64RETURNWORKAROUND}
+  sfMusic_getDuration: function (const Music: PSfmlMusic): Int64; cdecl;
+  sfMusic_getPlayingOffset: function (const Music: PSfmlMusic): Int64; cdecl;
+  sfSoundStream_getPlayingOffset: function (const SoundStream: PSfmlSoundStream): Int64; cdecl;
+  sfSound_getPlayingOffset: function (const Sound: PSfmlSound): Int64; cdecl;
+  sfSoundBuffer_getDuration: function (const SoundBuffer: PSfmlSoundBuffer): Int64; cdecl;
+{$ENDIF}
 
 procedure InitDLL;
 
@@ -1290,14 +1275,12 @@ begin
       SfmlMusicDestroy := BindFunction('sfMusic_destroy');
       SfmlMusicSetLoop := BindFunction('sfMusic_setLoop');
       SfmlMusicGetLoop := BindFunction('sfMusic_getLoop');
-      SfmlMusicGetDuration := BindFunction('sfMusic_getDuration');
       SfmlMusicPlay := BindFunction('sfMusic_play');
       SfmlMusicPause := BindFunction('sfMusic_pause');
       SfmlMusicStop := BindFunction('sfMusic_stop');
       SfmlMusicGetChannelCount := BindFunction('sfMusic_getChannelCount');
       SfmlMusicGetSampleRate := BindFunction('sfMusic_getSampleRate');
       SfmlMusicGetStatus := BindFunction('sfMusic_getStatus');
-      SfmlMusicGetPlayingOffset := BindFunction('sfMusic_getPlayingOffset');
       SfmlMusicSetPitch := BindFunction('sfMusic_setPitch');
       SfmlMusicSetVolume := BindFunction('sfMusic_setVolume');
       SfmlMusicSetPosition := BindFunction('sfMusic_setPosition');
@@ -1334,7 +1317,6 @@ begin
       SfmlSoundStreamGetMinDistance := BindFunction('sfSoundStream_getMinDistance');
       SfmlSoundStreamGetAttenuation := BindFunction('sfSoundStream_getAttenuation');
       SfmlSoundStreamGetLoop := BindFunction('sfSoundStream_getLoop');
-      SfmlSoundStreamGetPlayingOffset := BindFunction('sfSoundStream_getPlayingOffset');
       SfmlSoundCreate := BindFunction('sfSound_create');
       SfmlSoundCopy := BindFunction('sfSound_copy');
       SfmlSoundDestroy := BindFunction('sfSound_destroy');
@@ -1359,7 +1341,6 @@ begin
       SfmlSoundIsRelativeToListener := BindFunction('sfSound_isRelativeToListener');
       SfmlSoundGetMinDistance := BindFunction('sfSound_isRelativeToListener');
       SfmlSoundGetAttenuation := BindFunction('sfSound_getAttenuation');
-      SfmlSoundGetPlayingOffset := BindFunction('sfSound_getPlayingOffset');
       SfmlSoundBufferCreateFromFile := BindFunction('sfSoundBuffer_createFromFile');
       SfmlSoundBufferCreateFromMemory := BindFunction('sfSoundBuffer_createFromMemory');
       SfmlSoundBufferCreateFromStream := BindFunction('sfSoundBuffer_createFromStream');
@@ -1371,7 +1352,6 @@ begin
       SfmlSoundBufferGetSampleCount := BindFunction('sfSoundBuffer_getSampleCount');
       SfmlSoundBufferGetSampleRate := BindFunction('sfSoundBuffer_getSampleRate');
       SfmlSoundBufferGetChannelCount := BindFunction('sfSoundBuffer_getChannelCount');
-      SfmlSoundBufferGetDuration := BindFunction('sfSoundBuffer_getDuration');
       SfmlSoundBufferRecorderCreate := BindFunction('sfSoundBufferRecorder_create');
       SfmlSoundBufferRecorderDestroy := BindFunction('sfSoundBufferRecorder_destroy');
       SfmlSoundBufferRecorderStart := BindFunction('sfSoundBufferRecorder_start');
@@ -1389,6 +1369,20 @@ begin
       SfmlSoundRecorderGetDefaultDevice := BindFunction('sfSoundRecorder_getDefaultDevice');
       SfmlSoundRecorderSetDevice := BindFunction('sfSoundRecorder_setDevice');
       SfmlSoundRecorderGetDevice := BindFunction('sfSoundRecorder_getDevice');
+
+{$IFDEF INT64RETURNWORKAROUND}
+      sfMusic_getDuration := BindFunction('sfMusic_getDuration');
+      sfMusic_getPlayingOffset := BindFunction('sfMusic_getPlayingOffset');
+      sfSoundStream_getPlayingOffset := BindFunction('sfSoundStream_getPlayingOffset');
+      sfSound_getPlayingOffset := BindFunction('sfSound_getPlayingOffset');
+      sfSoundBuffer_getDuration := BindFunction('sfSoundBuffer_getDuration');
+{$ELSE}
+      SfmlMusicGetDuration := BindFunction('sfMusic_getDuration');
+      SfmlMusicGetPlayingOffset := BindFunction('sfMusic_getPlayingOffset');
+      SfmlSoundStreamGetPlayingOffset := BindFunction('sfSoundStream_getPlayingOffset');
+      SfmlSoundGetPlayingOffset := BindFunction('sfSound_getPlayingOffset');
+      SfmlSoundBufferGetDuration := BindFunction('sfSoundBuffer_getDuration');
+{$ENDIF}
     except
       FreeLibrary(CSfmlAudioHandle);
       CSfmlAudioHandle := 0;
@@ -1400,7 +1394,44 @@ begin
   if CSfmlAudioHandle <> 0 then
     FreeLibrary(CSfmlAudioHandle);
 end;
+{$ELSE}
+{$IFDEF INT64RETURNWORKAROUND}
+function sfMusic_getDuration(const Music: PSfmlMusic): Int64; cdecl; external CSfmlAudioLibrary;
+function sfMusic_getPlayingOffset(const Music: PSfmlMusic): Int64; cdecl; external CSfmlAudioLibrary;
+function sfSoundStream_getPlayingOffset(const SoundStream: PSfmlSoundStream): Int64; cdecl; external CSfmlAudioLibrary;
+function sfSound_getPlayingOffset(const Sound: PSfmlSound): Int64; cdecl; external CSfmlAudioLibrary;
+function sfSoundBuffer_getDuration(const SoundBuffer: PSfmlSoundBuffer): Int64; cdecl; external CSfmlAudioLibrary;
+{$ENDIF}
+{$ENDIF}
 
+{$IFDEF INT64RETURNWORKAROUND}
+function SfmlMusicGetDuration(const Music: PSfmlMusic): TSfmlTime; cdecl;
+begin
+  Result.MicroSeconds := sfMusic_getDuration(Music);
+end;
+
+function SfmlMusicGetPlayingOffset(const Music: PSfmlMusic): TSfmlTime; cdecl;
+begin
+  Result.MicroSeconds := sfMusic_getPlayingOffset(Music);
+end;
+
+function SfmlSoundStreamGetPlayingOffset(const SoundStream: PSfmlSoundStream): TSfmlTime; cdecl;
+begin
+  Result.MicroSeconds := sfSoundStream_getPlayingOffset(SoundStream);
+end;
+
+function SfmlSoundGetPlayingOffset(const Sound: PSfmlSound): TSfmlTime; cdecl;
+begin
+  Result.MicroSeconds := sfSound_getPlayingOffset(Sound);
+end;
+
+function SfmlSoundBufferGetDuration(const SoundBuffer: PSfmlSoundBuffer): TSfmlTime; cdecl;
+begin
+  Result.MicroSeconds := sfSoundBuffer_getDuration(SoundBuffer);
+end;
+{$ENDIF}
+
+{$IFDEF DynLink}
 initialization
 
 InitDLL;

@@ -215,8 +215,8 @@ initialization
   RegisterTest(TestTSfmlClock);
   RegisterTest(TestTSfmlThread);
 {$ELSE}
-  RegisterTest(TestTSfmlTime.Suite);
-  RegisterTest(TestTSfmlClock.Suite);
-  RegisterTest(TestTSfmlThread.Suite);
+  RegisterTest('SfmlSystem', TestTSfmlTime.Suite);
+  RegisterTest('SfmlSystem', TestTSfmlClock.Suite);
+  RegisterTest('SfmlSystem', TestTSfmlThread.Suite);
 {$ENDIF}
 end.

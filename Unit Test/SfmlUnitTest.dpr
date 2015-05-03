@@ -12,12 +12,15 @@ uses
   {$ELSE}
   DUnitTestRunner,
   {$ENDIF}
+  SfmlAudio in '..\Source\SfmlAudio.pas',
+  SfmlGraphics in '..\Source\SfmlGraphics.pas',
+  SfmlNetwork in '..\Source\SfmlNetwork.pas',
   SfmlSystem in '..\Source\SfmlSystem.pas',
   SfmlWindow in '..\Source\SfmlWindow.pas',
-  SfmlAudio in '..\Source\SfmlAudio.pas',
+  TestSfmlAudio in 'TestSfmlAudio.pas',
+  TestSfmlGraphics in 'TestSfmlGraphics.pas',
   TestSfmlSystem in 'TestSfmlSystem.pas',
-  TestSfmlWindow in 'TestSfmlWindow.pas',
-  TestSfmlAudio in 'TestSfmlAudio.pas';
+  TestSfmlWindow in 'TestSfmlWindow.pas';
 
 {$R *.res}
 
@@ -30,5 +33,3 @@ begin
   DUnitTestRunner.RunRegisteredTests;
 {$ENDIF}
 end.
-
-

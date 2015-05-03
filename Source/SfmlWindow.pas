@@ -45,8 +45,13 @@ const
   CSflmJoystickAxisCount   = 8;
 
 type
-  PSfmlContext = type Pointer;
-  PSfmlWindow = type Pointer;
+  // opaque structures
+  TSfmlContextRecord = record end;
+  TSfmlWindowRecord = record end;
+
+  // handles for opaque structures
+  PSfmlContext = ^TSfmlContextRecord;
+  PSfmlWindow = ^TSfmlWindowRecord;
 
   TSfmlVideoMode = record
     Width, Height, BitsPerPixel: Cardinal;
@@ -225,7 +230,7 @@ type
   TSfmlVideoModeIsValid = function (Mode: TSfmlVideoMode): Boolean; cdecl;
 
   TSfmlWindowCreate = function (Mode: TSfmlVideoMode; const Title: PAnsiChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
-  TSfmlWindowCreateUnicode = function (Mode: TSfmlVideoMode; const Title: PUCS4CharArray; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
+  TSfmlWindowCreateUnicode = function (Mode: TSfmlVideoMode; const Title: PUCS4Char; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
   TSfmlWindowCreateFromHandle = function (Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl;
   TSfmlWindowDestroy = procedure (Window: PSfmlWindow); cdecl;
   TSfmlWindowClose = procedure (Window: PSfmlWindow); cdecl;
@@ -238,7 +243,7 @@ type
   TSfmlWindowGetSize = function (const Window: PSfmlWindow): TSfmlVector2u; cdecl;
   TSfmlWindowSetSize = procedure (Window: PSfmlWindow; Size: TSfmlVector2u); cdecl;
   TSfmlWindowSetTitle = procedure (Window: PSfmlWindow; const Title: PAnsiChar); cdecl;
-  TSfmlWindowSetUnicodeTitle = procedure (Window: PSfmlWindow; const Title: PUCS4CharArray); cdecl;
+  TSfmlWindowSetUnicodeTitle = procedure (Window: PSfmlWindow; const Title: PUCS4Char); cdecl;
   TSfmlWindowSetIcon = procedure (Window: PSfmlWindow; Width, Height: Cardinal; const Pixels: PByte); cdecl;
   TSfmlWindowSetVisible = procedure (Window: PSfmlWindow; Visible: Boolean); cdecl;
   TSfmlWindowSetMouseCursorVisible = procedure (Window: PSfmlWindow; Visible: Boolean); cdecl;
@@ -340,7 +345,7 @@ var
   function SfmlVideoModeIsValid(Mode: TSfmlVideoMode): Boolean; cdecl; external CSfmlWindowLibrary name 'sfVideoMode_isValid';
 
   function SfmlWindowCreate(Mode: TSfmlVideoMode; const Title: PAnsiChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl; external CSfmlWindowLibrary name 'sfWindow_create';
-  function SfmlWindowCreateUnicode(Mode: TSfmlVideoMode; const Title: PUCS4CharArray; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl; external CSfmlWindowLibrary name 'sfWindow_createUnicode';
+  function SfmlWindowCreateUnicode(Mode: TSfmlVideoMode; const Title: PUCS4Char; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl; external CSfmlWindowLibrary name 'sfWindow_createUnicode';
   function SfmlWindowCreateFromHandle(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings): PSfmlWindow; cdecl; external CSfmlWindowLibrary name 'sfWindow_createFromHandle';
   procedure SfmlWindowDestroy(Window: PSfmlWindow); cdecl; external CSfmlWindowLibrary name 'sfWindow_destroy';
   procedure SfmlWindowClose(Window: PSfmlWindow); cdecl; external CSfmlWindowLibrary name 'sfWindow_close';
@@ -353,7 +358,7 @@ var
   function SfmlWindowGetSize(const Window: PSfmlWindow): TSfmlVector2u; cdecl; external CSfmlWindowLibrary name 'sfWindow_getSize';
   procedure SfmlWindowSetSize(Window: PSfmlWindow; Size: TSfmlVector2u); cdecl; external CSfmlWindowLibrary name 'sfWindow_setSize';
   procedure SfmlWindowSetTitle(Window: PSfmlWindow; const Title: PAnsiChar); cdecl; external CSfmlWindowLibrary name 'sfWindow_setTitle';
-  procedure SfmlWindowSetUnicodeTitle(Window: PSfmlWindow; const Title: PUCS4CharArray); cdecl; external CSfmlWindowLibrary name 'sfWindow_setUnicodeTitle';
+  procedure SfmlWindowSetUnicodeTitle(Window: PSfmlWindow; const Title: PUCS4Char); cdecl; external CSfmlWindowLibrary name 'sfWindow_setUnicodeTitle';
   procedure SfmlWindowSetIcon(Window: PSfmlWindow; Width, Height: Cardinal; const Pixels: PByte); cdecl; external CSfmlWindowLibrary name 'sfWindow_setIcon';
   procedure SfmlWindowSetVisible(Window: PSfmlWindow; Visible: Boolean); cdecl; external CSfmlWindowLibrary name 'sfWindow_setVisible';
   procedure SfmlWindowSetMouseCursorVisible(Window: PSfmlWindow; Visible: Boolean); cdecl; external CSfmlWindowLibrary name 'sfWindow_setMouseCursorVisible';
@@ -382,7 +387,38 @@ type
     property Handle: PSfmlContext read FHandle;
   end;
 
-  TSfmlWindow = class
+  ISfmlWindow = interface
+    function GetPosition: TSfmlVector2i;
+    function GetSize: TSfmlVector2u;
+    procedure SetPosition(Position: TSfmlVector2i);
+    procedure SetSize(Size: TSfmlVector2u);
+    procedure SetTitle(const Title: AnsiString); overload;
+    procedure SetTitle(const Title: UnicodeString); overload;
+    procedure SetIcon(Width, Height: Cardinal; const Pixels: PByte);
+    procedure SetVisible(Visible: Boolean);
+    procedure SetVerticalSyncEnabled(Enabled: Boolean);
+    procedure SetMouseCursorVisible(Visible: Boolean);
+    procedure SetKeyRepeatEnabled(Enabled: Boolean);
+    procedure SetFramerateLimit(Limit: Cardinal);
+    procedure SetJoystickThreshold(Threshold: Single);
+    function SetActive(Active: Boolean): Boolean;
+
+    procedure RequestFocus;
+    function HasFocus: Boolean;
+    procedure Display;
+    function GetSystemHandle: TSfmlWindowHandle;
+
+    procedure Close;
+    function IsOpen: Boolean;
+    function GetSettings: TSfmlContextSettings;
+    function PollEvent(out Event: TSfmlEvent): Boolean;
+    function WaitEvent(out Event: TSfmlEvent): Boolean;
+
+    property Position: TSfmlVector2i read GetPosition write SetPosition;
+    property Size: TSfmlVector2u read GetSize write SetSize;
+  end;
+
+  TSfmlWindow = class(TInterfacedObject, ISfmlWindow)
   private
     FHandle: PSfmlWindow;
     function GetPosition: TSfmlVector2i;
@@ -406,16 +442,16 @@ type
     function GetSettings: TSfmlContextSettings;
     function PollEvent(out Event: TSfmlEvent): Boolean;
     function WaitEvent(out Event: TSfmlEvent): Boolean;
-    procedure SetTitle(const Title: AnsiString);
-    procedure SetUnicodeTitle(const Title: UCS4String);
+    procedure SetTitle(const Title: AnsiString); overload;
+    procedure SetTitle(const Title: UnicodeString); overload;
     procedure SetIcon(Width, Height: Cardinal; const Pixels: PByte);
     procedure SetVisible(Visible: Boolean);
-    procedure SetMouseCursorVisible(Visible: Boolean);
     procedure SetVerticalSyncEnabled(Enabled: Boolean);
+    procedure SetMouseCursorVisible(Visible: Boolean);
     procedure SetKeyRepeatEnabled(Enabled: Boolean);
-    function SetActive(Active: Boolean): Boolean;
     procedure SetFramerateLimit(Limit: Cardinal);
     procedure SetJoystickThreshold(Threshold: Single);
+    function SetActive(Active: Boolean): Boolean;
 
     procedure RequestFocus;
     function HasFocus: Boolean;
@@ -487,7 +523,8 @@ end;
 constructor TSfmlWindow.Create(VideoMode: TSfmlVideoMode; Title: UnicodeString;
   Style: TSfmlWindowStyles);
 begin
-  FHandle := SfmlWindowCreateUnicode(VideoMode, PUCS4CharArray(Title), Style, nil);
+  FHandle := SfmlWindowCreateUnicode(VideoMode,
+    PUCS4Char(UnicodeStringToUCS4String(Title)), Style, nil);
 end;
 
 constructor TSfmlWindow.Create(VideoMode: TSfmlVideoMode; Title: AnsiString;
@@ -500,8 +537,8 @@ end;
 constructor TSfmlWindow.Create(VideoMode: TSfmlVideoMode; Title: UnicodeString;
   Style: TSfmlWindowStyles; ContextSetting: PSfmlContextSettings);
 begin
-  FHandle := SfmlWindowCreateUnicode(VideoMode, PUCS4CharArray(Title), Style,
-    ContextSetting);
+  FHandle := SfmlWindowCreateUnicode(VideoMode,
+    PUCS4Char(UnicodeStringToUCS4String(Title)), Style, ContextSetting);
 end;
 
 constructor TSfmlWindow.Create(Handle: TSfmlWindowHandle);
@@ -610,9 +647,9 @@ begin
   SfmlWindowSetTitle(FHandle, PAnsiChar(Title));
 end;
 
-procedure TSfmlWindow.SetUnicodeTitle(const Title: UCS4String);
+procedure TSfmlWindow.SetTitle(const Title: UnicodeString);
 begin
-  SfmlWindowSetUnicodeTitle(FHandle, PUCS4CharArray(Title));
+  SfmlWindowSetUnicodeTitle(FHandle, PUCS4Char(UnicodeStringToUCS4String(Title)));
 end;
 
 procedure TSfmlWindow.SetVerticalSyncEnabled(Enabled: Boolean);

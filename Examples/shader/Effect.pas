@@ -6,7 +6,7 @@ uses
   SfmlSystem, SfmlGraphics;
 
 type
-  TEffect = class
+  TEffect = class(TSfmlDrawable)
   private
     FName: string;
     FIsLoaded: Boolean;
@@ -16,12 +16,12 @@ type
 
     function OnLoad: Boolean; virtual; abstract;
     procedure OnUpdate(Time, X, Y: Single); virtual; abstract;
-    procedure OnDraw(Target: TSfmlRenderWindow; states: PSfmlRenderStates); virtual; abstract;
+    procedure OnDraw(Target: TSfmlRenderTarget; states: PSfmlRenderStates); virtual; abstract;
   public
     procedure Load;
 
     procedure Update(Time, X, Y: Single);
-    procedure Draw(Target: TSfmlRenderWindow; States: PSfmlRenderStates);
+    procedure Draw(Target: TSfmlRenderTarget; States: PSfmlRenderStates);
 
     property Font: TSfmlFont read FFont write FFont;
     property Name: string read FName;
@@ -36,7 +36,7 @@ begin
   FName := Name;
 end;
 
-procedure TEffect.Draw(Target: TSfmlRenderWindow; States: PSfmlRenderStates);
+procedure TEffect.Draw(Target: TSfmlRenderTarget; States: PSfmlRenderStates);
 var
   Error: TSfmlText;
 begin

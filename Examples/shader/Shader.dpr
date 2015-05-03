@@ -19,7 +19,7 @@ type
     constructor Create;
     function OnLoad: Boolean; override;
     procedure OnUpdate(Time, X, Y: Single); override;
-    procedure OnDraw(Target: TSfmlRenderWindow; States: PSfmlRenderStates); override;
+    procedure OnDraw(Target: TSfmlRenderTarget; States: PSfmlRenderStates); override;
   end;
 
   TWaveBlur = class(TEffect)
@@ -30,7 +30,7 @@ type
     constructor Create;
     function OnLoad: Boolean; override;
     procedure OnUpdate(Time, X, Y: Single); override;
-    procedure OnDraw(Target: TSfmlRenderWindow; States: PSfmlRenderStates); override;
+    procedure OnDraw(Target: TSfmlRenderTarget; States: PSfmlRenderStates); override;
   end;
 
   TStormBlink = class(TEffect)
@@ -41,7 +41,7 @@ type
     constructor Create;
     function OnLoad: Boolean; override;
     procedure OnUpdate(Time, X, Y: Single); override;
-    procedure OnDraw(Target: TSfmlRenderWindow; States: PSfmlRenderStates); override;
+    procedure OnDraw(Target: TSfmlRenderTarget; States: PSfmlRenderStates); override;
   end;
 
   TEdge = class(TEffect)
@@ -56,7 +56,7 @@ type
     constructor Create;
     function OnLoad: Boolean; override;
     procedure OnUpdate(Time, X, Y: Single); override;
-    procedure OnDraw(Target: TSfmlRenderWindow; States: PSfmlRenderStates); override;
+    procedure OnDraw(Target: TSfmlRenderTarget; States: PSfmlRenderStates); override;
   end;
 
 { TPixelate }
@@ -66,7 +66,7 @@ begin
   inherited Create('Pixelate');
 end;
 
-procedure TPixelate.OnDraw(Target: TSfmlRenderWindow;
+procedure TPixelate.OnDraw(Target: TSfmlRenderTarget;
   States: PSfmlRenderStates);
 begin
   States.Shader := &FShader;
@@ -100,7 +100,7 @@ begin
   FText := TSfmlText.Create;
 end;
 
-procedure TWaveBlur.OnDraw(Target: TSfmlRenderWindow;
+procedure TWaveBlur.OnDraw(Target: TSfmlRenderTarget;
   States: PSfmlRenderStates);
 begin
   States.Shader := FShader;
@@ -151,7 +151,7 @@ begin
   inherited Create('storm + blink');
 end;
 
-procedure TStormBlink.OnDraw(Target: TSfmlRenderWindow;
+procedure TStormBlink.OnDraw(Target: TSfmlRenderTarget;
   States: PSfmlRenderStates);
 begin
   States.Shader := FShader;
@@ -200,7 +200,7 @@ begin
   inherited Create('edge post-effect');
 end;
 
-procedure TEdge.OnDraw(Target: TSfmlRenderWindow; States: PSfmlRenderStates);
+procedure TEdge.OnDraw(Target: TSfmlRenderTarget; States: PSfmlRenderStates);
 begin
   States.Shader := FShader;
   Target.Draw(TSfmlSprite(FSurface.getTexture()), States);
@@ -357,9 +357,9 @@ begin
     end;
 
     // Update the current example
-    X := SfmlMouseGetPosition(Window).X / Window.GetSize.X;
-    Y := SfmlMouseGetPosition(Window).Y / Window.GetSize.Y;
-    Effects[current].Update(Clock.GetElapsedTime.AsSeconds, x, y);
+    X := SfmlMouseGetPosition(Window).X / Window.Size.X;
+    Y := SfmlMouseGetPosition(Window).Y / Window.Size.Y;
+    Effects[current].Update(Clock.ElapsedTime.AsSeconds, x, y);
 
     // Clear the Window
     Window.Clear(SfmlColorFromRGB(255, 128, 0));
