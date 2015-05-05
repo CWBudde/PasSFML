@@ -2006,6 +2006,7 @@ type
   TSfmlRenderTexture = class(TSfmlRenderTarget)
   private
     FHandle: PSfmlRenderTexture;
+    FTexture: TSfmlTexture;
     procedure SetRepeated(Repeated: Boolean);
     procedure SetSmooth(Smooth: Boolean);
     function GetRepeated: Boolean;
@@ -2017,7 +2018,7 @@ type
     destructor Destroy; override;
 
     function GetDefaultView: PSfmlView; override;
-    function GetTexture: PSfmlTexture;
+    function GetTexture: TSfmlTexture;
     function GetView: PSfmlView; override;
     function GetViewport(const View: PSfmlView): TSfmlIntRect; override;
     function MapCoordsToPixel(Point: TSfmlVector2i; const View: PSfmlView = nil): TSfmlVector2i; override;
@@ -3084,9 +3085,28 @@ begin
   Result := SfmlRenderTextureGetSize(FHandle);
 end;
 
-function TSfmlRenderTexture.GetTexture: PSfmlTexture;
+function TSfmlRenderTexture.GetTexture: TSfmlTexture;
+var
+  TextureHandle: PSfmlTexture;
 begin
-  Result := SfmlRenderTextureGetTexture(FHandle);
+  TextureHandle := SfmlRenderTextureGetTexture(FHandle);
+
+  // check if a texture object is already assigned
+  if Assigned(FTexture) then
+  begin
+    // now check if the handle is identical
+    if FTexture.Handle <> TextureHandle then
+    begin
+      FTexture.Free;
+      FTexture := nil;
+    end;
+  end;
+
+  // create texture object if not present already
+  if not Assigned(FTexture) then
+    FTexture := TSfmlTexture.Create(TextureHandle);
+
+  Result := FTexture;
 end;
 
 function TSfmlRenderTexture.GetView: PSfmlView;

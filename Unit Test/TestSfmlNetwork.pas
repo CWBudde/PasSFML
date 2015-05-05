@@ -88,34 +88,10 @@ type
     procedure TearDown; override;
   published
     procedure TestCopy;
-    procedure TestAppend;
-    procedure TestClear;
-    procedure TestGetData;
-    procedure TestGetDataSize;
+    procedure TestAppendGetDataClear;
     procedure TestEndOfPacket;
     procedure TestCanRead;
-    procedure TestReadBool;
-    procedure TestReadInt8;
-    procedure TestReadUint8;
-    procedure TestReadInt16;
-    procedure TestReadUint16;
-    procedure TestReadInt32;
-    procedure TestReadUint32;
-    procedure TestReadFloat;
-    procedure TestReadDouble;
-    procedure TestReadString;
-    procedure TestReadWideString;
-    procedure TestWriteBool;
-    procedure TestWriteInt8;
-    procedure TestWriteUint8;
-    procedure TestWriteInt16;
-    procedure TestWriteUint16;
-    procedure TestWriteInt32;
-    procedure TestWriteUint32;
-    procedure TestWriteFloat;
-    procedure TestWriteDouble;
-    procedure TestWriteString;
-    procedure TestWriteWideString;
+    procedure TestReadWrite;
   end;
 
   TestTSfmlSocketSelector = class(TTestCase)
@@ -125,9 +101,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
-    procedure TestCopy;
-    procedure TestAddTcpListener;
-    procedure TestRemoveTcpListener;
+    procedure TestAddRemoveTcpListener;
     procedure TestClear;
     procedure TestWait;
     procedure TestIsTcpListenerReady;
@@ -170,8 +144,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
-    procedure TestBind;
-    procedure TestUnbind;
+    procedure TestBindUnbind;
     procedure TestSend;
     procedure TestReceive;
     procedure TestSendPacket;
@@ -212,39 +185,22 @@ end;
 procedure TestTSfmlFtp.FtpListDirectoryHandler(ASender: TIdFTPServerContext;
   const APath: TIdFTPFileName; ADirectoryListing: TIdFTPListOutput; const ACmd,
   ASwitches: string);
-
-  procedure AddListItem(ADirectoryListing: TIdFTPListItems; Filename: string;
-    ItemType: TIdDirItemType; Size: Int64; Date: TDateTime);
-  var
-    ListItem: TIdFTPListItem;
-  begin
-    ListItem := ADirectoryListing.Add;
-    ListItem.ItemType := ItemType;
-    ListItem.FileName := Filename;
-    ListItem.Size := Size;
-    ListItem.ModifiedDate := Date;
-  end;
-
 var
-  f: TSearchRec;
-  a: Integer;
+  ListItem: TIdFTPListOutputItem;
 begin
-(*
-  ADirectoryListing.DirectoryName := APath;
+  // add test file
+  ListItem := ADirectoryListing.Add;
+  ListItem.ItemType := ditFile;
+  ListItem.FileName := 'File';
+  ListItem.Size := 1024;
+  ListItem.ModifiedDate := Now;
 
-  a := FindFirst(TransLatePath(APath, ASender.HomeDir) + '*.*', faAnyFile, f) ;
-  while (a = 0) do
-  begin
-    if (f.Attr and faDirectory > 0) then
-      AddlistItem(ADirectoryListing, f.Name, ditDirectory, f.size, FileDateToDateTime(f.Time))
-    else
-      AddlistItem(ADirectoryListing, f.Name, ditFile, f.size, FileDateToDateTime(f.Time)) ;
-    a := FindNext(f) ;
-  end;
-
-
-  FindClose(f) ;
-*)
+  // add test directory
+  ListItem := ADirectoryListing.Add;
+  ListItem.ItemType := ditDirectory;
+  ListItem.FileName := 'Dir';
+  ListItem.Size := 1024;
+  ListItem.ModifiedDate := Now;
 end;
 
 procedure TestTSfmlFtp.FtpUserLoginHandler(ASender: TIdFTPServerContext;
@@ -407,50 +363,36 @@ begin
 end;
 
 procedure TestTSfmlHttpRequest.TestSetField;
-var
-  Value: AnsiString;
-  Field: AnsiString;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlHttpRequest.SetField(Field, Value);
+  FSfmlHttpRequest.SetField('Foo', 'Bar');
   // TODO: check return values
 end;
 
 procedure TestTSfmlHttpRequest.TestSetMethod;
-var
-  Method: TSfmlHttpMethod;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlHttpRequest.SetMethod(Method);
+  FSfmlHttpRequest.SetMethod(sfHttpGet);
+  FSfmlHttpRequest.SetMethod(sfHttpPost);
+  FSfmlHttpRequest.SetMethod(sfHttpHead);
+  FSfmlHttpRequest.SetMethod(sfHttpPut);
+  FSfmlHttpRequest.SetMethod(sfHttpDelete);
   // TODO: check return values
 end;
 
 procedure TestTSfmlHttpRequest.TestSetUri;
-var
-  Uri: AnsiString;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlHttpRequest.SetUri(Uri);
-  // TODO: check return values
+  FSfmlHttpRequest.SetUri('www.google.com');
 end;
 
 procedure TestTSfmlHttpRequest.TestSetHttpVersion;
-var
-  Minor: Cardinal;
-  Major: Cardinal;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlHttpRequest.SetHttpVersion(Major, Minor);
-  // TODO: check return values
+  FSfmlHttpRequest.SetHttpVersion(1, 1);
 end;
 
 procedure TestTSfmlHttpRequest.TestSetBody;
 var
   Body: AnsiString;
 begin
-  // TODO: Methodenaufrufparameter einrichten
   FSfmlHttpRequest.SetBody(Body);
-  // TODO: check return values
 end;
 
 
@@ -469,11 +411,13 @@ end;
 
 procedure TestTSfmlHttp.TestBasics;
 var
-  Host: AnsiString;
   Request: TSfmlHttpRequest;
   ReturnValue: TSfmlHttpResponse;
 begin
-  FSfmlHttp.SetHost('localhost', 80);
+  FSfmlHttp.SetHost('www.google.com', 80);
+
+  Request := TSfmlHttpRequest.Create;
+  Request.SetMethod(sfHttpGet);
 
   ReturnValue := FSfmlHttp.SendRequest(Request, SfmlSeconds(5));
   CheckTrue(ReturnValue.GetStatus = sfHttpOk);
@@ -499,41 +443,43 @@ var
   ReturnValue: TSfmlPacket;
 begin
   ReturnValue := FSfmlPacket.Copy;
-  CheckEquals(FSfmlPacket.GetDataSize, ReturnValue.GetDataSize);
+  CheckEquals(FSfmlPacket.DataSize, ReturnValue.DataSize);
   CheckEquals(FSfmlPacket.EndOfPacket, ReturnValue.EndOfPacket);
   CheckEquals(FSfmlPacket.CanRead, ReturnValue.CanRead);
 end;
 
-procedure TestTSfmlPacket.TestAppend;
+procedure TestTSfmlPacket.TestAppendGetDataClear;
 var
-  SizeInBytes: NativeUInt;
-  Data: Pointer;
+  Data: PByteArray;
+  PacketData: PByteArray;
+  Index: Integer;
+const
+  CDataSize = 10;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlPacket.Append(Data, SizeInBytes);
-  // TODO: check return values
-end;
+  GetMem(Data, CDataSize);
+  try
+    // append some data
+    FillChar(Data^, CDataSize, 42);
+    FSfmlPacket.Append(Data, CDataSize);
 
-procedure TestTSfmlPacket.TestClear;
-begin
-  FSfmlPacket.Clear;
-  // TODO: check return values
-end;
+    // ensure the size equals the data size
+    CheckEquals(CDataSize, FSfmlPacket.DataSize);
 
-procedure TestTSfmlPacket.TestGetData;
-var
-  ReturnValue: Pointer;
-begin
-  ReturnValue := FSfmlPacket.GetData;
-  // TODO: check return values
-end;
+    // get packet data
+    PacketData := FSfmlPacket.GetData;
 
-procedure TestTSfmlPacket.TestGetDataSize;
-var
-  ReturnValue: NativeUInt;
-begin
-  ReturnValue := FSfmlPacket.GetDataSize;
-  // TODO: check return values
+    // check data for validity
+    for Index := 0 to CDataSize - 1 do
+      CheckEquals(42, PacketData^[Index]);
+
+    // clear contained data
+    FSfmlPacket.Clear;
+
+    // ensure the size is zero
+    CheckEquals(0, FSfmlPacket.DataSize);
+  finally
+    Dispose(Data);
+  end;
 end;
 
 procedure TestTSfmlPacket.TestEndOfPacket;
@@ -541,7 +487,7 @@ var
   ReturnValue: Boolean;
 begin
   ReturnValue := FSfmlPacket.EndOfPacket;
-  // TODO: check return values
+  CheckTrue(ReturnValue);
 end;
 
 procedure TestTSfmlPacket.TestCanRead;
@@ -549,196 +495,56 @@ var
   ReturnValue: Boolean;
 begin
   ReturnValue := FSfmlPacket.CanRead;
-  // TODO: check return values
+  CheckTrue(ReturnValue);
 end;
 
-procedure TestTSfmlPacket.TestReadBool;
+procedure TestTSfmlPacket.TestReadWrite;
 var
-  ReturnValue: Boolean;
+  Ansi: AnsiString;
+  Wide: UnicodeString;
 begin
-  ReturnValue := FSfmlPacket.ReadBool;
-  // TODO: check return values
-end;
+  // Boolean
+  FSfmlPacket.WriteBool(True);
+  CheckEquals(True, FSfmlPacket.ReadBool);
 
-procedure TestTSfmlPacket.TestReadInt8;
-var
-  ReturnValue: Shortint;
-begin
-  ReturnValue := FSfmlPacket.ReadInt8;
-  // TODO: check return values
-end;
+  // ShortInt
+  FSfmlPacket.Writeint8(123);
+  CheckEquals(123, FSfmlPacket.ReadInt8);
 
-procedure TestTSfmlPacket.TestReadUint8;
-var
-  ReturnValue: Byte;
-begin
-  ReturnValue := FSfmlPacket.ReadUint8;
-  // TODO: check return values
-end;
+  // Byte
+  FSfmlPacket.WriteUint8(234);
+  CheckEquals(234, FSfmlPacket.ReadUInt8);
 
-procedure TestTSfmlPacket.TestReadInt16;
-var
-  ReturnValue: Smallint;
-begin
-  ReturnValue := FSfmlPacket.ReadInt16;
-  // TODO: check return values
-end;
+  // SmallInt
+  FSfmlPacket.WriteInt16(345);
+  CheckEquals(345, FSfmlPacket.ReadInt16);
 
-procedure TestTSfmlPacket.TestReadUint16;
-var
-  ReturnValue: Word;
-begin
-  ReturnValue := FSfmlPacket.ReadUint16;
-  // TODO: check return values
-end;
+  // Word
+  FSfmlPacket.WriteUint16(456);
+  CheckEquals(456, FSfmlPacket.ReadUInt16);
 
-procedure TestTSfmlPacket.TestReadInt32;
-var
-  ReturnValue: System.Integer;
-begin
-  ReturnValue := FSfmlPacket.ReadInt32;
-  // TODO: check return values
-end;
+  FSfmlPacket.WriteUint16(567);
+  CheckEquals(567, FSfmlPacket.ReadUint16);
 
-procedure TestTSfmlPacket.TestReadUint32;
-var
-  ReturnValue: Cardinal;
-begin
-  ReturnValue := FSfmlPacket.ReadUint32;
-  // TODO: check return values
-end;
+  FSfmlPacket.WriteInt32(678);
+  CheckEquals(678, FSfmlPacket.ReadInt32);
 
-procedure TestTSfmlPacket.TestReadFloat;
-var
-  ReturnValue: Single;
-begin
-  ReturnValue := FSfmlPacket.ReadFloat;
-  // TODO: check return values
-end;
+  FSfmlPacket.WriteUint32(789);
+  CheckEquals(789, FSfmlPacket.ReadUint32);
 
-procedure TestTSfmlPacket.TestReadDouble;
-var
-  ReturnValue: Double;
-begin
-  ReturnValue := FSfmlPacket.ReadDouble;
-  // TODO: check return values
-end;
+  FSfmlPacket.WriteFloat(0.25);
+  CheckEquals(0.25, FSfmlPacket.ReadFloat);
 
-procedure TestTSfmlPacket.TestReadString;
-var
-  &String: AnsiString;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlPacket.ReadString(&String);
-  // TODO: check return values
-end;
+  FSfmlPacket.WriteDouble(0.125);
+  CheckEquals(0.125, FSfmlPacket.ReadDouble);
 
-procedure TestTSfmlPacket.TestReadWideString;
-var
-  &String: string;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlPacket.ReadWideString(&String);
-  // TODO: check return values
-end;
+  FSfmlPacket.WriteString(AnsiString('Foo'));
+  FSfmlPacket.ReadString(Ansi);
+  CheckEquals(AnsiString('Foo'), Ansi);
 
-procedure TestTSfmlPacket.TestWriteBool;
-var
-  Value: Boolean;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlPacket.WriteBool(Value);
-  // TODO: check return values
-end;
-
-procedure TestTSfmlPacket.TestWriteInt8;
-var
-  Value: Shortint;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlPacket.WriteInt8(Value);
-  // TODO: check return values
-end;
-
-procedure TestTSfmlPacket.TestWriteUint8;
-var
-  Value: Byte;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlPacket.WriteUint8(Value);
-  // TODO: check return values
-end;
-
-procedure TestTSfmlPacket.TestWriteInt16;
-var
-  Value: Smallint;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlPacket.WriteInt16(Value);
-  // TODO: check return values
-end;
-
-procedure TestTSfmlPacket.TestWriteUint16;
-var
-  Value: Word;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlPacket.WriteUint16(Value);
-  // TODO: check return values
-end;
-
-procedure TestTSfmlPacket.TestWriteInt32;
-var
-  Value: System.Integer;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlPacket.WriteInt32(Value);
-  // TODO: check return values
-end;
-
-procedure TestTSfmlPacket.TestWriteUint32;
-var
-  Value: Cardinal;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlPacket.WriteUint32(Value);
-  // TODO: check return values
-end;
-
-procedure TestTSfmlPacket.TestWriteFloat;
-var
-  Value: Single;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlPacket.WriteFloat(Value);
-  // TODO: check return values
-end;
-
-procedure TestTSfmlPacket.TestWriteDouble;
-var
-  Value: Double;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlPacket.WriteDouble(Value);
-  // TODO: check return values
-end;
-
-procedure TestTSfmlPacket.TestWriteString;
-var
-  &String: AnsiString;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlPacket.WriteString(&String);
-  // TODO: check return values
-end;
-
-procedure TestTSfmlPacket.TestWriteWideString;
-var
-  &String: PUCS4CharArray;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlPacket.WriteWideString(&String);
-  // TODO: check return values
+  FSfmlPacket.WriteWideString('Bar');
+  FSfmlPacket.ReadWideString(Wide);
+  CheckEquals('Bar', Wide);
 end;
 
 
@@ -755,76 +561,84 @@ begin
   FSfmlSocketSelector := nil;
 end;
 
-procedure TestTSfmlSocketSelector.TestCopy;
+procedure TestTSfmlSocketSelector.TestAddRemoveTcpListener;
 var
-  ReturnValue: TSfmlSocketSelector;
+  Socket: TSfmlTcpListener;
 begin
-  ReturnValue := FSfmlSocketSelector.Copy;
-  // TODO: check return values
-end;
+  Socket := TSfmlTcpListener.Create;
+  try
+    FSfmlSocketSelector.AddTcpListener(Socket.Handle);
+    // TODO: check return values
 
-procedure TestTSfmlSocketSelector.TestAddTcpListener;
-var
-  Socket: PSfmlTcpListener;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlSocketSelector.AddTcpListener(Socket);
-  // TODO: check return values
-end;
-
-procedure TestTSfmlSocketSelector.TestRemoveTcpListener;
-var
-  Socket: PSfmlTcpListener;
-begin
-  // TODO: Methodenaufrufparameter einrichten
-  FSfmlSocketSelector.RemoveTcpListener(Socket);
-  // TODO: check return values
+    FSfmlSocketSelector.RemoveTcpListener(Socket.Handle);
+    // TODO: check return values
+  finally
+    Socket.Free;
+  end;
 end;
 
 procedure TestTSfmlSocketSelector.TestClear;
+var
+  Socket: TSfmlTcpListener;
 begin
-  FSfmlSocketSelector.Clear;
-  // TODO: check return values
+  Socket := TSfmlTcpListener.Create;
+  try
+    FSfmlSocketSelector.AddTcpListener(Socket.Handle);
+    FSfmlSocketSelector.Clear;
+    // TODO: check return values
+  finally
+    Socket.Free;
+  end;
 end;
 
 procedure TestTSfmlSocketSelector.TestWait;
 var
   ReturnValue: Boolean;
-  Timeout: TSfmlTime;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlSocketSelector.Wait(Timeout);
-  // TODO: check return values
+  ReturnValue := FSfmlSocketSelector.Wait(SfmlSeconds(1));
+  CheckTrue(ReturnValue);
 end;
 
 procedure TestTSfmlSocketSelector.TestIsTcpListenerReady;
 var
   ReturnValue: Boolean;
-  Socket: PSfmlTcpListener;
+  Socket: TSfmlTcpListener;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlSocketSelector.IsTcpListenerReady(Socket);
-  // TODO: check return values
+  Socket := TSfmlTcpListener.Create;
+  try
+    ReturnValue := FSfmlSocketSelector.IsTcpListenerReady(Socket.Handle);
+    CheckTrue(ReturnValue);
+  finally
+    Socket.Free;
+  end;
 end;
 
 procedure TestTSfmlSocketSelector.TestIsTcpSocketReady;
 var
   ReturnValue: Boolean;
-  Socket: PSfmlTcpSocket;
+  Socket: TSfmlTcpSocket;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlSocketSelector.IsTcpSocketReady(Socket);
-  // TODO: check return values
+  Socket := TSfmlTcpSocket.Create;
+  try
+    ReturnValue := FSfmlSocketSelector.IsTcpSocketReady(Socket.Handle);
+    CheckTrue(ReturnValue);
+  finally
+    Socket.Free;
+  end;
 end;
 
 procedure TestTSfmlSocketSelector.TestIsUdpSocketReady;
 var
   ReturnValue: Boolean;
-  Socket: PSfmlUdpSocket;
+  Socket: TSfmlUdpSocket;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlSocketSelector.IsUdpSocketReady(Socket);
-  // TODO: check return values
+  Socket := TSfmlUdpSocket.Create;
+  try
+    ReturnValue := FSfmlSocketSelector.IsUdpSocketReady(Socket.Handle);
+    CheckTrue(ReturnValue);
+  finally
+    Socket.Free;
+  end;
 end;
 
 
@@ -844,10 +658,9 @@ end;
 procedure TestTSfmlTcpListener.TestListen;
 var
   ReturnValue: TSfmlSocketStatus;
-  Port: Byte;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlTcpListener.Listen(Port);
+  ReturnValue := FSfmlTcpListener.Listen(80);
+  CheckTrue(ReturnValue <> sfSocketError);
   // TODO: check return values
 end;
 
@@ -858,7 +671,7 @@ var
 begin
   // TODO: Methodenaufrufparameter einrichten
   ReturnValue := FSfmlTcpListener.Accept(Connected);
-  // TODO: check return values
+  CheckTrue(ReturnValue <> sfSocketError);
 end;
 
 
@@ -888,19 +701,17 @@ var
   ReturnValue: Byte;
 begin
   ReturnValue := FSfmlTcpSocket.GetRemotePort;
+  CheckEquals(123, ReturnValue);
   // TODO: check return values
 end;
 
 procedure TestTSfmlTcpSocket.TestConnect;
 var
   ReturnValue: TSfmlSocketStatus;
-  TimeOut: TSfmlTime;
-  Port: Byte;
-  Host: TSfmlIpAddress;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlTcpSocket.Connect(Host, Port, TimeOut);
-  // TODO: check return values
+  ReturnValue := FSfmlTcpSocket.Connect(SfmlIpAddressLocalHost, 123,
+    SfmlSeconds(1));
+  CheckTrue(ReturnValue <> sfSocketError);
 end;
 
 procedure TestTSfmlTcpSocket.TestDisconnect;
@@ -915,41 +726,59 @@ var
   Size: NativeUInt;
   Data: Pointer;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlTcpSocket.Send(Data, Size);
-  // TODO: check return values
+  Size := 1024;
+  GetMem(Data, Size);
+  try
+    FillChar(Data^, Size, 0);
+    ReturnValue := FSfmlTcpSocket.Send(Data, Size);
+    CheckTrue(ReturnValue <> sfSocketError);
+  finally
+    Dispose(Data);
+  end;
 end;
 
 procedure TestTSfmlTcpSocket.TestReceive;
 var
   ReturnValue: TSfmlSocketStatus;
-  SizeReceived: PNativeUInt;
-  MaxSize: NativeUInt;
+  SizeReceived: NativeUInt;
   Data: Pointer;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlTcpSocket.Receive(Data, MaxSize, SizeReceived);
-  // TODO: check return values
+  GetMem(Data, 1024);
+  try
+    ReturnValue := FSfmlTcpSocket.Receive(Data, 1024, SizeReceived);
+    CheckEquals(0, SizeReceived);
+    CheckTrue(ReturnValue <> sfSocketError);
+  finally
+    Dispose(Data);
+  end;
 end;
 
 procedure TestTSfmlTcpSocket.TestSendPacket;
 var
   ReturnValue: TSfmlSocketStatus;
-  Packet: PSfmlPacket;
+  Packet: TSfmlPacket;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlTcpSocket.SendPacket(Packet);
-  // TODO: check return values
+  Packet := TSfmlPacket.Create;
+  try
+    ReturnValue := FSfmlTcpSocket.SendPacket(Packet.Handle);
+    CheckTrue(ReturnValue <> sfSocketError);
+  finally
+    Packet.Free;
+  end;
 end;
 
 procedure TestTSfmlTcpSocket.TestReceivePacket;
 var
   ReturnValue: TSfmlSocketStatus;
-  Packet: PSfmlPacket;
+  Packet: TSfmlPacket;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlTcpSocket.ReceivePacket(Packet);
-  // TODO: check return values
+  Packet := TSfmlPacket.Create;
+  try
+    ReturnValue := FSfmlTcpSocket.ReceivePacket(Packet.Handle);
+    CheckTrue(ReturnValue <> sfSocketError);
+  finally
+    Packet.Free;
+  end;
 end;
 
 
@@ -966,33 +795,31 @@ begin
   FSfmlUdpSocket := nil;
 end;
 
-procedure TestTSfmlUdpSocket.TestBind;
+procedure TestTSfmlUdpSocket.TestBindUnbind;
 var
   ReturnValue: TSfmlSocketStatus;
-  Port: Byte;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlUdpSocket.Bind(Port);
-  // TODO: check return values
-end;
-
-procedure TestTSfmlUdpSocket.TestUnbind;
-begin
+  ReturnValue := FSfmlUdpSocket.Bind(123);
+  CheckTrue(ReturnValue <> sfSocketError);
   FSfmlUdpSocket.Unbind;
-  // TODO: check return values
 end;
 
 procedure TestTSfmlUdpSocket.TestSend;
 var
   ReturnValue: TSfmlSocketStatus;
-  Port: Byte;
   Address: TSfmlIpAddress;
   Size: NativeUInt;
   Data: Pointer;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlUdpSocket.Send(Data, Size, Address, Port);
-  // TODO: check return values
+  Size := 1024;
+  GetMem(Data, Size);
+  try
+    FillChar(Data^, Size, 0);
+    ReturnValue := FSfmlUdpSocket.Send(Data, Size, Address, 123);
+    CheckTrue(ReturnValue <> sfSocketError);
+  finally
+    Dispose(Data);
+  end;
 end;
 
 procedure TestTSfmlUdpSocket.TestReceive;
@@ -1000,26 +827,36 @@ var
   ReturnValue: TSfmlSocketStatus;
   Port: Byte;
   Address: TSfmlIpAddress;
-  SizeReceived: PNativeUInt;
+  SizeReceived: NativeUInt;
   MaxSize: NativeUInt;
   Data: Pointer;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlUdpSocket.Receive(Data, MaxSize, SizeReceived, Address,
-      Port);
-  // TODO: check return values
+  MaxSize := 1024;
+  GetMem(Data, MaxSize);
+  try
+    ReturnValue := FSfmlUdpSocket.Receive(Data, MaxSize, SizeReceived,
+      Address, Port);
+
+    CheckTrue(ReturnValue <> sfSocketError);
+    CheckEquals(SizeReceived, 0);
+  finally
+    Dispose(Data);
+  end;
 end;
 
 procedure TestTSfmlUdpSocket.TestSendPacket;
 var
   ReturnValue: TSfmlSocketStatus;
-  Port: Byte;
   Address: TSfmlIpAddress;
-  Packet: PSfmlPacket;
+  Packet: TSfmlPacket;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlUdpSocket.SendPacket(Packet, Address, Port);
-  // TODO: check return values
+  Packet := TSfmlPacket.Create;
+  try
+    ReturnValue := FSfmlUdpSocket.SendPacket(Packet.Handle, Address, 123);
+    CheckTrue(ReturnValue <> sfSocketError);
+  finally
+    Packet.Free;
+  end;
 end;
 
 procedure TestTSfmlUdpSocket.TestReceivePacket;
@@ -1027,11 +864,15 @@ var
   ReturnValue: TSfmlSocketStatus;
   Port: Byte;
   Address: TSfmlIpAddress;
-  Packet: PSfmlPacket;
+  Packet: TSfmlPacket;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlUdpSocket.ReceivePacket(Packet, Address, Port);
-  // TODO: check return values
+  Packet := TSfmlPacket.Create;
+  try
+    ReturnValue := FSfmlUdpSocket.ReceivePacket(Packet.Handle, Address, Port);
+    CheckTrue(ReturnValue <> sfSocketError);
+  finally
+    Packet.Free;
+  end;
 end;
 
 initialization

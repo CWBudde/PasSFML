@@ -117,7 +117,8 @@ type
     sfFtpInvalidFile = 1003
   );
 
-  TSfmlHttpMethod = (sfHttpGet, sfHttpPost, sfHttpHead, sfHttpPut, sfHttpDelete);
+  TSfmlHttpMethod = (sfHttpGet, sfHttpPost, sfHttpHead, sfHttpPut,
+    sfHttpDelete);
 
   TSfmlHttpStatus = (
     sfHttpOk = 200,
@@ -231,7 +232,7 @@ type
   TSfmlPacketReadFloat = function (Packet: PSfmlPacket): Single; cdecl;
   TSfmlPacketReadDouble = function (Packet: PSfmlPacket): Double; cdecl;
   TSfmlPacketReadString = procedure (Packet: PSfmlPacket; &String: PAnsiChar); cdecl;
-  TSfmlPacketReadWideString = procedure (Packet: PSfmlPacket; &String: PUCS4CharArray); cdecl;
+  TSfmlPacketReadWideString = procedure (Packet: PSfmlPacket; &String: PUCS4Char); cdecl;
   TSfmlPacketWriteBool = procedure (Packet: PSfmlPacket; Value: Boolean); cdecl;
   TSfmlPacketWriteInt8 = procedure (Packet: PSfmlPacket; Value: ShortInt); cdecl;
   TSfmlPacketWriteUint8 = procedure (Packet: PSfmlPacket; Value: Byte); cdecl;
@@ -242,7 +243,7 @@ type
   TSfmlPacketWriteFloat = procedure (Packet: PSfmlPacket; Value: Single); cdecl;
   TSfmlPacketWriteDouble = procedure (Packet: PSfmlPacket; Value: Double); cdecl;
   TSfmlPacketWriteString = procedure (Packet: PSfmlPacket; const &String: PAnsiChar); cdecl;
-  TSfmlPacketWriteWideString = procedure (Packet: PSfmlPacket; const &String: PUCS4CharArray); cdecl;
+  TSfmlPacketWriteWideString = procedure (Packet: PSfmlPacket; const &String: PUCS4Char); cdecl;
 
   TSfmlSocketSelectorCreate = function : PSfmlSocketSelector; cdecl;
   TSfmlSocketSelectorCopy = function (const Selector: PSfmlSocketSelector): PSfmlSocketSelector; cdecl;
@@ -516,7 +517,7 @@ const
   function SfmlPacketReadFloat(Packet: PSfmlPacket): Single; cdecl; external CSfmlNetworkLibrary name 'sfPacket_readFloat';
   function SfmlPacketReadDouble(Packet: PSfmlPacket): Double; cdecl; external CSfmlNetworkLibrary name 'sfPacket_readDouble';
   procedure SfmlPacketReadString(Packet: PSfmlPacket; &String: PAnsiChar); cdecl; external CSfmlNetworkLibrary name 'sfPacket_readString';
-  procedure SfmlPacketReadWideString(Packet: PSfmlPacket; &String: PUCS4CharArray); cdecl; external CSfmlNetworkLibrary name 'sfPacket_readWideString';
+  procedure SfmlPacketReadWideString(Packet: PSfmlPacket; &String: PUCS4Char); cdecl; external CSfmlNetworkLibrary name 'sfPacket_readWideString';
   procedure SfmlPacketWriteBool(Packet: PSfmlPacket; Value: Boolean); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeBool';
   procedure SfmlPacketWriteInt8(Packet: PSfmlPacket; Value: ShortInt); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeInt8';
   procedure SfmlPacketWriteUint8(Packet: PSfmlPacket; Value: Byte); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeUint8';
@@ -527,7 +528,7 @@ const
   procedure SfmlPacketWriteFloat(Packet: PSfmlPacket; Value: Single); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeFloat';
   procedure SfmlPacketWriteDouble(Packet: PSfmlPacket; Value: Double); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeDouble';
   procedure SfmlPacketWriteString(Packet: PSfmlPacket; const &String: PAnsiChar); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeString';
-  procedure SfmlPacketWriteWideString(Packet: PSfmlPacket; const &String: PUCS4CharArray); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeWideString';
+  procedure SfmlPacketWriteWideString(Packet: PSfmlPacket; const &String: PUCS4Char); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeWideString';
 
   function SfmlSocketSelectorCreate: PSfmlSocketSelector; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_create';
   function SfmlSocketSelectorCopy(const Selector: PSfmlSocketSelector): PSfmlSocketSelector; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_copy';
@@ -558,7 +559,7 @@ const
   function SfmlTcpSocketConnect(Socket: PSfmlTcpSocket; Host: TSfmlIpAddress; Port: Byte; TimeOut: TSfmlTime): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_connect';
   procedure SfmlTcpSocketDisconnect(Socket: PSfmlTcpSocket); cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_disconnect';
   function SfmlTcpSocketSend(Socket: PSfmlTcpSocket; const Data: Pointer; Size: NativeUInt): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_send';
-  function SfmlTcpSocketReceive(Socket: PSfmlTcpSocket; Data: Pointer; MaxSize: NativeUInt; SizeReceived: PNativeUInt): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_receive';
+  function SfmlTcpSocketReceive(Socket: PSfmlTcpSocket; Data: Pointer; MaxSize: NativeUInt; out SizeReceived: NativeUInt): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_receive';
   function SfmlTcpSocketSendPacket(Socket: PSfmlTcpSocket; Packet: PSfmlPacket): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_sendPacket';
   function SfmlTcpSocketReceivePacket(Socket: PSfmlTcpSocket; Packet: PSfmlPacket): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_receivePacket';
 
@@ -570,7 +571,7 @@ const
   function SfmlUdpSocketBind(Socket: PSfmlUdpSocket; Port: Byte): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_bind';
   procedure SfmlUdpSocketUnbind(Socket: PSfmlUdpSocket); cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_unbind';
   function SfmlUdpSocketSend(Socket: PSfmlUdpSocket; const Data: Pointer; Size: NativeUInt; Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_send';
-  function SfmlUdpSocketReceive(Socket: PSfmlUdpSocket; Data: Pointer; MaxSize: NativeUInt; SizeReceived: PNativeUInt; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_receive';
+  function SfmlUdpSocketReceive(Socket: PSfmlUdpSocket; Data: Pointer; MaxSize: NativeUInt; out SizeReceived: NativeUInt; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_receive';
   function SfmlUdpSocketSendPacket(Socket: PSfmlUdpSocket; Packet: PSfmlPacket; Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_sendPacket';
   function SfmlUdpSocketReceivePacket(Socket: PSfmlUdpSocket; Packet: PSfmlPacket; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_receivePacket';
   function SfmlUdpSocketMaxDatagramSize: Cardinal; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_maxDatagramSize';
@@ -692,6 +693,7 @@ type
   private
     FHandle: PSfmlPacket;
     constructor Create(Handle: PSfmlPacket); overload;
+    function GetDataSize: NativeUInt;
   public
     constructor Create; overload;
     destructor Destroy; override;
@@ -701,7 +703,6 @@ type
     procedure Clear;
 
     function GetData: Pointer;
-    function GetDataSize: NativeUInt;
     function EndOfPacket: Boolean;
     function CanRead: Boolean;
     function ReadBool: Boolean;
@@ -713,8 +714,8 @@ type
     function ReadUint32: Cardinal;
     function ReadFloat: Single;
     function ReadDouble: Double;
-    procedure ReadString(&String: AnsiString);
-    procedure ReadWideString(&String: string);
+    procedure ReadString(out &String: AnsiString);
+    procedure ReadWideString(out &String: UnicodeString);
     procedure WriteBool(Value: Boolean);
     procedure WriteInt8(Value: ShortInt);
     procedure WriteUint8(Value: Byte);
@@ -725,7 +726,10 @@ type
     procedure WriteFloat(Value: Single);
     procedure WriteDouble(Value: Double);
     procedure WriteString(&String: AnsiString);
-    procedure WriteWideString(&String: PUCS4CharArray);
+    procedure WriteWideString(&String: UnicodeString);
+
+    property DataSize: NativeUInt read GetDataSize;
+    property Handle: PSfmlPacket read FHandle;
   end;
 
   TSfmlSocketSelector = class
@@ -771,6 +775,8 @@ type
 
     function Listen(Port: Byte): TSfmlSocketStatus;
     function Accept(out Connected: PSfmlTcpSocket): TSfmlSocketStatus;
+
+    property Handle: PSfmlTcpListener read FHandle;
   end;
 
   TSfmlTcpSocket = class(TSfmlSocket)
@@ -789,9 +795,11 @@ type
     function Connect(Host: TSfmlIpAddress; Port: Byte; TimeOut: TSfmlTime): TSfmlSocketStatus;
     procedure Disconnect;
     function Send(Data: Pointer; Size: NativeUInt): TSfmlSocketStatus;
-    function Receive(Data: Pointer; MaxSize: NativeUInt; SizeReceived: PNativeUInt): TSfmlSocketStatus;
+    function Receive(Data: Pointer; MaxSize: NativeUInt; out SizeReceived: NativeUInt): TSfmlSocketStatus;
     function SendPacket(Packet: PSfmlPacket): TSfmlSocketStatus;
     function ReceivePacket(Packet: PSfmlPacket): TSfmlSocketStatus;
+
+    property Handle: PSfmlTcpSocket read FHandle;
   end;
 
   TSfmlUdpSocket = class(TSfmlSocket)
@@ -808,9 +816,11 @@ type
     function Bind(Port: Byte): TSfmlSocketStatus;
     procedure Unbind;
     function Send(Data: Pointer; Size: NativeUInt; Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus;
-    function Receive(Data: Pointer; MaxSize: NativeUInt; SizeReceived: PNativeUInt; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus;
+    function Receive(Data: Pointer; MaxSize: NativeUInt; out SizeReceived: NativeUInt; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus;
     function SendPacket(Packet: PSfmlPacket; Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus;
     function ReceivePacket(Packet: PSfmlPacket; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus;
+
+    property Handle: PSfmlUdpSocket read FHandle;
   end;
 
 implementation
@@ -1222,7 +1232,7 @@ begin
   Result := SfmlPacketReadInt8(FHandle);
 end;
 
-procedure TSfmlPacket.ReadString(&String: AnsiString);
+procedure TSfmlPacket.ReadString(out &String: AnsiString);
 begin
   SfmlPacketReadString(FHandle, PAnsiChar(&String));
 end;
@@ -1242,9 +1252,12 @@ begin
   Result := SfmlPacketReadUint8(FHandle);
 end;
 
-procedure TSfmlPacket.ReadWideString(&String: string);
+procedure TSfmlPacket.ReadWideString(out &String: UnicodeString);
+var
+  Temp: UCS4String;
 begin
-  SfmlPacketReadWideString(FHandle, PUCS4CharArray(&String));
+  SfmlPacketReadWideString(FHandle, PUCS4Char(Temp));
+  &String := UCS4StringToUnicodeString(Temp);
 end;
 
 procedure TSfmlPacket.WriteBool(Value: Boolean);
@@ -1297,9 +1310,10 @@ begin
   SfmlPacketWriteUint8(FHandle, Value);
 end;
 
-procedure TSfmlPacket.WriteWideString(&String: PUCS4CharArray);
+procedure TSfmlPacket.WriteWideString(&String: UnicodeString);
 begin
-  SfmlPacketWriteWideString(FHandle, PUCS4CharArray(&String));
+  SfmlPacketWriteWideString(FHandle,
+    PUCS4Char(UnicodeStringToUCS4String(&String)));
 end;
 
 
@@ -1448,7 +1462,7 @@ begin
 end;
 
 function TSfmlTcpSocket.Receive(Data: Pointer; MaxSize: NativeUInt;
-  SizeReceived: PNativeUInt): TSfmlSocketStatus;
+  out SizeReceived: NativeUInt): TSfmlSocketStatus;
 begin
   Result := SfmlTcpSocketReceive(FHandle, Data, MaxSize, SizeReceived);
 end;
@@ -1504,7 +1518,7 @@ begin
 end;
 
 function TSfmlUdpSocket.Receive(Data: Pointer; MaxSize: NativeUInt;
-  SizeReceived: PNativeUInt; out Address: TSfmlIpAddress;
+  out SizeReceived: NativeUInt; out Address: TSfmlIpAddress;
   out Port: Byte): TSfmlSocketStatus;
 begin
   Result := SfmlUdpSocketReceive(FHandle, Data, MaxSize, SizeReceived, Address, Port);

@@ -843,15 +843,16 @@ var
   ReturnValue: PSfmlView;
 begin
   ReturnValue := FSfmlRenderTexture.GetDefaultView;
-  // TODO: Check results
+  CheckTrue(ReturnValue <> nil);
 end;
 
 procedure TestTSfmlRenderTexture.TestGetTexture;
 var
-  ReturnValue: PSfmlTexture;
+  ReturnValue: TSfmlTexture;
 begin
   ReturnValue := FSfmlRenderTexture.GetTexture;
-  // TODO: Check results
+  CheckEquals(FSfmlRenderTexture.Size.X, ReturnValue.Size.X);
+  CheckEquals(FSfmlRenderTexture.Size.Y, ReturnValue.Size.Y);
 end;
 
 procedure TestTSfmlRenderTexture.TestGetView;
