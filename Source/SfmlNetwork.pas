@@ -34,7 +34,7 @@ uses
 const
 {$IF Defined(MSWINDOWS)}
   CSfmlNetworkLibrary = 'csfml-network-2.dll';
-{$ELSEIF Defined(DARWIN)}
+{$ELSEIF Defined(DARWIN) or Defined(MACOS)}
   CSfmlNetworkLibrary = 'csfml-network-2.dylib';
 {$ELSEIF Defined(UNIX)}
   CSfmlNetworkLibrary = 'csfml-network-2.so';

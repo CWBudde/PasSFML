@@ -69,7 +69,7 @@ end;
 procedure TPixelate.OnDraw(Target: TSfmlRenderTarget;
   States: PSfmlRenderStates);
 begin
-  States.Shader := &FShader;
+  States.Shader := FShader.Handle;
   Target.Draw(FSprite, States);
 end;
 
@@ -103,7 +103,7 @@ end;
 procedure TWaveBlur.OnDraw(Target: TSfmlRenderTarget;
   States: PSfmlRenderStates);
 begin
-  States.Shader := FShader;
+  States.Shader := FShader.Handle;
   Target.Draw(FText, States);
 end;
 
@@ -128,7 +128,7 @@ begin
     'Mauris ultricies dolor sed massa convallis sed aliquet augue fringilla.'#10 +
     'Duis erat eros, porta in accumsan in, blandit quis sem.'#10 +
     'In hac habitasse platea dictumst. Etiam fringilla est id odio dapibus sit amet semper dui laoreet.'#10;
-  FText.Font := Font;
+  FText.Font := Font.Handle;
   FText.CharacterSize := 22;
   FText.Position := SfmlVector2f(30, 20);
 
@@ -154,7 +154,7 @@ end;
 procedure TStormBlink.OnDraw(Target: TSfmlRenderTarget;
   States: PSfmlRenderStates);
 begin
-  States.Shader := FShader;
+  States.Shader := FShader.Handle;
   Target.Draw(FPoints, States);
 end;
 
@@ -202,7 +202,7 @@ end;
 
 procedure TEdge.OnDraw(Target: TSfmlRenderTarget; States: PSfmlRenderStates);
 begin
-  States.Shader := FShader;
+  States.Shader := FShader.Handle;
   Target.Draw(TSfmlSprite(FSurface.getTexture()), States);
 end;
 
@@ -357,9 +357,9 @@ begin
     end;
 
     // Update the current example
-    X := SfmlMouseGetPosition(Window).X / Window.Size.X;
-    Y := SfmlMouseGetPosition(Window).Y / Window.Size.Y;
-    Effects[current].Update(Clock.ElapsedTime.AsSeconds, x, y);
+    X := Window.MousePosition.X / Window.Size.X;
+    Y := Window.MousePosition.Y / Window.Size.Y;
+    Effects[current].Update(Clock.ElapsedTime.AsSeconds, X, Y);
 
     // Clear the Window
     Window.Clear(SfmlColorFromRGB(255, 128, 0));

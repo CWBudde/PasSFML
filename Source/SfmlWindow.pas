@@ -34,7 +34,7 @@ uses
 const
 {$IF Defined(MSWINDOWS)}
   CSfmlWindowLibrary = 'csfml-window-2.dll';
-{$ELSEIF Defined(DARWIN)}
+{$ELSEIF Defined(DARWIN) or Defined(MACOS)}
   CSfmlWindowLibrary = 'csfml-window-2.dylib';
 {$ELSEIF Defined(UNIX)}
   CSfmlWindowLibrary = 'csfml-window-2.so';
@@ -61,7 +61,13 @@ type
   end;
   PSfmlVideoMode = ^TSfmlVideoMode;
 
-  TSfmlWindowHandle = ^HWND; // Cardinal in linux, Pointer in OSX
+{$IF Defined(MSWINDOWS)}
+  TSfmlWindowHandle = ^HWND;
+{$ELSEIF Defined(DARWIN) or Defined(MACOS)}
+  TSfmlWindowHandle = Pointer;
+{$ELSEIF Defined(UNIX)}
+  TSfmlWindowHandle = Cardinal;
+{$IFEND}
 
   TSfmlWindowStyle = (sfTitleBar, sfResize, sfClose, sfFullscreen);
   TSfmlWindowStyles = set of TSfmlWindowStyle;
@@ -421,8 +427,10 @@ type
   TSfmlWindow = class(TInterfacedObject, ISfmlWindow)
   private
     FHandle: PSfmlWindow;
+    function GetMousePosition: TSfmlVector2i;
     function GetPosition: TSfmlVector2i;
     function GetSize: TSfmlVector2u;
+    procedure SetMousePosition(Position: TSfmlVector2i);
     procedure SetPosition(Position: TSfmlVector2i);
     procedure SetSize(Size: TSfmlVector2u);
   public
@@ -459,6 +467,7 @@ type
     function GetSystemHandle: TSfmlWindowHandle;
 
     property Handle: PSfmlWindow read FHandle;
+    property MousePosition: TSfmlVector2i read GetMousePosition write SetMousePosition;
     property Position: TSfmlVector2i read GetPosition write SetPosition;
     property Size: TSfmlVector2u read GetSize write SetSize;
   end;
@@ -562,6 +571,11 @@ begin
   SfmlWindowDisplay(FHandle);
 end;
 
+function TSfmlWindow.GetMousePosition: TSfmlVector2i;
+begin
+  Result := SfmlMouseGetPosition(FHandle);
+end;
+
 function TSfmlWindow.GetPosition: TSfmlVector2i;
 begin
   Result := SfmlWindowGetPosition(FHandle);
@@ -630,6 +644,11 @@ end;
 procedure TSfmlWindow.SetMouseCursorVisible(Visible: Boolean);
 begin
   SfmlWindowSetMouseCursorVisible(FHandle, Visible);
+end;
+
+procedure TSfmlWindow.SetMousePosition(Position: TSfmlVector2i);
+begin
+  SfmlMouseSetPosition(Position, FHandle);
 end;
 
 procedure TSfmlWindow.SetPosition(Position: TSfmlVector2i);

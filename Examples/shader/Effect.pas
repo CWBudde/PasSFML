@@ -16,7 +16,7 @@ type
 
     function OnLoad: Boolean; virtual; abstract;
     procedure OnUpdate(Time, X, Y: Single); virtual; abstract;
-    procedure OnDraw(Target: TSfmlRenderTarget; states: PSfmlRenderStates); virtual; abstract;
+    procedure OnDraw(Target: TSfmlRenderTarget; States: PSfmlRenderStates); virtual; abstract;
   public
     procedure Load;
 

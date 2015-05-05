@@ -31,7 +31,7 @@ interface
 const
 {$IF Defined(MSWINDOWS)}
   CSfmlSystemLibrary = 'csfml-system-2.dll';
-{$ELSEIF Defined(DARWIN)}
+{$ELSEIF Defined(DARWIN) or Defined(MACOS)}
   CSfmlSystemLibrary = 'csfml-system-2.dylib';
 {$ELSEIF Defined(UNIX)}
   CSfmlSystemLibrary = 'csfml-system-2.so';

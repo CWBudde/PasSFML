@@ -34,7 +34,7 @@ uses
 const
 {$IF Defined(MSWINDOWS)}
   CSfmlAudioLibrary = 'csfml-audio-2.dll';
-{$ELSEIF Defined(DARWIN)}
+{$ELSEIF Defined(DARWIN) or Defined(MACOS)}
   CSfmlAudioLibrary = 'csfml-audio-2.dylib';
 {$ELSEIF Defined(UNIX)}
   CSfmlAudioLibrary = 'csfml-audio-2.so';

@@ -34,7 +34,7 @@ uses
 const
 {$IF Defined(MSWINDOWS)}
   CSfmlGraphicsLibrary = 'csfml-graphics-2.dll';
-{$ELSEIF Defined(DARWIN)}
+{$ELSEIF Defined(DARWIN) or Defined(MACOS)}
   CSfmlGraphicsLibrary = 'csfml-graphics-2.dylib';
 {$ELSEIF Defined(UNIX)}
   CSfmlGraphicsLibrary = 'csfml-graphics-2.so';
@@ -1802,6 +1802,7 @@ type
     procedure SetScale(Scale: TSfmlVector2f); override;
   public
     constructor Create; overload;
+    constructor Create(Texture: TSfmlTexture); overload;
     destructor Destroy; override;
 
     function Copy: TSfmlSprite;
@@ -1981,7 +1982,8 @@ type
     function GetViewport(const View: PSfmlView): TSfmlIntRect; virtual; abstract;
     procedure SetView(const View: PSfmlView); virtual; abstract;
   public
-    procedure Clear(Color: TSfmlColor); virtual; abstract;
+    procedure Clear(Color: TSfmlColor); overload; virtual; abstract;
+    procedure Clear; overload;
 
     procedure Draw(const &Object: TSfmlCircleShape; const States: PSfmlRenderStates = nil); overload; virtual; abstract;
     procedure Draw(const &Object: TSfmlConvexShape; const States: PSfmlRenderStates = nil); overload; virtual; abstract;
@@ -2059,7 +2061,9 @@ type
   TSfmlRenderWindow = class(TSfmlRenderTarget, ISfmlWindow)
   private
     FHandle: PSfmlRenderWindow;
+    function GetMousePosition: TSfmlVector2i;
     function GetPosition: TSfmlVector2i;
+    procedure SetMousePosition(Position: TSfmlVector2i);
     procedure SetPosition(Position: TSfmlVector2i);
   protected
     function GetSize: TSfmlVector2u; override;
@@ -2068,7 +2072,7 @@ type
     constructor Create(Mode: TSfmlVideoMode; const Title: UnicodeString; Style: TSfmlWindowStyles); overload;
     constructor Create(Mode: TSfmlVideoMode; const Title: AnsiString; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings); overload;
     constructor Create(Mode: TSfmlVideoMode; const Title: UnicodeString; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings); overload;
-    constructor Create(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings); overload;
+    constructor Create(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings = nil); overload;
     destructor Destroy; override;
 
     function GetDefaultView: PSfmlView; override;
@@ -2124,13 +2128,11 @@ type
     procedure SetVerticalSyncEnabled(Enabled: Boolean);
     procedure SetView(const View: PSfmlView); override;
     procedure SetVisible(Visible: Boolean);
-(*
-    function SfmlMouseGetPositionRenderWindow(const relativeTo: PSfmlRenderWindow): TSfmlVector2i;
-    procedure SfmlMouseSetPositionRenderWindow(position: TSfmlVector2i; const RelativeTo: PSfmlRenderWindow);
-    function SfmlTouchGetPositionRenderWindow(Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): TSfmlVector2i;
-*)
+
+//    function SfmlTouchGetPositionRenderWindow(Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): TSfmlVector2i;
 
     property Handle: PSfmlRenderWindow read FHandle;
+    property MousePosition: TSfmlVector2i read GetMousePosition write SetMousePosition;
     property Position: TSfmlVector2i read GetPosition write SetPosition;
   end;
 
@@ -2963,6 +2965,14 @@ begin
 end;
 
 
+{ TSfmlRenderTarget }
+
+procedure TSfmlRenderTarget.Clear;
+begin
+  Clear(SfmlBlack);
+end;
+
+
 { TSfmlRenderTexture }
 
 constructor TSfmlRenderTexture.Create(Width, Height: Cardinal; DepthBuffer: Boolean = False);
@@ -3196,7 +3206,7 @@ begin
     PUCS4Char(UnicodeStringToUCS4String(Title)), Style, Settings);
 end;
 
-constructor TSfmlRenderWindow.Create(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings);
+constructor TSfmlRenderWindow.Create(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings = nil);
 begin
   FHandle := SfmlRenderWindowCreateFromHandle(Handle, Settings);
 end;
@@ -3335,6 +3345,11 @@ begin
   Result := SfmlRenderWindowGetDefaultView(FHandle);
 end;
 
+function TSfmlRenderWindow.GetMousePosition: TSfmlVector2i;
+begin
+  Result := SfmlMouseGetPositionRenderWindow(FHandle);
+end;
+
 function TSfmlRenderWindow.GetPosition: TSfmlVector2i;
 begin
   Result := SfmlRenderWindowGetPosition(FHandle);
@@ -3441,6 +3456,11 @@ end;
 procedure TSfmlRenderWindow.SetMouseCursorVisible(Show: Boolean);
 begin
   SfmlRenderWindowSetMouseCursorVisible(FHandle, Show);
+end;
+
+procedure TSfmlRenderWindow.SetMousePosition(Position: TSfmlVector2i);
+begin
+  SfmlMouseSetPositionRenderWindow(Position, FHandle);
 end;
 
 procedure TSfmlRenderWindow.SetPosition(Position: TSfmlVector2i);
@@ -3890,6 +3910,12 @@ end;
 constructor TSfmlText.Create;
 begin
   FHandle := SfmlTextCreate;
+end;
+
+constructor TSfmlSprite.Create(Texture: TSfmlTexture);
+begin
+  Create;
+  SetTexture(Texture);
 end;
 
 constructor TSfmlText.Create(Text: UnicodeString; Font: TSfmlFont;
