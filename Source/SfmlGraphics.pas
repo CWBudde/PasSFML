@@ -1196,7 +1196,6 @@ const
 
   function SfmlRenderTextureCreate(Width, Height: Cardinal; DepthBuffer: Boolean): PSfmlRenderTexture; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_create';
   procedure SfmlRenderTextureDestroy(RenderTexture: PSfmlRenderTexture); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_destroy';
-  function SfmlRenderTextureGetSize(const RenderTexture: PSfmlRenderTexture): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_getSize';
   function SfmlRenderTextureSetActive(RenderTexture: PSfmlRenderTexture; Active: Boolean): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_setActive';
   procedure SfmlRenderTextureDisplay(RenderTexture: PSfmlRenderTexture); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_display';
   procedure SfmlRenderTextureClear(RenderTexture: PSfmlRenderTexture; Color: TSfmlColor); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_clear';
@@ -1221,6 +1220,7 @@ const
   procedure SfmlRenderTextureSetRepeated(RenderTexture: PSfmlRenderTexture; Repeated: Boolean); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_setRepeated';
   function SfmlRenderTextureIsRepeated(const RenderTexture: PSfmlRenderTexture): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_isRepeated';
 {$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlRenderTextureGetSize(const RenderTexture: PSfmlRenderTexture): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_getSize';
   function SfmlRenderTextureMapPixelToCoords(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_mapPixelToCoords';
   function SfmlRenderTextureMapCoordsToPixel(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_mapCoordsToPixel';
 {$ENDIF}
@@ -1236,7 +1236,6 @@ const
   function SfmlRenderWindowWaitEvent(RenderWindow: PSfmlRenderWindow; out Event: TSfmlEvent): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_waitEvent';
   function SfmlRenderWindowGetPosition(const RenderWindow: PSfmlRenderWindow): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_getPosition';
   procedure SfmlRenderWindowSetPosition(RenderWindow: PSfmlRenderWindow; Position: TSfmlVector2i); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setPosition';
-  function SfmlRenderWindowGetSize(const RenderWindow: PSfmlRenderWindow): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_getSize';
   procedure SfmlRenderWindowSetSize(RenderWindow: PSfmlRenderWindow; Size: TSfmlVector2u); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setSize';
   procedure SfmlRenderWindowSetTitle(RenderWindow: PSfmlRenderWindow; const Title: PAnsiChar); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setTitle';
   procedure SfmlRenderWindowSetUnicodeTitle(RenderWindow: PSfmlRenderWindow; const Title: PUCS4Char); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setUnicodeTitle';
@@ -1270,6 +1269,7 @@ const
   procedure SfmlRenderWindowResetGLStates(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_resetGLStates';
   function SfmlRenderWindowCapture(const RenderWindow: PSfmlRenderWindow): PSfmlImage; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_capture';
 {$IFNDEF INT64RETURNWORKAROUND}
+  function SfmlRenderWindowGetSize(const RenderWindow: PSfmlRenderWindow): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_getSize';
   function SfmlRenderWindowMapPixelToCoords(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_mapPixelToCoords';
   function SfmlRenderWindowMapCoordsToPixel(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_mapCoordsToPixel';
 {$ENDIF}
@@ -2204,8 +2204,10 @@ type
   function SfmlRectangleShapeGetPosition(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
   function SfmlRectangleShapeGetScale(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
   function SfmlRectangleShapeGetSize(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
+  function SfmlRenderTextureGetSize(const RenderTexture: PSfmlRenderTexture): TSfmlVector2u; cdecl;
   function SfmlRenderTextureMapPixelToCoords(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl;
   function SfmlRenderTextureMapCoordsToPixel(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl;
+  function SfmlRenderWindowGetSize(const RenderWindow: PSfmlRenderWindow): TSfmlVector2u; cdecl;
   function SfmlRenderWindowMapPixelToCoords(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl;
   function SfmlRenderWindowMapCoordsToPixel(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl;
   function SfmlShapeGetOrigin(const Shape: PSfmlShape): TSfmlVector2f; cdecl;
@@ -4972,8 +4974,10 @@ function sfRectangleShape_getPoint(const Shape: PSfmlRectangleShape; Index: Card
 function sfRectangleShape_getPosition(const Shape: PSfmlRectangleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfRectangleShape_getScale(const Shape: PSfmlRectangleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfRectangleShape_getSize(const Shape: PSfmlRectangleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfRenderTexture_getSize(const RenderTexture: PSfmlRenderTexture): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfRenderTexture_mapPixelToCoords(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfRenderTexture_mapCoordsToPixel(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfRenderWindow_getSize(const RenderWindow: PSfmlRenderWindow): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfRenderWindow_mapPixelToCoords(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfRenderWindow_mapCoordsToPixel(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfShape_getOrigin(const Shape: PSfmlShape): Int64; cdecl; external CSfmlGraphicsLibrary;
@@ -5096,6 +5100,13 @@ begin
   Val := sfRectangleShape_getSize(Shape);
 end;
 
+function SfmlRenderTextureGetSize(const RenderTexture: PSfmlRenderTexture): TSfmlVector2u; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfRenderTexture_getSize(RenderTexture);
+end;
+
 function SfmlRenderTextureMapPixelToCoords(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl;
 var
   Val: Int64 absolute Result;
@@ -5108,6 +5119,13 @@ var
   Val: Int64 absolute Result;
 begin
   Val := sfRenderTexture_mapCoordsToPixel(RenderTexture, Point, View);
+end;
+
+function SfmlRenderWindowGetSize(const RenderWindow: PSfmlRenderWindow): TSfmlVector2u; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfRenderWindow_getSize(RenderWindow);
 end;
 
 function SfmlRenderWindowMapPixelToCoords(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl;

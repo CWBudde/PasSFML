@@ -669,7 +669,6 @@ var
   ReturnValue: TSfmlSocketStatus;
   Connected: PSfmlTcpSocket;
 begin
-  // TODO: Methodenaufrufparameter einrichten
   ReturnValue := FSfmlTcpListener.Accept(Connected);
   CheckTrue(ReturnValue <> sfSocketError);
 end;

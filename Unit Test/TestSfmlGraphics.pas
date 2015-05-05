@@ -849,10 +849,23 @@ end;
 procedure TestTSfmlRenderTexture.TestGetTexture;
 var
   ReturnValue: TSfmlTexture;
+  TextureSize: TSfmlVector2u;
 begin
+  // get texture size
+  TextureSize := FSfmlRenderTexture.Size;
+
+  // clear texture
+  FSfmlRenderTexture.Clear(SfmlRed);
+
+  // render texture
+  FSfmlRenderTexture.Display;
+
+  // get texture
   ReturnValue := FSfmlRenderTexture.GetTexture;
-  CheckEquals(FSfmlRenderTexture.Size.X, ReturnValue.Size.X);
-  CheckEquals(FSfmlRenderTexture.Size.Y, ReturnValue.Size.Y);
+
+  // check results
+  CheckEquals(TextureSize.X, ReturnValue.Size.X);
+  CheckEquals(TextureSize.Y, ReturnValue.Size.Y);
 end;
 
 procedure TestTSfmlRenderTexture.TestGetView;
@@ -1427,8 +1440,8 @@ var
   ReturnValue: Boolean;
   Active: Boolean;
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  ReturnValue := FSfmlRenderWindow.SetActive(Active);
+  ReturnValue := FSfmlRenderWindow.SetActive(True);
+  ReturnValue := FSfmlRenderWindow.SetActive(False);
   // TODO: Check results
 end;
 
@@ -1753,7 +1766,8 @@ procedure TestTSfmlRenderWindow.TestSetSize;
 var
   Size: TSfmlVector2u;
 begin
-  // TODO: Methodenaufrufparameter einrichten
+  Size.X := 128;
+  Size.Y := 128;
   FSfmlRenderWindow.SetSize(Size);
   // TODO: Check results
 end;
@@ -2403,15 +2417,13 @@ procedure TestTSfmlView.TestMove;
 begin
   // move shape
   FSfmlView.Move(SfmlVector2f(10, 10));
-
-  // check result
+  // TODO: Check results
 end;
 
 procedure TestTSfmlView.TestReset;
 var
   Rectangle: TSfmlFloatRect;
 begin
-  // TODO: Methodenaufrufparameter einrichten
   FSfmlView.Reset(Rectangle);
   // TODO: Check results
 end;

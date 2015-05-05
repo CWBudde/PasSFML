@@ -630,7 +630,8 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    function Connect(Server: TSfmlIpAddress; Port: Byte; Timeout: TSfmlTime): TSfmlFtpResponse;
+    function Connect(Server: TSfmlIpAddress; Port: Byte; Timeout: TSfmlTime): TSfmlFtpResponse; overload;
+    function Connect(Server: TSfmlIpAddress; Port: Byte = 21): TSfmlFtpResponse; overload;
     function LoginAnonymous: TSfmlFtpResponse;
     function Login(const UserName, Password: AnsiString): TSfmlFtpResponse;
     function Disconnect: TSfmlFtpResponse;
@@ -643,8 +644,8 @@ type
     function DeleteDirectory(Name: AnsiString): TSfmlFtpResponse;
     function RenameFile(&File: AnsiString; const NewName: AnsiString): TSfmlFtpResponse;
     function DeleteFile(Name: AnsiString): TSfmlFtpResponse;
-    function Download(DistantFile: AnsiString; const DestPath: AnsiString; Mode: TSfmlFtpTransferMode): TSfmlFtpResponse;
-    function Upload(LocalFile: AnsiString; const DestPath: AnsiString; Mode: TSfmlFtpTransferMode): TSfmlFtpResponse;
+    function Download(DistantFile: AnsiString; const DestPath: AnsiString; Mode: TSfmlFtpTransferMode = sfFtpBinary): TSfmlFtpResponse;
+    function Upload(LocalFile: AnsiString; const DestPath: AnsiString; Mode: TSfmlFtpTransferMode = sfFtpBinary): TSfmlFtpResponse;
   end;
 
   TSfmlHttpRequest = class
@@ -960,6 +961,13 @@ begin
     Timeout));
 end;
 
+function TSfmlFtp.Connect(Server: TSfmlIpAddress;
+  Port: Byte = 21): TSfmlFtpResponse;
+begin
+  Result := TSfmlFtpResponse.Create(SfmlFtpConnect(FHandle, Server, Port,
+    SfmlTimeZero));
+end;
+
 function TSfmlFtp.CreateDirectory(Name: AnsiString): TSfmlFtpResponse;
 begin
   Result := TSfmlFtpResponse.Create(SfmlFtpCreateDirectory(FHandle,
@@ -984,7 +992,7 @@ begin
 end;
 
 function TSfmlFtp.Download(DistantFile: AnsiString; const DestPath: AnsiString;
-  Mode: TSfmlFtpTransferMode): TSfmlFtpResponse;
+  Mode: TSfmlFtpTransferMode = sfFtpBinary): TSfmlFtpResponse;
 begin
   Result := TSfmlFtpResponse.Create(SfmlFtpDownload(FHandle,
     PAnsiChar(DistantFile), PAnsiChar(DestPath), Mode));
@@ -1031,7 +1039,7 @@ begin
 end;
 
 function TSfmlFtp.Upload(LocalFile: AnsiString; const DestPath: AnsiString;
-  Mode: TSfmlFtpTransferMode): TSfmlFtpResponse;
+  Mode: TSfmlFtpTransferMode = sfFtpBinary): TSfmlFtpResponse;
 begin
   Result := TSfmlFtpResponse.Create(SfmlFtpUpload(FHandle, PAnsiChar(LocalFile),
     PAnsiChar(DestPath), Mode));
