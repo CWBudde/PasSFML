@@ -26,7 +26,7 @@ unit SfmlGraphics;
 
 interface
 
-{$I ..\..\Source\Sfml.inc}
+{$I Sfml.inc}
 
 uses
   SfmlWindow, SfmlSystem;
