@@ -827,9 +827,13 @@ type
 implementation
 
 {$IFDEF DynLink}
-{$IFDEF MSWindows}
 uses
+{$IFDEF FPC}
+  DynLibs;
+{$ELSE}
+{$IFDEF MSWindows}
   Windows;
+{$ENDIF}
 {$ENDIF}
 {$ENDIF}
 
@@ -1563,7 +1567,7 @@ end;
 {$IFDEF DynLink}
 
 var
-  CSfmlNetworkHandle: HINST;
+  CSfmlNetworkHandle: {$IFDEF FPC}TLibHandle{$ELSE}HINST{$ENDIF};
 
 procedure InitDLL;
 
@@ -1574,7 +1578,13 @@ procedure InitDLL;
   end;
 
 begin
+  // dynamically load external library
+  {$IFDEF FPC}
+  CSfmlNetworkHandle := LoadLibrary(CSfmlNetworkLibrary);
+  {$ELSE}
   CSfmlNetworkHandle := LoadLibraryA(CSfmlNetworkLibrary);
+  {$ENDIF}
+
   if CSfmlNetworkHandle <> 0 then
     try
       Move(GetProcAddress(CSfmlNetworkHandle, PAnsiChar('sfIpAddress_None'))^, SfmlIpAddressNone, SizeOf(TSfmlIpAddress));

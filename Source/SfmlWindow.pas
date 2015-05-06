@@ -29,6 +29,11 @@ interface
 {$I Sfml.inc}
 
 uses
+  {$IFDEF DynLink}
+  {$IFDEF FPC}
+    DynLibs,
+  {$ENDIF}
+  {$ENDIF}
   {$IFDEF MSWindows} Windows, {$ENDIF} SfmlSystem;
 
 const
@@ -689,7 +694,7 @@ end;
 {$IFDEF DynLink}
 
 var
-  CSfmlWindowHandle: HINST;
+  CSfmlWindowHandle: {$IFDEF FPC}TLibHandle{$ELSE}HINST{$ENDIF};
 
 procedure InitDLL;
 
@@ -700,7 +705,13 @@ procedure InitDLL;
   end;
 
 begin
+  // dynamically load external library
+  {$IFDEF FPC}
+  CSfmlWindowHandle := LoadLibrary(CSfmlWindowLibrary);
+  {$ELSE}
   CSfmlWindowHandle := LoadLibraryA(CSfmlWindowLibrary);
+  {$ENDIF}
+
   if CSfmlWindowHandle <> 0 then
     try
       SfmlContextCreate := BindFunction('sfContext_create');

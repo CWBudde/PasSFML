@@ -26,7 +26,7 @@ unit SfmlGraphics;
 
 interface
 
-{$I Sfml.inc}
+{$I ..\..\Source\Sfml.inc}
 
 uses
   SfmlWindow, SfmlSystem;
@@ -992,6 +992,8 @@ var
   SfmlViewRotate: TSfmlViewRotate;
   SfmlViewZoom: TSfmlViewZoom;
 {$IFNDEF INT64RETURNWORKAROUND}
+  SfmlRenderTextureGetSize: TSfmlRenderTextureGetSize;
+  SfmlRenderWindowGetSize: TSfmlRenderWindowGetSize;
   SfmlViewGetCenter: TSfmlViewGetCenter;
   SfmlViewGetSize: TSfmlViewGetSize;
 {$ENDIF}
@@ -2240,9 +2242,13 @@ function SfmlVertex(Position: TSfmlVector2f; Color: TSfmlColor): TSfmlVertex; ov
 implementation
 
 {$IFDEF DynLink}
-{$IFDEF MSWindows}
 uses
+{$IFDEF FPC}
+  DynLibs;
+{$ELSE}
+{$IFDEF MSWindows}
   Windows;
+{$ENDIF}
 {$ENDIF}
 {$ENDIF}
 
@@ -4476,7 +4482,7 @@ end;
 
 {$IFDEF DynLink}
 var
-  CSfmlGraphicsHandle: HINST;
+  CSfmlGraphicsHandle: {$IFDEF FPC}TLibHandle{$ELSE}HINST{$ENDIF};
 {$IFDEF INT64RETURNWORKAROUND}
   sfCircleShape_getPoint: function (const Shape: PSfmlCircleShape; Index: Cardinal): Int64; cdecl;
   sfCircleShape_getPosition: function (const Shape: PSfmlCircleShape): Int64; cdecl;
@@ -4527,7 +4533,13 @@ procedure InitDLL;
   end;
 
 begin
+  // dynamically load external library
+  {$IFDEF FPC}
+  CSfmlGraphicsHandle := LoadLibrary(CSfmlGraphicsLibrary);
+  {$ELSE}
   CSfmlGraphicsHandle := LoadLibraryA(CSfmlGraphicsLibrary);
+  {$ENDIF}
+
   if CSfmlGraphicsHandle <> 0 then
     try
       Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfBlendAlpha'))^, SfmlBlendAlpha, SizeOf(TSfmlBlendMode));

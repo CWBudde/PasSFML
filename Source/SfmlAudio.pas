@@ -683,9 +683,13 @@ type
 implementation
 
 {$IFDEF DynLink}
-{$IFDEF MSWindows}
 uses
+{$IFDEF FPC}
+  DynLibs;
+{$ELSE}
+{$IFDEF MSWindows}
   Windows;
+{$ENDIF}
 {$ENDIF}
 {$ENDIF}
 
@@ -1254,7 +1258,7 @@ end;
 
 {$IFDEF DynLink}
 var
-  CSfmlAudioHandle: HINST;
+  CSfmlAudioHandle: {$IFDEF FPC}TLibHandle{$ELSE}HINST{$ENDIF};
 {$IFDEF INT64RETURNWORKAROUND}
   sfMusic_getDuration: function (const Music: PSfmlMusic): Int64; cdecl;
   sfMusic_getPlayingOffset: function (const Music: PSfmlMusic): Int64; cdecl;
@@ -1272,7 +1276,13 @@ procedure InitDLL;
   end;
 
 begin
+  // dynamically load external library
+  {$IFDEF FPC}
+  CSfmlAudioHandle := LoadLibrary(CSfmlAudioLibrary);
+  {$ELSE}
   CSfmlAudioHandle := LoadLibraryA(CSfmlAudioLibrary);
+  {$ENDIF}
+
   if CSfmlAudioHandle <> 0 then
     try
       SfmlListenerSetGlobalVolume := BindFunction('sfListener_setGlobalVolume');

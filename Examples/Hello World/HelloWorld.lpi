@@ -81,22 +81,27 @@
       <Unit1>
         <Filename Value="..\..\Source\SfmlAudio.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="SfmlAudio"/>
       </Unit1>
       <Unit2>
         <Filename Value="..\..\Source\SfmlGraphics.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="SfmlGraphics"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\..\Source\SfmlNetwork.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="SfmlNetwork"/>
       </Unit3>
       <Unit4>
         <Filename Value="..\..\Source\SfmlSystem.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="SfmlSystem"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\..\Source\SfmlWindow.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="SfmlWindow"/>
       </Unit5>
     </Units>
   </ProjectOptions>
@@ -121,6 +126,8 @@
         <GenerateDebugInfo Value="False"/>
       </Debugging>
       <Options>
+        <PassLinkerOptions Value="True"/>
+        <LinkerOptions Value="-rpath-link ..\..\Binaries\linux"/>
         <Win32>
           <GraphicApplication Value="True"/>
         </Win32>
