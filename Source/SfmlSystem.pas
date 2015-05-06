@@ -26,7 +26,7 @@ unit SfmlSystem;
 
 interface
 
-{$I SFML.inc}
+{$I Sfml.inc}
 
 const
 {$IF Defined(MSWINDOWS)}

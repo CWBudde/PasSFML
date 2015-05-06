@@ -745,12 +745,12 @@ end;
 
 function TSfmlMusic.GetPlayingOffset: TSfmlTime;
 begin
-  SfmlMusicGetPlayingOffset(FHandle);
+  Result := SfmlMusicGetPlayingOffset(FHandle);
 end;
 
 function TSfmlMusic.GetPosition: TSfmlVector3f;
 begin
-  SfmlMusicGetPosition(FHandle);
+  Result := SfmlMusicGetPosition(FHandle);
 end;
 
 function TSfmlMusic.GetSampleRate: Cardinal;
@@ -872,12 +872,12 @@ end;
 
 function TSfmlSoundStream.GetPlayingOffset: TSfmlTime;
 begin
-  SfmlSoundStreamGetPlayingOffset(FHandle);
+  Result := SfmlSoundStreamGetPlayingOffset(FHandle);
 end;
 
 function TSfmlSoundStream.GetPosition: TSfmlVector3f;
 begin
-  SfmlSoundStreamGetPosition(FHandle);
+  Result := SfmlSoundStreamGetPosition(FHandle);
 end;
 
 function TSfmlSoundStream.GetSampleRate: Cardinal;

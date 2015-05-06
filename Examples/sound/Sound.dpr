@@ -25,7 +25,7 @@ begin
   Writeln(' ', Buffer.ChannelCount, ' channels');
 
   // Create a sound instance and play it
-  Sound := TSfmlSound(buffer);
+  Sound := TSfmlSound.Create(Buffer);
   Sound.Play;
 
   // Loop while the sound is playing
@@ -38,6 +38,8 @@ begin
     WriteLn('Playing... ', Sound.PlayingOffset.AsSeconds, ' sec');
   end;
   WriteLn;
+
+  Sound.Free;
 end;
 
 procedure PlayMusic;
@@ -49,7 +51,7 @@ begin
 
   // Display music informations
   Writeln('Orchestral.ogg:');
-  Writeln(' ', Music.Duration.asSeconds, ' seconds');
+  Writeln(' ', Music.Duration.AsSeconds, ' seconds');
   Writeln(' ', Music.SampleRate, ' samples / sec');
   Writeln(' ', Music.ChannelCount, ' channels');
 
@@ -66,6 +68,8 @@ begin
     WriteLn('Playing... ', Music.PlayingOffset.AsSeconds, ' sec');
   end;
   Writeln;
+
+  Music.Free;
 end;
 
 begin
