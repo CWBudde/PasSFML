@@ -26,7 +26,7 @@ unit SfmlSystem;
 
 interface
 
-{$I SFML.inc}
+{$I Sfml.inc}
 
 const
 {$IF Defined(MSWINDOWS)}
@@ -258,9 +258,13 @@ function SfmlVector3f(X, Y, Z: Single): TSfmlVector3f;
 implementation
 
 {$IFDEF DynLink}
-{$IFDEF MSWindows}
 uses
+{$IFDEF FPC}
+  DynLibs;
+{$ELSE}
+{$IFDEF MSWindows}
   Windows;
+{$ENDIF}
 {$ENDIF}
 {$ENDIF}
 
@@ -421,7 +425,7 @@ end;
 
 {$IFDEF DynLink}
 var
-  CSfmlSystemHandle: HINST;
+  CSfmlSystemHandle: {$IFDEF FPC}TLibHandle{$ELSE}HINST{$ENDIF};
 {$IFDEF INT64RETURNWORKAROUND}
   sfSeconds: function (Amount: Single): Int64; cdecl;
   sfMilliseconds: function (Amount: LongInt): Int64; cdecl;
@@ -439,7 +443,11 @@ procedure InitDLL;
   end;
 
 begin
+  {$IFDEF FPC}
+  CSfmlSystemHandle := LoadLibrary(CSfmlSystemLibrary);
+  {$ELSE}
   CSfmlSystemHandle := LoadLibraryA(CSfmlSystemLibrary);
+  {$ENDIF}
   if CSfmlSystemHandle <> 0 then
     try
       Move(GetProcAddress(CSfmlSystemHandle, PAnsiChar('sfTime_Zero'))^, SfmlTimeZero, SizeOf(SfmlTimeZero));
