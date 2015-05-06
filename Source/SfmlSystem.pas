@@ -190,7 +190,6 @@ const
 
   function SfmlMutexCreate: PSfmlMutex; cdecl; external CSfmlSystemLibrary name 'sfMutex_create';
   procedure SfmlMutexDestroy(Mutex: PSfmlMutex); cdecl; external CSfmlSystemLibrary name 'sfMutex_destroy';
-
   procedure SfmlMutexLock(Mutex: PSfmlMutex); cdecl; external CSfmlSystemLibrary name 'sfMutex_lock';
   procedure SfmlMutexUnlock(Mutex: PSfmlMutex); cdecl; external CSfmlSystemLibrary name 'sfMutex_unlock';
 
@@ -218,6 +217,17 @@ type
 
     property ElapsedTime: TSfmlTime read GetElapsedTime;
     property Handle: PSfmlClock read FHandle;
+  end;
+
+  TSfmlMutex = class
+  private
+    FHandle: PSfmlMutex;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Lock;
+    procedure Unlock;
   end;
 
   TSfmlThread = class
@@ -355,6 +365,30 @@ end;
 function TSfmlClock.Copy: TSfmlClock;
 begin
   Result := TSfmlClock.Create(SfmlClockCopy(FHandle));
+end;
+
+
+{ TSfmlMutex }
+
+constructor TSfmlMutex.Create;
+begin
+  FHandle := SfmlMutexCreate;
+end;
+
+destructor TSfmlMutex.Destroy;
+begin
+  SfmlMutexDestroy(FHandle);
+  inherited;
+end;
+
+procedure TSfmlMutex.Lock;
+begin
+  SfmlMutexLock(FHandle);
+end;
+
+procedure TSfmlMutex.Unlock;
+begin
+  SfmlMutexUnlock(FHandle);
 end;
 
 
