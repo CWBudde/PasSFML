@@ -719,7 +719,6 @@ var
 
   SfmlRenderTextureCreate: TSfmlRenderTextureCreate;
   SfmlRenderTextureDestroy: TSfmlRenderTextureDestroy;
-  SfmlRenderTextureGetSize: TSfmlRenderTextureGetSize;
   SfmlRenderTextureSetActive: TSfmlRenderTextureSetActive;
   SfmlRenderTextureDisplay: TSfmlRenderTextureDisplay;
   SfmlRenderTextureClear: TSfmlRenderTextureClear;
@@ -759,7 +758,6 @@ var
   SfmlRenderWindowWaitEvent: TSfmlRenderWindowWaitEvent;
   SfmlRenderWindowGetPosition: TSfmlRenderWindowGetPosition;
   SfmlRenderWindowSetPosition: TSfmlRenderWindowSetPosition;
-  SfmlRenderWindowGetSize: TSfmlRenderWindowGetSize;
   SfmlRenderWindowSetSize: TSfmlRenderWindowSetSize;
   SfmlRenderWindowSetTitle: TSfmlRenderWindowSetTitle;
   SfmlRenderWindowSetUnicodeTitle: TSfmlRenderWindowSetUnicodeTitle;
@@ -4494,8 +4492,10 @@ var
   sfRectangleShape_getPosition: function (const Shape: PSfmlRectangleShape): Int64; cdecl;
   sfRectangleShape_getScale: function (const Shape: PSfmlRectangleShape): Int64; cdecl;
   sfRectangleShape_getSize: function (const Shape: PSfmlRectangleShape): Int64; cdecl;
+  sfRenderTexture_getSize: function(const RenderTexture: PSfmlRenderTexture): Int64; cdecl;
   sfRenderTexture_mapPixelToCoords: function (const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl;
   sfRenderTexture_mapCoordsToPixel: function (const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl;
+  sfRenderWindow_getSize: function(const RenderWindow: PSfmlRenderWindow): Int64; cdecl;
   sfRenderWindow_mapPixelToCoords: function (const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl;
   sfRenderWindow_mapCoordsToPixel: function (const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl;
   sfShape_getOrigin: function (const Shape: PSfmlShape): Int64; cdecl;
@@ -4668,7 +4668,6 @@ begin
       SfmlRectangleShapeGetGlobalBounds := BindFunction('sfRectangleShape_getGlobalBounds');
       SfmlRenderTextureCreate := BindFunction('sfRenderTexture_create');
       SfmlRenderTextureDestroy := BindFunction('sfRenderTexture_destroy');
-      SfmlRenderTextureGetSize := BindFunction('sfRenderTexture_getSize');
       SfmlRenderTextureSetActive := BindFunction('sfRenderTexture_setActive');
       SfmlRenderTextureDisplay := BindFunction('sfRenderTexture_display');
       SfmlRenderTextureClear := BindFunction('sfRenderTexture_clear');
@@ -4703,7 +4702,6 @@ begin
       SfmlRenderWindowWaitEvent := BindFunction('sfRenderWindow_waitEvent');
       SfmlRenderWindowGetPosition := BindFunction('sfRenderWindow_getPosition');
       SfmlRenderWindowSetPosition := BindFunction('sfRenderWindow_setPosition');
-      SfmlRenderWindowGetSize := BindFunction('sfRenderWindow_getSize');
       SfmlRenderWindowSetSize := BindFunction('sfRenderWindow_setSize');
       SfmlRenderWindowSetTitle := BindFunction('sfRenderWindow_setTitle');
       SfmlRenderWindowSetUnicodeTitle := BindFunction('sfRenderWindow_setUnicodeTitle');
@@ -4912,8 +4910,10 @@ begin
       sfRectangleShape_getOrigin := BindFunction('sfRectangleShape_getOrigin');
       sfRectangleShape_getPoint := BindFunction('sfRectangleShape_getPoint');
       sfRectangleShape_getSize := BindFunction('sfRectangleShape_getSize');
+      sfRenderTexture_getSize := BindFunction('sfRenderTexture_getSize');
       sfRenderTexture_mapPixelToCoords := BindFunction('sfRenderTexture_mapPixelToCoords');
       sfRenderTexture_mapCoordsToPixel := BindFunction('sfRenderTexture_mapCoordsToPixel');
+      sfRenderWindow_getSize := BindFunction('sfRenderWindow_getSize');
       sfRenderWindow_mapPixelToCoords := BindFunction('sfRenderWindow_mapPixelToCoords');
       sfRenderWindow_mapCoordsToPixel := BindFunction('sfRenderWindow_mapCoordsToPixel');
       sfShape_getPosition := BindFunction('sfShape_getPosition');
