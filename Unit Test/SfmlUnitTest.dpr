@@ -23,8 +23,6 @@ uses
   TestSfmlSystem in 'TestSfmlSystem.pas',
   TestSfmlWindow in 'TestSfmlWindow.pas';
 
-{$R *.res}
-
 begin
 {$IFDEF FPC}
   Application.Initialize;

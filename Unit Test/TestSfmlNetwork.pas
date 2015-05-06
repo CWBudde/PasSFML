@@ -5,9 +5,10 @@ unit TestSfmlNetwork;
 interface
 
 uses
+  SysUtils,
 {$IFNDEF FPC}
   TestFramework,
-  IdFtpServer, IdFTPList, IdFTPListOutput, Windows, SysUtils, Classes,
+  IdFtpServer, IdFTPList, IdFTPListOutput, Windows, Classes,
 {$ELSE}
   FPCUnit, TestUtils, TestRegistry,
 {$ENDIF}

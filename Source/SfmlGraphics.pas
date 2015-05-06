@@ -1274,9 +1274,9 @@ const
   function SfmlRenderWindowMapCoordsToPixel(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_mapCoordsToPixel';
 {$ENDIF}
 
-  function SfmlMouseGetPositionRenderWindow(const relativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfMouseGetPosi_TionRenderWindow';
-  procedure SfmlMouseSetPositionRenderWindow(position: TSfmlVector2i; const RelativeTo: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfMouseSetPosi_TionRenderWindow';
-  function SfmlTouchGetPositionRenderWindow(Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfTouchGetPosi_TionRenderWindow';
+  function SfmlMouseGetPositionRenderWindow(const relativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfMouse_getPositionRenderWindow';
+  procedure SfmlMouseSetPositionRenderWindow(position: TSfmlVector2i; const RelativeTo: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfMouse_setPositionRenderWindow';
+  function SfmlTouchGetPositionRenderWindow(Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfTouch_getPositionRenderWindow';
 
   function SfmlShaderCreateFromFile(const VertexShaderFilename: PAnsiChar; const FragmentShaderFilename: PAnsiChar): PSfmlShader; cdecl; external CSfmlGraphicsLibrary name 'sfShader_createFromFile';
   function SfmlShaderCreateFromMemory(const VertexShader: PAnsiChar; const FragmentShader: PAnsiChar): PSfmlShader; cdecl; external CSfmlGraphicsLibrary name 'sfShader_createFromMemory';

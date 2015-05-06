@@ -274,7 +274,7 @@ type
   TSfmlTcpSocketConnect = function (Socket: PSfmlTcpSocket; Host: TSfmlIpAddress; Port: Byte; TimeOut: TSfmlTime): TSfmlSocketStatus; cdecl;
   TSfmlTcpSocketDisconnect = procedure (Socket: PSfmlTcpSocket); cdecl;
   TSfmlTcpSocketSend = function (Socket: PSfmlTcpSocket; const Data: Pointer; Size: NativeUInt): TSfmlSocketStatus; cdecl;
-  TSfmlTcpSocketReceive = function (Socket: PSfmlTcpSocket; Data: Pointer; MaxSize: NativeUInt; SizeReceived: PNativeUInt): TSfmlSocketStatus; cdecl;
+  TSfmlTcpSocketReceive = function (Socket: PSfmlTcpSocket; Data: Pointer; MaxSize: NativeUInt; out SizeReceived: NativeUInt): TSfmlSocketStatus; cdecl;
   TSfmlTcpSocketSendPacket = function (Socket: PSfmlTcpSocket; Packet: PSfmlPacket): TSfmlSocketStatus; cdecl;
   TSfmlTcpSocketReceivePacket = function (Socket: PSfmlTcpSocket; Packet: PSfmlPacket): TSfmlSocketStatus; cdecl;
 
@@ -286,7 +286,7 @@ type
   TSfmlUdpSocketBind = function (Socket: PSfmlUdpSocket; Port: Byte): TSfmlSocketStatus; cdecl;
   TSfmlUdpSocketUnbind = procedure (Socket: PSfmlUdpSocket); cdecl;
   TSfmlUdpSocketSend = function (Socket: PSfmlUdpSocket; const Data: Pointer; Size: NativeUInt; Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus; cdecl;
-  TSfmlUdpSocketReceive = function (Socket: PSfmlUdpSocket; Data: Pointer; MaxSize: NativeUInt; SizeReceived: PNativeUInt; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus; cdecl;
+  TSfmlUdpSocketReceive = function (Socket: PSfmlUdpSocket; Data: Pointer; MaxSize: NativeUInt; out SizeReceived: NativeUInt; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus; cdecl;
   TSfmlUdpSocketSendPacket = function (Socket: PSfmlUdpSocket; Packet: PSfmlPacket; Address: TSfmlIpAddress; Port: Byte): TSfmlSocketStatus; cdecl;
   TSfmlUdpSocketReceivePacket = function (Socket: PSfmlUdpSocket; Packet: PSfmlPacket; out Address: TSfmlIpAddress; out Port: Byte): TSfmlSocketStatus; cdecl;
   TSfmlUdpSocketMaxDatagramSize = function : Cardinal; cdecl;

@@ -136,9 +136,9 @@ begin
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
       glTranslatef(0, 0, -200);
-      glRotatef(Clock.GetElapsedTime.AsSeconds * 50, 1, 0, 0);
-      glRotatef(Clock.GetElapsedTime.AsSeconds * 30, 0, 1, 0);
-      glRotatef(Clock.GetElapsedTime.AsSeconds * 90, 0, 0, 1);
+      glRotatef(Clock.ElapsedTime.AsSeconds * 50, 1, 0, 0);
+      glRotatef(Clock.ElapsedTime.AsSeconds * 30, 0, 1, 0);
+      glRotatef(Clock.ElapsedTime.AsSeconds * 90, 0, 0, 1);
 
       // Draw the cube
       glDrawArrays(GL_TRIANGLES, 0, 36);
