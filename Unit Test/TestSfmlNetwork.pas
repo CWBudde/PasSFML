@@ -444,9 +444,13 @@ var
   ReturnValue: TSfmlPacket;
 begin
   ReturnValue := FSfmlPacket.Copy;
-  CheckEquals(FSfmlPacket.DataSize, ReturnValue.DataSize);
-  CheckEquals(FSfmlPacket.EndOfPacket, ReturnValue.EndOfPacket);
-  CheckEquals(FSfmlPacket.CanRead, ReturnValue.CanRead);
+  try
+    CheckEquals(FSfmlPacket.DataSize, ReturnValue.DataSize);
+    CheckEquals(FSfmlPacket.EndOfPacket, ReturnValue.EndOfPacket);
+    CheckEquals(FSfmlPacket.CanRead, ReturnValue.CanRead);
+  finally
+    ReturnValue.Free;
+  end;
 end;
 
 procedure TestTSfmlPacket.TestAppendGetDataClear;

@@ -142,9 +142,13 @@ var
   TimeStamp: array [0..1] of TSfmlTime;
 begin
   CopiedClock := FSfmlClock.Copy;
-  TimeStamp[0] := CopiedClock.ElapsedTime;
-  TimeStamp[1] := FSfmlClock.ElapsedTime;
-  CheckTrue(TimeStamp[1].MicroSeconds >= TimeStamp[0].MicroSeconds);
+  try
+    TimeStamp[0] := CopiedClock.ElapsedTime;
+    TimeStamp[1] := FSfmlClock.ElapsedTime;
+    CheckTrue(TimeStamp[1].MicroSeconds >= TimeStamp[0].MicroSeconds);
+  finally
+    CopiedClock.Free;
+  end;
 end;
 
 procedure TestTSfmlClock.TestElapsedTime;

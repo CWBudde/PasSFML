@@ -1104,12 +1104,12 @@ end;
 
 function TSfmlHttpResponse.GetBody: AnsiString;
 begin
-  SfmlHttpResponseGetBody(FHandle);
+  Result := SfmlHttpResponseGetBody(FHandle);
 end;
 
 function TSfmlHttpResponse.GetField(const Field: AnsiString): AnsiString;
 begin
-  SfmlHttpResponseGetField(FHandle, PAnsiChar(Field));
+  Result := SfmlHttpResponseGetField(FHandle, PAnsiChar(Field));
 end;
 
 function TSfmlHttpResponse.GetMajorVersion: Cardinal;
@@ -1460,7 +1460,7 @@ end;
 
 function TSfmlTcpSocket.GetRemoteAddress: TSfmlIpAddress;
 begin
-  SfmlTcpSocketGetRemoteAddress(FHandle);
+  Result := SfmlTcpSocketGetRemoteAddress(FHandle);
 end;
 
 function TSfmlTcpSocket.GetRemotePort: Byte;

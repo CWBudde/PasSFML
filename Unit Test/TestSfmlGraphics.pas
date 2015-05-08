@@ -274,45 +274,48 @@ var
   Point: array [0 .. 1] of TSfmlVector2f;
 begin
   ReturnValue := FSfmlCircleShape.Copy;
-
-  CheckEquals(FSfmlCircleShape.FillColor.Value, ReturnValue.FillColor.Value);
-  CheckEquals(FSfmlCircleShape.GlobalBounds.Left, ReturnValue.GlobalBounds.Left);
-  CheckEquals(FSfmlCircleShape.GlobalBounds.Top, ReturnValue.GlobalBounds.Top);
-  CheckEquals(FSfmlCircleShape.GlobalBounds.Width, ReturnValue.GlobalBounds.Width);
-  CheckEquals(FSfmlCircleShape.GlobalBounds.Height, ReturnValue.GlobalBounds.Height);
-  for Index := 0 to 8 do
-    CheckEquals(FSfmlCircleShape.InverseTransform.Matrix[Index], ReturnValue.InverseTransform.Matrix[Index]);
-  CheckEquals(FSfmlCircleShape.LocalBounds.Left, ReturnValue.LocalBounds.Left);
-  CheckEquals(FSfmlCircleShape.LocalBounds.Top, ReturnValue.LocalBounds.Top);
-  CheckEquals(FSfmlCircleShape.LocalBounds.Width, ReturnValue.LocalBounds.Width);
-  CheckEquals(FSfmlCircleShape.LocalBounds.Height, ReturnValue.LocalBounds.Height);
-  Point[0] := FSfmlCircleShape.Origin;
-  Point[1] := ReturnValue.Origin;
-  CheckEquals(Point[0].X, Point[1].X);
-  CheckEquals(Point[0].Y, Point[1].Y);
-  CheckEquals(FSfmlCircleShape.OutlineColor.Value, ReturnValue.OutlineColor.Value);
-  CheckEquals(FSfmlCircleShape.OutlineThickness, ReturnValue.OutlineThickness);
-  CheckEquals(FSfmlCircleShape.PointCount, ReturnValue.PointCount);
-  for Index := 0 to FSfmlCircleShape.PointCount - 1 do
-  begin
-    Point[0] := FSfmlCircleShape.Point[Index];
-    Point[1] := ReturnValue.Point[Index];
+  try
+    CheckEquals(FSfmlCircleShape.FillColor.Value, ReturnValue.FillColor.Value);
+    CheckEquals(FSfmlCircleShape.GlobalBounds.Left, ReturnValue.GlobalBounds.Left);
+    CheckEquals(FSfmlCircleShape.GlobalBounds.Top, ReturnValue.GlobalBounds.Top);
+    CheckEquals(FSfmlCircleShape.GlobalBounds.Width, ReturnValue.GlobalBounds.Width);
+    CheckEquals(FSfmlCircleShape.GlobalBounds.Height, ReturnValue.GlobalBounds.Height);
+    for Index := 0 to 8 do
+      CheckEquals(FSfmlCircleShape.InverseTransform.Matrix[Index], ReturnValue.InverseTransform.Matrix[Index]);
+    CheckEquals(FSfmlCircleShape.LocalBounds.Left, ReturnValue.LocalBounds.Left);
+    CheckEquals(FSfmlCircleShape.LocalBounds.Top, ReturnValue.LocalBounds.Top);
+    CheckEquals(FSfmlCircleShape.LocalBounds.Width, ReturnValue.LocalBounds.Width);
+    CheckEquals(FSfmlCircleShape.LocalBounds.Height, ReturnValue.LocalBounds.Height);
+    Point[0] := FSfmlCircleShape.Origin;
+    Point[1] := ReturnValue.Origin;
     CheckEquals(Point[0].X, Point[1].X);
     CheckEquals(Point[0].Y, Point[1].Y);
+    CheckEquals(FSfmlCircleShape.OutlineColor.Value, ReturnValue.OutlineColor.Value);
+    CheckEquals(FSfmlCircleShape.OutlineThickness, ReturnValue.OutlineThickness);
+    CheckEquals(FSfmlCircleShape.PointCount, ReturnValue.PointCount);
+    for Index := 0 to FSfmlCircleShape.PointCount - 1 do
+    begin
+      Point[0] := FSfmlCircleShape.Point[Index];
+      Point[1] := ReturnValue.Point[Index];
+      CheckEquals(Point[0].X, Point[1].X);
+      CheckEquals(Point[0].Y, Point[1].Y);
+    end;
+    CheckEquals(FSfmlCircleShape.Position.X, ReturnValue.Position.X);
+    CheckEquals(FSfmlCircleShape.Position.Y, ReturnValue.Position.Y);
+    CheckEquals(FSfmlCircleShape.Radius, ReturnValue.Radius);
+    CheckEquals(FSfmlCircleShape.Rotation, ReturnValue.Rotation);
+    CheckEquals(FSfmlCircleShape.ScaleFactor.X, ReturnValue.ScaleFactor.X);
+    CheckEquals(FSfmlCircleShape.ScaleFactor.Y, ReturnValue.ScaleFactor.Y);
+    CheckEquals(Pointer(FSfmlCircleShape.Texture), Pointer(ReturnValue.Texture));
+    CheckEquals(FSfmlCircleShape.TextureRect.Left, ReturnValue.TextureRect.Left);
+    CheckEquals(FSfmlCircleShape.TextureRect.Top, ReturnValue.TextureRect.Top);
+    CheckEquals(FSfmlCircleShape.TextureRect.Width, ReturnValue.TextureRect.Width);
+    CheckEquals(FSfmlCircleShape.TextureRect.Height, ReturnValue.TextureRect.Height);
+    for Index := 0 to 8 do
+      CheckEquals(FSfmlCircleShape.Transform.Matrix[Index], ReturnValue.Transform.Matrix[Index]);
+  finally
+    ReturnValue.Free;
   end;
-  CheckEquals(FSfmlCircleShape.Position.X, ReturnValue.Position.X);
-  CheckEquals(FSfmlCircleShape.Position.Y, ReturnValue.Position.Y);
-  CheckEquals(FSfmlCircleShape.Radius, ReturnValue.Radius);
-  CheckEquals(FSfmlCircleShape.Rotation, ReturnValue.Rotation);
-  CheckEquals(FSfmlCircleShape.ScaleFactor.X, ReturnValue.ScaleFactor.X);
-  CheckEquals(FSfmlCircleShape.ScaleFactor.Y, ReturnValue.ScaleFactor.Y);
-  CheckEquals(Pointer(FSfmlCircleShape.Texture), Pointer(ReturnValue.Texture));
-  CheckEquals(FSfmlCircleShape.TextureRect.Left, ReturnValue.TextureRect.Left);
-  CheckEquals(FSfmlCircleShape.TextureRect.Top, ReturnValue.TextureRect.Top);
-  CheckEquals(FSfmlCircleShape.TextureRect.Width, ReturnValue.TextureRect.Width);
-  CheckEquals(FSfmlCircleShape.TextureRect.Height, ReturnValue.TextureRect.Height);
-  for Index := 0 to 8 do
-    CheckEquals(FSfmlCircleShape.Transform.Matrix[Index], ReturnValue.Transform.Matrix[Index]);
 end;
 
 procedure TestTSfmlCircleShape.TestTextureRect;
@@ -430,40 +433,43 @@ var
   Index: Integer;
 begin
   ReturnValue := FSfmlConvexShape.Copy;
-
-  CheckEquals(FSfmlConvexShape.FillColor.Value, ReturnValue.FillColor.Value);
-  CheckEquals(FSfmlConvexShape.GlobalBounds.Left, ReturnValue.GlobalBounds.Left);
-  CheckEquals(FSfmlConvexShape.GlobalBounds.Top, ReturnValue.GlobalBounds.Top);
-  CheckEquals(FSfmlConvexShape.GlobalBounds.Width, ReturnValue.GlobalBounds.Width);
-  CheckEquals(FSfmlConvexShape.GlobalBounds.Height, ReturnValue.GlobalBounds.Height);
-  for Index := 0 to 8 do
-    CheckEquals(FSfmlConvexShape.InverseTransform.Matrix[Index], ReturnValue.InverseTransform.Matrix[Index]);
-  CheckEquals(FSfmlConvexShape.LocalBounds.Left, ReturnValue.LocalBounds.Left);
-  CheckEquals(FSfmlConvexShape.LocalBounds.Top, ReturnValue.LocalBounds.Top);
-  CheckEquals(FSfmlConvexShape.LocalBounds.Width, ReturnValue.LocalBounds.Width);
-  CheckEquals(FSfmlConvexShape.LocalBounds.Height, ReturnValue.LocalBounds.Height);
-  CheckEquals(FSfmlConvexShape.Origin.X, ReturnValue.Origin.X);
-  CheckEquals(FSfmlConvexShape.Origin.Y, ReturnValue.Origin.Y);
-  CheckEquals(FSfmlConvexShape.OutlineColor.Value, ReturnValue.OutlineColor.Value);
-  CheckEquals(FSfmlConvexShape.OutlineThickness, ReturnValue.OutlineThickness);
-  CheckEquals(FSfmlConvexShape.PointCount, ReturnValue.PointCount);
-  for Index := 0 to FSfmlConvexShape.PointCount - 1 do
-  begin
-    CheckEquals(FSfmlConvexShape.Point[Index].X, ReturnValue.Point[Index].X);
-    CheckEquals(FSfmlConvexShape.Point[Index].Y, ReturnValue.Point[Index].Y);
-  end;
-  CheckEquals(FSfmlConvexShape.Position.X, ReturnValue.Position.X);
-  CheckEquals(FSfmlConvexShape.Position.Y, ReturnValue.Position.Y);
-  CheckEquals(FSfmlConvexShape.Rotation, ReturnValue.Rotation);
-  CheckEquals(FSfmlConvexShape.ScaleFactor.X, ReturnValue.ScaleFactor.X);
-  CheckEquals(FSfmlConvexShape.ScaleFactor.Y, ReturnValue.ScaleFactor.Y);
+  try
+    CheckEquals(FSfmlConvexShape.FillColor.Value, ReturnValue.FillColor.Value);
+    CheckEquals(FSfmlConvexShape.GlobalBounds.Left, ReturnValue.GlobalBounds.Left);
+    CheckEquals(FSfmlConvexShape.GlobalBounds.Top, ReturnValue.GlobalBounds.Top);
+    CheckEquals(FSfmlConvexShape.GlobalBounds.Width, ReturnValue.GlobalBounds.Width);
+    CheckEquals(FSfmlConvexShape.GlobalBounds.Height, ReturnValue.GlobalBounds.Height);
+    for Index := 0 to 8 do
+      CheckEquals(FSfmlConvexShape.InverseTransform.Matrix[Index], ReturnValue.InverseTransform.Matrix[Index]);
+    CheckEquals(FSfmlConvexShape.LocalBounds.Left, ReturnValue.LocalBounds.Left);
+    CheckEquals(FSfmlConvexShape.LocalBounds.Top, ReturnValue.LocalBounds.Top);
+    CheckEquals(FSfmlConvexShape.LocalBounds.Width, ReturnValue.LocalBounds.Width);
+    CheckEquals(FSfmlConvexShape.LocalBounds.Height, ReturnValue.LocalBounds.Height);
+    CheckEquals(FSfmlConvexShape.Origin.X, ReturnValue.Origin.X);
+    CheckEquals(FSfmlConvexShape.Origin.Y, ReturnValue.Origin.Y);
+    CheckEquals(FSfmlConvexShape.OutlineColor.Value, ReturnValue.OutlineColor.Value);
+    CheckEquals(FSfmlConvexShape.OutlineThickness, ReturnValue.OutlineThickness);
+    CheckEquals(FSfmlConvexShape.PointCount, ReturnValue.PointCount);
+    for Index := 0 to FSfmlConvexShape.PointCount - 1 do
+    begin
+      CheckEquals(FSfmlConvexShape.Point[Index].X, ReturnValue.Point[Index].X);
+      CheckEquals(FSfmlConvexShape.Point[Index].Y, ReturnValue.Point[Index].Y);
+    end;
+    CheckEquals(FSfmlConvexShape.Position.X, ReturnValue.Position.X);
+    CheckEquals(FSfmlConvexShape.Position.Y, ReturnValue.Position.Y);
+    CheckEquals(FSfmlConvexShape.Rotation, ReturnValue.Rotation);
+    CheckEquals(FSfmlConvexShape.ScaleFactor.X, ReturnValue.ScaleFactor.X);
+    CheckEquals(FSfmlConvexShape.ScaleFactor.Y, ReturnValue.ScaleFactor.Y);
 // ToDo    CheckEquals(FSfmlConvexShape.Texture, ReturnValue.Texture);
-  CheckEquals(FSfmlConvexShape.TextureRect.Left, ReturnValue.TextureRect.Left);
-  CheckEquals(FSfmlConvexShape.TextureRect.Top, ReturnValue.TextureRect.Top);
-  CheckEquals(FSfmlConvexShape.TextureRect.Width, ReturnValue.TextureRect.Width);
-  CheckEquals(FSfmlConvexShape.TextureRect.Height, ReturnValue.TextureRect.Height);
-  for Index := 0 to 8 do
-    CheckEquals(FSfmlConvexShape.Transform.Matrix[Index], ReturnValue.Transform.Matrix[Index]);
+    CheckEquals(FSfmlConvexShape.TextureRect.Left, ReturnValue.TextureRect.Left);
+    CheckEquals(FSfmlConvexShape.TextureRect.Top, ReturnValue.TextureRect.Top);
+    CheckEquals(FSfmlConvexShape.TextureRect.Width, ReturnValue.TextureRect.Width);
+    CheckEquals(FSfmlConvexShape.TextureRect.Height, ReturnValue.TextureRect.Height);
+    for Index := 0 to 8 do
+      CheckEquals(FSfmlConvexShape.Transform.Matrix[Index], ReturnValue.Transform.Matrix[Index]);
+  finally
+    ReturnValue.Free;
+  end;
 end;
 
 procedure TestTSfmlConvexShape.TestMove;
@@ -549,7 +555,11 @@ var
   ReturnValue: TSfmlFont;
 begin
   ReturnValue := FSfmlFont.Copy;
-  CheckEquals(FSfmlFont.GetInfo.Family, ReturnValue.GetInfo.Family);
+  try
+    CheckEquals(FSfmlFont.GetInfo.Family, ReturnValue.GetInfo.Family);
+  finally
+    ReturnValue.Free;
+  end;
 end;
 
 procedure TestTSfmlFont.TestGetGlyph;
@@ -626,16 +636,19 @@ var
   Data: array [0 .. 1] of PByte;
 begin
   ReturnValue := FSfmlImage.Copy;
-
-  CheckEquals(FSfmlImage.Size.X, ReturnValue.Size.X);
-  CheckEquals(FSfmlImage.Size.Y, ReturnValue.Size.Y);
-  Data[0] := FSfmlImage.GetPixelsPtr;
-  Data[1] := ReturnValue.GetPixelsPtr;
-  for Index := 0 to 4 * (FSfmlImage.Size.X * FSfmlImage.Size.Y) - 1 do
-  begin
-    CheckEquals(Data[0]^, Data[1]^);
-    Inc(Data[0]);
-    Inc(Data[1]);
+  try
+    CheckEquals(FSfmlImage.Size.X, ReturnValue.Size.X);
+    CheckEquals(FSfmlImage.Size.Y, ReturnValue.Size.Y);
+    Data[0] := FSfmlImage.GetPixelsPtr;
+    Data[1] := ReturnValue.GetPixelsPtr;
+    for Index := 0 to 4 * (FSfmlImage.Size.X * FSfmlImage.Size.Y) - 1 do
+    begin
+      CheckEquals(Data[0]^, Data[1]^);
+      Inc(Data[0]);
+      Inc(Data[1]);
+    end;
+  finally
+    ReturnValue.Free;
   end;
 end;
 
@@ -662,46 +675,49 @@ var
   Data: array [0 .. 1] of PByte;
 begin
   Original := FSfmlImage.Copy;
+  try
+    FSfmlImage.FlipHorizontally;
 
-  FSfmlImage.FlipHorizontally;
+    // test horizontally flipped image
+    Data[0] := FSfmlImage.GetPixelsPtr;
+    Data[1] := Original.GetPixelsPtr;
+    for Y := 0 to FSfmlImage.Size.Y - 1 do
+      for X := 0 to FSfmlImage.Size.X - 1 do
+        for C := 0 to 3 do
+        begin
+  //        CheckEquals(Data[0]^, Data[1]^);
+          Inc(Data[0]);
+          Inc(Data[1]);
+        end;
 
-  // test horizontally flipped image
-  Data[0] := FSfmlImage.GetPixelsPtr;
-  Data[1] := Original.GetPixelsPtr;
-  for Y := 0 to FSfmlImage.Size.Y - 1 do
-    for X := 0 to FSfmlImage.Size.X - 1 do
-      for C := 0 to 3 do
-      begin
-//        CheckEquals(Data[0]^, Data[1]^);
-        Inc(Data[0]);
-        Inc(Data[1]);
-      end;
+    FSfmlImage.FlipVertically;
 
-  FSfmlImage.FlipVertically;
+    // test vertically (and horizontally) flipped image
+    Data[0] := FSfmlImage.GetPixelsPtr;
+    Data[1] := Original.GetPixelsPtr;
+    for Y := 0 to FSfmlImage.Size.Y - 1 do
+      for X := 0 to FSfmlImage.Size.X - 1 do
+        for C := 0 to 3 do
+        begin
+  //        CheckEquals(Data[0]^, Data[1]^);
+          Inc(Data[0]);
+          Inc(Data[1]);
+        end;
 
-  // test vertically (and horizontally) flipped image
-  Data[0] := FSfmlImage.GetPixelsPtr;
-  Data[1] := Original.GetPixelsPtr;
-  for Y := 0 to FSfmlImage.Size.Y - 1 do
-    for X := 0 to FSfmlImage.Size.X - 1 do
-      for C := 0 to 3 do
-      begin
-//        CheckEquals(Data[0]^, Data[1]^);
-        Inc(Data[0]);
-        Inc(Data[1]);
-      end;
+    // flip back
+    FSfmlImage.FlipHorizontally;
+    FSfmlImage.FlipVertically;
 
-  // flip back
-  FSfmlImage.FlipHorizontally;
-  FSfmlImage.FlipVertically;
-
-  Data[0] := FSfmlImage.GetPixelsPtr;
-  Data[1] := Original.GetPixelsPtr;
-  for Index := 0 to 4 * (FSfmlImage.Size.X * FSfmlImage.Size.Y) - 1 do
-  begin
-    CheckEquals(Data[0]^, Data[1]^);
-    Inc(Data[0]);
-    Inc(Data[1]);
+    Data[0] := FSfmlImage.GetPixelsPtr;
+    Data[1] := Original.GetPixelsPtr;
+    for Index := 0 to 4 * (FSfmlImage.Size.X * FSfmlImage.Size.Y) - 1 do
+    begin
+      CheckEquals(Data[0]^, Data[1]^);
+      Inc(Data[0]);
+      Inc(Data[1]);
+    end;
+  finally
+    Original.Free;
   end;
 end;
 
@@ -725,40 +741,43 @@ var
   Index: Integer;
 begin
   ReturnValue := FSfmlRectangleShape.Copy;
-
-  CheckEquals(FSfmlRectangleShape.FillColor.Value, ReturnValue.FillColor.Value);
-  CheckEquals(FSfmlRectangleShape.GlobalBounds.Left, ReturnValue.GlobalBounds.Left);
-  CheckEquals(FSfmlRectangleShape.GlobalBounds.Top, ReturnValue.GlobalBounds.Top);
-  CheckEquals(FSfmlRectangleShape.GlobalBounds.Width, ReturnValue.GlobalBounds.Width);
-  CheckEquals(FSfmlRectangleShape.GlobalBounds.Height, ReturnValue.GlobalBounds.Height);
-  for Index := 0 to 8 do
-    CheckEquals(FSfmlRectangleShape.InverseTransform.Matrix[Index], ReturnValue.InverseTransform.Matrix[Index]);
-  CheckEquals(FSfmlRectangleShape.LocalBounds.Left, ReturnValue.LocalBounds.Left);
-  CheckEquals(FSfmlRectangleShape.LocalBounds.Top, ReturnValue.LocalBounds.Top);
-  CheckEquals(FSfmlRectangleShape.LocalBounds.Width, ReturnValue.LocalBounds.Width);
-  CheckEquals(FSfmlRectangleShape.LocalBounds.Height, ReturnValue.LocalBounds.Height);
-  CheckEquals(FSfmlRectangleShape.Origin.X, ReturnValue.Origin.X);
-  CheckEquals(FSfmlRectangleShape.Origin.Y, ReturnValue.Origin.Y);
-  CheckEquals(FSfmlRectangleShape.OutlineColor.Value, ReturnValue.OutlineColor.Value);
-  CheckEquals(FSfmlRectangleShape.OutlineThickness, ReturnValue.OutlineThickness);
-  CheckEquals(FSfmlRectangleShape.PointCount, ReturnValue.PointCount);
-  for Index := 0 to FSfmlRectangleShape.PointCount - 1 do
-  begin
-    CheckEquals(FSfmlRectangleShape.Point[Index].X, ReturnValue.Point[Index].X);
-    CheckEquals(FSfmlRectangleShape.Point[Index].Y, ReturnValue.Point[Index].Y);
-  end;
-  CheckEquals(FSfmlRectangleShape.Position.X, ReturnValue.Position.X);
-  CheckEquals(FSfmlRectangleShape.Position.Y, ReturnValue.Position.Y);
-  CheckEquals(FSfmlRectangleShape.Rotation, ReturnValue.Rotation);
-  CheckEquals(FSfmlRectangleShape.ScaleFactor.X, ReturnValue.ScaleFactor.X);
-  CheckEquals(FSfmlRectangleShape.ScaleFactor.Y, ReturnValue.ScaleFactor.Y);
+  try
+    CheckEquals(FSfmlRectangleShape.FillColor.Value, ReturnValue.FillColor.Value);
+    CheckEquals(FSfmlRectangleShape.GlobalBounds.Left, ReturnValue.GlobalBounds.Left);
+    CheckEquals(FSfmlRectangleShape.GlobalBounds.Top, ReturnValue.GlobalBounds.Top);
+    CheckEquals(FSfmlRectangleShape.GlobalBounds.Width, ReturnValue.GlobalBounds.Width);
+    CheckEquals(FSfmlRectangleShape.GlobalBounds.Height, ReturnValue.GlobalBounds.Height);
+    for Index := 0 to 8 do
+      CheckEquals(FSfmlRectangleShape.InverseTransform.Matrix[Index], ReturnValue.InverseTransform.Matrix[Index]);
+    CheckEquals(FSfmlRectangleShape.LocalBounds.Left, ReturnValue.LocalBounds.Left);
+    CheckEquals(FSfmlRectangleShape.LocalBounds.Top, ReturnValue.LocalBounds.Top);
+    CheckEquals(FSfmlRectangleShape.LocalBounds.Width, ReturnValue.LocalBounds.Width);
+    CheckEquals(FSfmlRectangleShape.LocalBounds.Height, ReturnValue.LocalBounds.Height);
+    CheckEquals(FSfmlRectangleShape.Origin.X, ReturnValue.Origin.X);
+    CheckEquals(FSfmlRectangleShape.Origin.Y, ReturnValue.Origin.Y);
+    CheckEquals(FSfmlRectangleShape.OutlineColor.Value, ReturnValue.OutlineColor.Value);
+    CheckEquals(FSfmlRectangleShape.OutlineThickness, ReturnValue.OutlineThickness);
+    CheckEquals(FSfmlRectangleShape.PointCount, ReturnValue.PointCount);
+    for Index := 0 to FSfmlRectangleShape.PointCount - 1 do
+    begin
+      CheckEquals(FSfmlRectangleShape.Point[Index].X, ReturnValue.Point[Index].X);
+      CheckEquals(FSfmlRectangleShape.Point[Index].Y, ReturnValue.Point[Index].Y);
+    end;
+    CheckEquals(FSfmlRectangleShape.Position.X, ReturnValue.Position.X);
+    CheckEquals(FSfmlRectangleShape.Position.Y, ReturnValue.Position.Y);
+    CheckEquals(FSfmlRectangleShape.Rotation, ReturnValue.Rotation);
+    CheckEquals(FSfmlRectangleShape.ScaleFactor.X, ReturnValue.ScaleFactor.X);
+    CheckEquals(FSfmlRectangleShape.ScaleFactor.Y, ReturnValue.ScaleFactor.Y);
 // ToDo    CheckEquals(FSfmlRectangleShape.Texture, ReturnValue.Texture);
-  CheckEquals(FSfmlRectangleShape.TextureRect.Left, ReturnValue.TextureRect.Left);
-  CheckEquals(FSfmlRectangleShape.TextureRect.Top, ReturnValue.TextureRect.Top);
-  CheckEquals(FSfmlRectangleShape.TextureRect.Width, ReturnValue.TextureRect.Width);
-  CheckEquals(FSfmlRectangleShape.TextureRect.Height, ReturnValue.TextureRect.Height);
-  for Index := 0 to 8 do
-    CheckEquals(FSfmlRectangleShape.Transform.Matrix[Index], ReturnValue.Transform.Matrix[Index]);
+    CheckEquals(FSfmlRectangleShape.TextureRect.Left, ReturnValue.TextureRect.Left);
+    CheckEquals(FSfmlRectangleShape.TextureRect.Top, ReturnValue.TextureRect.Top);
+    CheckEquals(FSfmlRectangleShape.TextureRect.Width, ReturnValue.TextureRect.Width);
+    CheckEquals(FSfmlRectangleShape.TextureRect.Height, ReturnValue.TextureRect.Height);
+    for Index := 0 to 8 do
+      CheckEquals(FSfmlRectangleShape.Transform.Matrix[Index], ReturnValue.Transform.Matrix[Index]);
+  finally
+    ReturnValue.Free;
+  end;
 end;
 
 procedure TestTSfmlRectangleShape.TestMove;
@@ -1939,31 +1958,34 @@ var
   Index: Integer;
 begin
   ReturnValue := FSfmlSprite.Copy;
-
-  CheckEquals(FSfmlSprite.GlobalBounds.Left, ReturnValue.GlobalBounds.Left);
-  CheckEquals(FSfmlSprite.GlobalBounds.Top, ReturnValue.GlobalBounds.Top);
-  CheckEquals(FSfmlSprite.GlobalBounds.Width, ReturnValue.GlobalBounds.Width);
-  CheckEquals(FSfmlSprite.GlobalBounds.Height, ReturnValue.GlobalBounds.Height);
-  for Index := 0 to 8 do
-    CheckEquals(FSfmlSprite.InverseTransform.Matrix[Index], ReturnValue.InverseTransform.Matrix[Index]);
-  CheckEquals(FSfmlSprite.LocalBounds.Left, ReturnValue.LocalBounds.Left);
-  CheckEquals(FSfmlSprite.LocalBounds.Top, ReturnValue.LocalBounds.Top);
-  CheckEquals(FSfmlSprite.LocalBounds.Width, ReturnValue.LocalBounds.Width);
-  CheckEquals(FSfmlSprite.LocalBounds.Height, ReturnValue.LocalBounds.Height);
-  CheckEquals(FSfmlSprite.Origin.X, ReturnValue.Origin.X);
-  CheckEquals(FSfmlSprite.Origin.Y, ReturnValue.Origin.Y);
-  CheckEquals(FSfmlSprite.Position.X, ReturnValue.Position.X);
-  CheckEquals(FSfmlSprite.Position.Y, ReturnValue.Position.Y);
-  CheckEquals(FSfmlSprite.Rotation, ReturnValue.Rotation);
-  CheckEquals(FSfmlSprite.ScaleFactor.X, ReturnValue.ScaleFactor.X);
-  CheckEquals(FSfmlSprite.ScaleFactor.Y, ReturnValue.ScaleFactor.Y);
-  CheckEquals(Pointer(FSfmlSprite.Texture), Pointer(ReturnValue.Texture));
-  CheckEquals(FSfmlSprite.TextureRect.Left, ReturnValue.TextureRect.Left);
-  CheckEquals(FSfmlSprite.TextureRect.Top, ReturnValue.TextureRect.Top);
-  CheckEquals(FSfmlSprite.TextureRect.Width, ReturnValue.TextureRect.Width);
-  CheckEquals(FSfmlSprite.TextureRect.Height, ReturnValue.TextureRect.Height);
-  for Index := 0 to 8 do
-    CheckEquals(FSfmlSprite.Transform.Matrix[Index], ReturnValue.Transform.Matrix[Index]);
+  try
+    CheckEquals(FSfmlSprite.GlobalBounds.Left, ReturnValue.GlobalBounds.Left);
+    CheckEquals(FSfmlSprite.GlobalBounds.Top, ReturnValue.GlobalBounds.Top);
+    CheckEquals(FSfmlSprite.GlobalBounds.Width, ReturnValue.GlobalBounds.Width);
+    CheckEquals(FSfmlSprite.GlobalBounds.Height, ReturnValue.GlobalBounds.Height);
+    for Index := 0 to 8 do
+      CheckEquals(FSfmlSprite.InverseTransform.Matrix[Index], ReturnValue.InverseTransform.Matrix[Index]);
+    CheckEquals(FSfmlSprite.LocalBounds.Left, ReturnValue.LocalBounds.Left);
+    CheckEquals(FSfmlSprite.LocalBounds.Top, ReturnValue.LocalBounds.Top);
+    CheckEquals(FSfmlSprite.LocalBounds.Width, ReturnValue.LocalBounds.Width);
+    CheckEquals(FSfmlSprite.LocalBounds.Height, ReturnValue.LocalBounds.Height);
+    CheckEquals(FSfmlSprite.Origin.X, ReturnValue.Origin.X);
+    CheckEquals(FSfmlSprite.Origin.Y, ReturnValue.Origin.Y);
+    CheckEquals(FSfmlSprite.Position.X, ReturnValue.Position.X);
+    CheckEquals(FSfmlSprite.Position.Y, ReturnValue.Position.Y);
+    CheckEquals(FSfmlSprite.Rotation, ReturnValue.Rotation);
+    CheckEquals(FSfmlSprite.ScaleFactor.X, ReturnValue.ScaleFactor.X);
+    CheckEquals(FSfmlSprite.ScaleFactor.Y, ReturnValue.ScaleFactor.Y);
+    CheckEquals(Pointer(FSfmlSprite.Texture), Pointer(ReturnValue.Texture));
+    CheckEquals(FSfmlSprite.TextureRect.Left, ReturnValue.TextureRect.Left);
+    CheckEquals(FSfmlSprite.TextureRect.Top, ReturnValue.TextureRect.Top);
+    CheckEquals(FSfmlSprite.TextureRect.Width, ReturnValue.TextureRect.Width);
+    CheckEquals(FSfmlSprite.TextureRect.Height, ReturnValue.TextureRect.Height);
+    for Index := 0 to 8 do
+      CheckEquals(FSfmlSprite.Transform.Matrix[Index], ReturnValue.Transform.Matrix[Index]);
+  finally
+    ReturnValue.Free;
+  end;
 end;
 
 procedure TestTSfmlSprite.TestMove;
@@ -2049,28 +2071,31 @@ var
   Index: Integer;
 begin
   ReturnValue := FSfmlText.Copy;
-
-  CheckEquals(FSfmlText.CharacterSize, ReturnValue.CharacterSize);
-  CheckEquals(FSfmlText.Color.Value, ReturnValue.Color.Value);
-  CheckEquals(FSfmlText.GlobalBounds.Left, ReturnValue.GlobalBounds.Left);
-  CheckEquals(FSfmlText.GlobalBounds.Top, ReturnValue.GlobalBounds.Top);
-  CheckEquals(FSfmlText.GlobalBounds.Width, ReturnValue.GlobalBounds.Width);
-  CheckEquals(FSfmlText.GlobalBounds.Height, ReturnValue.GlobalBounds.Height);
-  for Index := 0 to 8 do
-    CheckEquals(FSfmlText.InverseTransform.Matrix[Index], ReturnValue.InverseTransform.Matrix[Index]);
-  CheckEquals(FSfmlText.LocalBounds.Left, ReturnValue.LocalBounds.Left);
-  CheckEquals(FSfmlText.LocalBounds.Top, ReturnValue.LocalBounds.Top);
-  CheckEquals(FSfmlText.LocalBounds.Width, ReturnValue.LocalBounds.Width);
-  CheckEquals(FSfmlText.LocalBounds.Height, ReturnValue.LocalBounds.Height);
-  CheckEquals(FSfmlText.Origin.X, ReturnValue.Origin.X);
-  CheckEquals(FSfmlText.Origin.Y, ReturnValue.Origin.Y);
-  CheckEquals(FSfmlText.Position.X, ReturnValue.Position.X);
-  CheckEquals(FSfmlText.Position.Y, ReturnValue.Position.Y);
-  CheckEquals(FSfmlText.Rotation, ReturnValue.Rotation);
-  CheckEquals(FSfmlText.ScaleFactor.X, ReturnValue.ScaleFactor.X);
-  CheckEquals(FSfmlText.ScaleFactor.Y, ReturnValue.ScaleFactor.Y);
-  for Index := 0 to 8 do
-    CheckEquals(FSfmlText.Transform.Matrix[Index], ReturnValue.Transform.Matrix[Index]);
+  try
+    CheckEquals(FSfmlText.CharacterSize, ReturnValue.CharacterSize);
+    CheckEquals(FSfmlText.Color.Value, ReturnValue.Color.Value);
+    CheckEquals(FSfmlText.GlobalBounds.Left, ReturnValue.GlobalBounds.Left);
+    CheckEquals(FSfmlText.GlobalBounds.Top, ReturnValue.GlobalBounds.Top);
+    CheckEquals(FSfmlText.GlobalBounds.Width, ReturnValue.GlobalBounds.Width);
+    CheckEquals(FSfmlText.GlobalBounds.Height, ReturnValue.GlobalBounds.Height);
+    for Index := 0 to 8 do
+      CheckEquals(FSfmlText.InverseTransform.Matrix[Index], ReturnValue.InverseTransform.Matrix[Index]);
+    CheckEquals(FSfmlText.LocalBounds.Left, ReturnValue.LocalBounds.Left);
+    CheckEquals(FSfmlText.LocalBounds.Top, ReturnValue.LocalBounds.Top);
+    CheckEquals(FSfmlText.LocalBounds.Width, ReturnValue.LocalBounds.Width);
+    CheckEquals(FSfmlText.LocalBounds.Height, ReturnValue.LocalBounds.Height);
+    CheckEquals(FSfmlText.Origin.X, ReturnValue.Origin.X);
+    CheckEquals(FSfmlText.Origin.Y, ReturnValue.Origin.Y);
+    CheckEquals(FSfmlText.Position.X, ReturnValue.Position.X);
+    CheckEquals(FSfmlText.Position.Y, ReturnValue.Position.Y);
+    CheckEquals(FSfmlText.Rotation, ReturnValue.Rotation);
+    CheckEquals(FSfmlText.ScaleFactor.X, ReturnValue.ScaleFactor.X);
+    CheckEquals(FSfmlText.ScaleFactor.Y, ReturnValue.ScaleFactor.Y);
+    for Index := 0 to 8 do
+      CheckEquals(FSfmlText.Transform.Matrix[Index], ReturnValue.Transform.Matrix[Index]);
+  finally
+    ReturnValue.Free;
+  end;
 end;
 
 procedure TestTSfmlText.TestFindCharacterPos;
@@ -2157,11 +2182,14 @@ var
   ReturnValue: TSfmlTexture;
 begin
   ReturnValue := FSfmlTexture.Copy;
-
-  CheckEquals(FSfmlTexture.Repeated, ReturnValue.Repeated);
-  CheckEquals(FSfmlTexture.Smooth, ReturnValue.Smooth);
-  CheckEquals(FSfmlTexture.Size.X, ReturnValue.Size.X);
-  CheckEquals(FSfmlTexture.Size.Y, ReturnValue.Size.Y);
+  try
+    CheckEquals(FSfmlTexture.Repeated, ReturnValue.Repeated);
+    CheckEquals(FSfmlTexture.Smooth, ReturnValue.Smooth);
+    CheckEquals(FSfmlTexture.Size.X, ReturnValue.Size.X);
+    CheckEquals(FSfmlTexture.Size.Y, ReturnValue.Size.Y);
+  finally
+    ReturnValue.Free;
+  end;
 end;
 
 procedure TestTSfmlTexture.TestCopyToImage;
@@ -2259,18 +2287,21 @@ var
   Index: Integer;
 begin
   ReturnValue := FSfmlTransformable.Copy;
-
-  for Index := 0 to 8 do
-    CheckEquals(FSfmlTransformable.InverseTransform.Matrix[Index], ReturnValue.InverseTransform.Matrix[Index]);
-  CheckEquals(FSfmlTransformable.Origin.X, ReturnValue.Origin.X);
-  CheckEquals(FSfmlTransformable.Origin.Y, ReturnValue.Origin.Y);
-  CheckEquals(FSfmlTransformable.Position.X, ReturnValue.Position.X);
-  CheckEquals(FSfmlTransformable.Position.Y, ReturnValue.Position.Y);
-  CheckEquals(FSfmlTransformable.Rotation, ReturnValue.Rotation);
-  CheckEquals(FSfmlTransformable.ScaleFactor.X, ReturnValue.ScaleFactor.X);
-  CheckEquals(FSfmlTransformable.ScaleFactor.Y, ReturnValue.ScaleFactor.Y);
-  for Index := 0 to 8 do
-    CheckEquals(FSfmlTransformable.Transform.Matrix[Index], ReturnValue.Transform.Matrix[Index]);
+  try
+    for Index := 0 to 8 do
+      CheckEquals(FSfmlTransformable.InverseTransform.Matrix[Index], ReturnValue.InverseTransform.Matrix[Index]);
+    CheckEquals(FSfmlTransformable.Origin.X, ReturnValue.Origin.X);
+    CheckEquals(FSfmlTransformable.Origin.Y, ReturnValue.Origin.Y);
+    CheckEquals(FSfmlTransformable.Position.X, ReturnValue.Position.X);
+    CheckEquals(FSfmlTransformable.Position.Y, ReturnValue.Position.Y);
+    CheckEquals(FSfmlTransformable.Rotation, ReturnValue.Rotation);
+    CheckEquals(FSfmlTransformable.ScaleFactor.X, ReturnValue.ScaleFactor.X);
+    CheckEquals(FSfmlTransformable.ScaleFactor.Y, ReturnValue.ScaleFactor.Y);
+    for Index := 0 to 8 do
+      CheckEquals(FSfmlTransformable.Transform.Matrix[Index], ReturnValue.Transform.Matrix[Index]);
+  finally
+    ReturnValue.Free;
+  end;
 end;
 
 procedure TestTSfmlTransformable.TestMove;
@@ -2345,20 +2376,23 @@ var
   Index: Integer;
 begin
   ReturnValue := FSfmlVertexArray.Copy;
-
-  CheckEquals(FSfmlVertexArray.Bounds.Left, ReturnValue.Bounds.Left);
-  CheckEquals(FSfmlVertexArray.Bounds.Top, ReturnValue.Bounds.Top);
-  CheckEquals(FSfmlVertexArray.Bounds.Width, ReturnValue.Bounds.Width);
-  CheckEquals(FSfmlVertexArray.Bounds.Height, ReturnValue.Bounds.Height);
-  CheckEquals(Integer(FSfmlVertexArray.PrimitiveType), Integer(ReturnValue.PrimitiveType));
-  CheckEquals(FSfmlVertexArray.VertexCount, ReturnValue.VertexCount);
-  for Index := 0 to FSfmlVertexArray.VertexCount - 1 do
-  begin
-    CheckEquals(FSfmlVertexArray.Vertex[Index].Position.X, ReturnValue.Vertex[Index].Position.X);
-    CheckEquals(FSfmlVertexArray.Vertex[Index].Position.Y, ReturnValue.Vertex[Index].Position.Y);
-    CheckEquals(FSfmlVertexArray.Vertex[Index].Color.Value, ReturnValue.Vertex[Index].Color.Value);
-    CheckEquals(FSfmlVertexArray.Vertex[Index].TexCoords.X, ReturnValue.Vertex[Index].TexCoords.X);
-    CheckEquals(FSfmlVertexArray.Vertex[Index].TexCoords.Y, ReturnValue.Vertex[Index].TexCoords.Y);
+  try
+    CheckEquals(FSfmlVertexArray.Bounds.Left, ReturnValue.Bounds.Left);
+    CheckEquals(FSfmlVertexArray.Bounds.Top, ReturnValue.Bounds.Top);
+    CheckEquals(FSfmlVertexArray.Bounds.Width, ReturnValue.Bounds.Width);
+    CheckEquals(FSfmlVertexArray.Bounds.Height, ReturnValue.Bounds.Height);
+    CheckEquals(Integer(FSfmlVertexArray.PrimitiveType), Integer(ReturnValue.PrimitiveType));
+    CheckEquals(FSfmlVertexArray.VertexCount, ReturnValue.VertexCount);
+    for Index := 0 to FSfmlVertexArray.VertexCount - 1 do
+    begin
+      CheckEquals(FSfmlVertexArray.Vertex[Index].Position.X, ReturnValue.Vertex[Index].Position.X);
+      CheckEquals(FSfmlVertexArray.Vertex[Index].Position.Y, ReturnValue.Vertex[Index].Position.Y);
+      CheckEquals(FSfmlVertexArray.Vertex[Index].Color.Value, ReturnValue.Vertex[Index].Color.Value);
+      CheckEquals(FSfmlVertexArray.Vertex[Index].TexCoords.X, ReturnValue.Vertex[Index].TexCoords.X);
+      CheckEquals(FSfmlVertexArray.Vertex[Index].TexCoords.Y, ReturnValue.Vertex[Index].TexCoords.Y);
+    end;
+  finally
+    ReturnValue.Free;
   end;
 end;
 
@@ -2401,16 +2435,19 @@ var
   ReturnValue: TSfmlView;
 begin
   ReturnValue := FSfmlView.Copy;
-
-  CheckEquals(FSfmlView.Center.X, ReturnValue.Center.X);
-  CheckEquals(FSfmlView.Center.Y, ReturnValue.Center.Y);
-  CheckEquals(FSfmlView.Rotation, ReturnValue.Rotation);
-  CheckEquals(FSfmlView.Size.X, ReturnValue.Size.X);
-  CheckEquals(FSfmlView.Size.Y, ReturnValue.Size.Y);
-  CheckEquals(FSfmlView.Viewport.Left, ReturnValue.Viewport.Left);
-  CheckEquals(FSfmlView.Viewport.Top, ReturnValue.Viewport.Top);
-  CheckEquals(FSfmlView.Viewport.Width, ReturnValue.Viewport.Width);
-  CheckEquals(FSfmlView.Viewport.Height, ReturnValue.Viewport.Height);
+  try
+    CheckEquals(FSfmlView.Center.X, ReturnValue.Center.X);
+    CheckEquals(FSfmlView.Center.Y, ReturnValue.Center.Y);
+    CheckEquals(FSfmlView.Rotation, ReturnValue.Rotation);
+    CheckEquals(FSfmlView.Size.X, ReturnValue.Size.X);
+    CheckEquals(FSfmlView.Size.Y, ReturnValue.Size.Y);
+    CheckEquals(FSfmlView.Viewport.Left, ReturnValue.Viewport.Left);
+    CheckEquals(FSfmlView.Viewport.Top, ReturnValue.Viewport.Top);
+    CheckEquals(FSfmlView.Viewport.Width, ReturnValue.Viewport.Width);
+    CheckEquals(FSfmlView.Viewport.Height, ReturnValue.Viewport.Height);
+  finally
+    ReturnValue.Free;
+  end;
 end;
 
 procedure TestTSfmlView.TestMove;

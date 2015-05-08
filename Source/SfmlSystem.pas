@@ -59,6 +59,11 @@ type
     {$IFDEF RecordConstructors}
     constructor Create(MicroSeconds: LongInt);
     {$ENDIF}
+    {$IFDEF RecordOperators}
+    class operator Equal(const Lhs, Rhs: TSfmlTime): Boolean;
+    class operator Add(const Lhs, Rhs: TSfmlTime): TSfmlTime;
+    class operator Subtract(const Lhs, Rhs: TSfmlTime): TSfmlTime;
+    {$ENDIF}
   end;
 
   TSfmlVector2i = record
@@ -306,8 +311,7 @@ end;
 
 
 {$IFDEF RecordConstructors}
-
-constructor Create(Microseconds: LongInt);
+constructor TSfmlTime.Create(Microseconds: LongInt);
 begin
   Self.MicroSeconds := Microseconds;
 end;
@@ -337,6 +341,24 @@ begin
   Self.Z := Z;
 end;
 {$ENDIF}
+
+{$IFDEF RecordOperators}
+class operator TSfmlTime.Equal(const Lhs, Rhs: TSfmlTime): Boolean;
+begin
+  Result := Lhs.MicroSeconds = Rhs.MicroSeconds;
+end;
+
+class operator TSfmlTime.Add(const Lhs, Rhs: TSfmlTime): TSfmlTime;
+begin
+  Result.MicroSeconds := Lhs.MicroSeconds + Rhs.MicroSeconds;
+end;
+
+class operator TSfmlTime.Subtract(const Lhs, Rhs: TSfmlTime): TSfmlTime;
+begin
+  Result.MicroSeconds := Lhs.MicroSeconds - Rhs.MicroSeconds;
+end;
+{$ENDIF}
+
 
 { TSfmlClock }
 

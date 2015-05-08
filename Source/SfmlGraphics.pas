@@ -93,7 +93,7 @@ type
   end;
 
   TSfmlColor = packed record
-  case LongInt of
+    case LongInt of
       0: (R, G, B, A: Byte);
       1: (Value: LongInt);
   end;
@@ -104,10 +104,27 @@ type
 
   TSfmlFloatRect = record
     Left, Top, Width, Height: Single;
+    {$IFDEF RecordConstructors}
+    constructor Create(Left, Top, Width, Height: Single);
+    {$ENDIF}
+    {$IFDEF RecordOperators}
+    class operator Equal(const Lhs, Rhs: TSfmlFloatRect): Boolean;
+    {$ENDIF}
   end;
 
   TSfmlIntRect = record
-    Left, Top, Width, Height: longint;
+    Left, Top, Width, Height: LongInt;
+    {$IFDEF RecordConstructors}
+    constructor Create(Left, Top, Width, Height: LongInt);
+    {$ENDIF}
+    {$IFDEF RecordOperators}
+    class operator Equal(const Lhs, Rhs: TSfmlIntRect): Boolean;
+
+    class operator Implicit(A: TSfmlFloatRect): TSfmlIntRect;
+    class operator Implicit(A: TSfmlIntRect): TSfmlFloatRect;
+    class operator Explicit(A: TSfmlFloatRect): TSfmlIntRect;
+    class operator Explicit(A: TSfmlIntRect): TSfmlFloatRect;
+    {$ENDIF}
   end;
   PSfmlIntRect = ^TSfmlIntRect;
 
@@ -120,8 +137,28 @@ type
   TSfmlPrimitiveType = (sfPoints, sfLines, sfLinesStrip, sfTriangles,
     sfTrianglesStrip, sfTrianglesFan, sfQuads);
 
+  TMatrixData = array [0 .. 8] of Single;
+
   TSfmlTransform = record
-    Matrix : array [0 .. 8] of Single;
+    Matrix : TMatrixData;
+    {$IFDEF RecordConstructors}
+    constructor Create(Matrix : TMatrixData);
+    {$ENDIF}
+    {$IFDEF RecordOperators}
+    class operator Equal(const Lhs, Rhs: TSfmlTransform): Boolean;
+    class operator NotEqual(const Lhs, Rhs: TSfmlTransform): Boolean;
+    class operator Multiply(const Lhs, Rhs: TSfmlTransform): TSfmlTransform; overload;
+    class operator Multiply(const Lhs: TSfmlTransform; Rhs: TSfmlVector2f): TSfmlVector2f; overload;
+    {$ENDIF}
+
+    function GetInverse: TSfmlTransform;
+    function TransformPoint(Point: TSfmlVector2f): TSfmlVector2f;
+    function TransformRect(Rectangle: TSfmlFloatRect): TSfmlFloatRect;
+    procedure Translate(X, Y: Single);
+    procedure Rotate(Angle: Single);
+    procedure RotateWithCenter(Angle: Single; centerX, centerY: Single);
+    procedure Scale(ScaleX, ScaleY: Single);
+    procedure ScaleWithCenter(ScaleX, ScaleY, CenterX, CenterY: Single);
   end;
   PSfmlTransform = ^TSfmlTransform;
 
@@ -499,7 +536,7 @@ type
   TSfmlTransformGetInverse = function (const Transform: PSfmlTransform): TSfmlTransform; cdecl;
   TSfmlTransformTransformPoint = function (const Transform: PSfmlTransform; Point: TSfmlVector2f): TSfmlVector2f; cdecl;
   TSfmlTransformTransformRect = function (const Transform: PSfmlTransform; Rectangle: TSfmlFloatRect): TSfmlFloatRect; cdecl;
-  TSfmlTransformCombine = procedure (Transform: PSfmlTransform; const Other: PSfmlTransform); cdecl;
+  TSfmlTransformCombine = procedure (out Transform: TSfmlTransform; const Other: PSfmlTransform); cdecl;
   TSfmlTransformTranslate = procedure (Transform: PSfmlTransform; X, Y: Single); cdecl;
   TSfmlTransformRotate = procedure (Transform: PSfmlTransform; Angle: Single); cdecl;
   TSfmlTransformRotateWithCenter = procedure (Transform: PSfmlTransform; Angle: Single; centerX, centerY: Single); cdecl;
@@ -1416,7 +1453,7 @@ const
   procedure SfmlTransformGetMatrix(const Transform: PSfmlTransform; Matrix: PSingle); cdecl; external CSfmlGraphicsLibrary name 'sfTransform_getMatrix';
   function SfmlTransformGetInverse(const Transform: PSfmlTransform): TSfmlTransform; cdecl; external CSfmlGraphicsLibrary name 'sfTransform_getInverse';
   function SfmlTransformTransformRect(const Transform: PSfmlTransform; Rectangle: TSfmlFloatRect): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfTransform_transformRect';
-  procedure SfmlTransformCombine(Transform: PSfmlTransform; const Other: PSfmlTransform); cdecl; external CSfmlGraphicsLibrary name 'sfTransform_combine';
+  procedure SfmlTransformCombine(out Transform: TSfmlTransform; const Other: PSfmlTransform); cdecl; external CSfmlGraphicsLibrary name 'sfTransform_combine';
   procedure SfmlTransformTranslate(Transform: PSfmlTransform; X, Y: Single); cdecl; external CSfmlGraphicsLibrary name 'sfTransform_translate';
   procedure SfmlTransformRotate(Transform: PSfmlTransform; Angle: Single); cdecl; external CSfmlGraphicsLibrary name 'sfTransform_rotate';
   procedure SfmlTransformRotateWithCenter(Transform: PSfmlTransform; Angle: Single; centerX, centerY: Single); cdecl; external CSfmlGraphicsLibrary name 'sfTransform_rotateWithCenter';
@@ -1803,6 +1840,7 @@ type
   public
     constructor Create; overload;
     constructor Create(Texture: TSfmlTexture); overload;
+    constructor Create(Texture: TSfmlTexture; TextureRect: TSfmlIntRect); overload;
     destructor Destroy; override;
 
     function Copy: TSfmlSprite;
@@ -2068,8 +2106,8 @@ type
   protected
     function GetSize: TSfmlVector2u; override;
   public
-    constructor Create(Mode: TSfmlVideoMode; const Title: AnsiString; Style: TSfmlWindowStyles); overload;
-    constructor Create(Mode: TSfmlVideoMode; const Title: UnicodeString; Style: TSfmlWindowStyles); overload;
+    constructor Create(Mode: TSfmlVideoMode; const Title: AnsiString; Style: TSfmlWindowStyles = [sfTitleBar, sfClose]); overload;
+    constructor Create(Mode: TSfmlVideoMode; const Title: UnicodeString; Style: TSfmlWindowStyles = [sfTitleBar, sfClose]); overload;
     constructor Create(Mode: TSfmlVideoMode; const Title: AnsiString; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings); overload;
     constructor Create(Mode: TSfmlVideoMode; const Title: UnicodeString; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings); overload;
     constructor Create(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings = nil); overload;
@@ -2128,8 +2166,6 @@ type
     procedure SetVerticalSyncEnabled(Enabled: Boolean);
     procedure SetView(const View: PSfmlView); override;
     procedure SetVisible(Visible: Boolean);
-
-//    function SfmlTouchGetPositionRenderWindow(Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): TSfmlVector2i;
 
     property Handle: PSfmlRenderWindow read FHandle;
     property MousePosition: TSfmlVector2i read GetMousePosition write SetMousePosition;
@@ -3216,13 +3252,13 @@ begin
 end;
 
 constructor TSfmlRenderWindow.Create(Mode: TSfmlVideoMode;
-  const Title: AnsiString; Style: TSfmlWindowStyles);
+  const Title: AnsiString; Style: TSfmlWindowStyles = [sfTitleBar, sfClose]);
 begin
   FHandle := SfmlRenderWindowCreate(Mode, PAnsiChar(Title), Style, nil);
 end;
 
 constructor TSfmlRenderWindow.Create(Mode: TSfmlVideoMode;
-  const Title: UnicodeString; Style: TSfmlWindowStyles);
+  const Title: UnicodeString; Style: TSfmlWindowStyles = [sfTitleBar, sfClose]);
 begin
   FHandle := SfmlRenderWindowCreateUnicode(Mode,
     PUCS4Char(UnicodeStringToUCS4String(Title)), Style, nil);
@@ -3503,26 +3539,6 @@ begin
   SfmlRenderWindowSetVisible(FHandle, Visible);
 end;
 
-(*
-function TSfmlRenderWindow.SfmlMouseGetPositionRenderWindow(
-  const relativeTo: PSfmlRenderWindow): TSfmlVector2i;
-begin
-  Result := SfmlRenderWindowSfmlMouseGetPositionRenderWindow(FHandle);
-end;
-
-procedure TSfmlRenderWindow.SfmlMouseSetPositionRenderWindow(
-  position: TSfmlVector2i; const RelativeTo: PSfmlRenderWindow);
-begin
-  SfmlRenderWindowSfmlMouseSetPositionRenderWindow(FHandle);
-end;
-
-function TSfmlRenderWindow.SfmlTouchGetPositionRenderWindow(Finger: Cardinal;
-  const RelativeTo: PSfmlRenderWindow): TSfmlVector2i;
-begin
-  Result := SfmlRenderWindowSfmlTouchGetPositionRenderWindow(FHandle);
-end;
-*)
-
 function TSfmlRenderWindow.WaitEvent(out Event: TSfmlEvent): Boolean;
 begin
   Result := SfmlRenderWindowWaitEvent(FHandle, Event);
@@ -3785,6 +3801,19 @@ begin
   FHandle := Handle;
 end;
 
+constructor TSfmlSprite.Create(Texture: TSfmlTexture);
+begin
+  Create;
+  SetTexture(Texture);
+end;
+
+constructor TSfmlSprite.Create(Texture: TSfmlTexture;
+  TextureRect: TSfmlIntRect);
+begin
+  Create(Texture);
+  SetTextureRect(TextureRect);
+end;
+
 destructor TSfmlSprite.Destroy;
 begin
   SfmlSpriteDestroy(FHandle);
@@ -3914,12 +3943,6 @@ end;
 constructor TSfmlText.Create;
 begin
   FHandle := SfmlTextCreate;
-end;
-
-constructor TSfmlSprite.Create(Texture: TSfmlTexture);
-begin
-  Create;
-  SetTexture(Texture);
 end;
 
 constructor TSfmlText.Create(Text: UnicodeString; Font: TSfmlFont;
@@ -5038,6 +5061,141 @@ function sfView_getCenter(const View: PSfmlView): Int64; cdecl; external CSfmlGr
 function sfView_getSize(const View: PSfmlView): Int64; cdecl; external CSfmlGraphicsLibrary;
 {$ENDIF}
 {$ENDIF}
+
+{$IFDEF RecordConstructors}
+constructor TSfmlFloatRect.Create(Left, Top, Width, Height: Single);
+begin
+  Self.Left := Left;
+  Self.Top := Top;
+  Self.Width := Width;
+  Self.Height := Height;
+end;
+
+constructor TSfmlIntRect.Create(Left, Top, Width, Height: LongInt);
+begin
+  Self.Left := Left;
+  Self.Top := Top;
+  Self.Width := Width;
+  Self.Height := Height;
+end;
+
+constructor TSfmlTransform.Create(Matrix: TMatrixData);
+begin
+  Move(Matrix[0], Self.Matrix[0], 9 * SizeOf(Single));
+end;
+{$ENDIF}
+
+{$IFDEF RecordOperators}
+class operator TSfmlIntRect.Equal(const Lhs, Rhs: TSfmlIntRect): Boolean;
+begin
+  Result := (Lhs.Left = Rhs.Left) and (Lhs.Top = Rhs.Top) and
+    (Lhs.Width = Rhs.Width) and (Lhs.Height = Rhs.Height);
+end;
+
+class operator TSfmlIntRect.Explicit(A: TSfmlFloatRect): TSfmlIntRect;
+begin
+  Result.Left := Round(A.Left);
+  Result.Top := Round(A.Top);
+  Result.Width := Round(A.Width);
+  Result.Height := Round(A.Height);
+end;
+
+class operator TSfmlIntRect.Explicit(A: TSfmlIntRect): TSfmlFloatRect;
+begin
+  Result.Left := A.Left;
+  Result.Top := A.Top;
+  Result.Width := A.Width;
+  Result.Height := A.Height;
+end;
+
+class operator TSfmlIntRect.Implicit(A: TSfmlFloatRect): TSfmlIntRect;
+begin
+  Result.Left := Round(A.Left);
+  Result.Top := Round(A.Top);
+  Result.Width := Round(A.Width);
+  Result.Height := Round(A.Height);
+end;
+
+class operator TSfmlIntRect.Implicit(A: TSfmlIntRect): TSfmlFloatRect;
+begin
+  Result.Left := A.Left;
+  Result.Top := A.Top;
+  Result.Width := A.Width;
+  Result.Height := A.Height;
+end;
+
+class operator TSfmlFloatRect.Equal(const Lhs, Rhs: TSfmlFloatRect): Boolean;
+begin
+  Result := (Lhs.Left = Rhs.Left) and (Lhs.Top = Rhs.Top) and
+    (Lhs.Width = Rhs.Width) and (Lhs.Height = Rhs.Height);
+end;
+
+class operator TSfmlTransform.Equal(const Lhs, Rhs: TSfmlTransform): Boolean;
+begin
+  Result := (Lhs.Matrix[0] = Rhs.Matrix[0]) and (Lhs.Matrix[1] = Rhs.Matrix[1])
+    and (Lhs.Matrix[2] = Rhs.Matrix[2]) and (Lhs.Matrix[3] = Rhs.Matrix[3])
+    and (Lhs.Matrix[4] = Rhs.Matrix[4]) and (Lhs.Matrix[5] = Rhs.Matrix[5])
+    and (Lhs.Matrix[6] = Rhs.Matrix[6]) and (Lhs.Matrix[7] = Rhs.Matrix[7])
+    and (Lhs.Matrix[8] = Rhs.Matrix[8]);
+end;
+
+class operator TSfmlTransform.NotEqual(const Lhs, Rhs: TSfmlTransform): Boolean;
+begin
+  Result := not (Lhs = Rhs);
+end;
+
+class operator TSfmlTransform.Multiply(const Lhs, Rhs: TSfmlTransform): TSfmlTransform;
+begin
+  Result := Lhs;
+  SfmlTransformCombine(Result, @Rhs);
+end;
+
+class operator TSfmlTransform.Multiply(const Lhs: TSfmlTransform; Rhs: TSfmlVector2f): TSfmlVector2f;
+begin
+  Result := SfmlTransformTransformPoint(@Lhs, Rhs);
+end;
+{$ENDIF}
+
+function TSfmlTransform.GetInverse: TSfmlTransform;
+begin
+  Result := SfmlTransformGetInverse(@Self);
+end;
+
+function TSfmlTransform.TransformPoint(Point: TSfmlVector2f): TSfmlVector2f;
+begin
+  Result := SfmlTransformTransformPoint(@Self, Point);
+end;
+
+function TSfmlTransform.TransformRect(Rectangle: TSfmlFloatRect): TSfmlFloatRect;
+begin
+  Result := SfmlTransformTransformRect(@Self, Rectangle);
+end;
+
+procedure TSfmlTransform.Translate(X, Y: Single);
+begin
+  SfmlTransformTranslate(@Self, X, Y);
+end;
+
+procedure TSfmlTransform.Rotate(Angle: Single);
+begin
+  SfmlTransformRotate(@Self, Angle);
+end;
+
+procedure TSfmlTransform.RotateWithCenter(Angle: Single; CenterX, CenterY: Single);
+begin
+  SfmlTransformRotateWithCenter(@Self, Angle, CenterX, CenterY);
+end;
+
+procedure TSfmlTransform.Scale(ScaleX, ScaleY: Single);
+begin
+  SfmlTransformScale(@Self, ScaleX, ScaleY);
+end;
+
+procedure TSfmlTransform.ScaleWithCenter(ScaleX, ScaleY, CenterX, CenterY: Single);
+begin
+  SfmlTransformScaleWithCenter(@Self, ScaleX, ScaleY, CenterX, CenterY);
+end;
+
 
 {$IFDEF INT64RETURNWORKAROUND}
 function SfmlCircleShapeGetPoint(const Shape: PSfmlCircleShape; Index: Cardinal): TSfmlVector2f; cdecl;

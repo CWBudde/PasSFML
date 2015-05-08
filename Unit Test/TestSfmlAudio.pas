@@ -190,19 +190,22 @@ var
   Index: Integer;
 begin
   NewBuffer := FSfmlSoundBuffer.Copy;
+  try
+    CheckEquals(FSfmlSoundBuffer.ChannelCount, NewBuffer.ChannelCount);
+    CheckEquals(FSfmlSoundBuffer.Duration.MicroSeconds, NewBuffer.Duration.MicroSeconds);
+    CheckEquals(FSfmlSoundBuffer.SampleCount, NewBuffer.SampleCount);
 
-  CheckEquals(FSfmlSoundBuffer.ChannelCount, NewBuffer.ChannelCount);
-  CheckEquals(FSfmlSoundBuffer.Duration.MicroSeconds, NewBuffer.Duration.MicroSeconds);
-  CheckEquals(FSfmlSoundBuffer.SampleCount, NewBuffer.SampleCount);
+    Samples[0] := FSfmlSoundBuffer.GetSamples;
+    Samples[1] := NewBuffer.GetSamples;
 
-  Samples[0] := FSfmlSoundBuffer.GetSamples;
-  Samples[1] := NewBuffer.GetSamples;
-
-  for Index := 0 to FSfmlSoundBuffer.SampleCount - 1 do
-  begin
-    CheckEquals(Samples[0]^, Samples[1]^);
-    Inc(Samples[0]);
-    Inc(Samples[1]);
+    for Index := 0 to FSfmlSoundBuffer.SampleCount - 1 do
+    begin
+      CheckEquals(Samples[0]^, Samples[1]^);
+      Inc(Samples[0]);
+      Inc(Samples[1]);
+    end;
+  finally
+    NewBuffer.Free;
   end;
 end;
 
@@ -229,19 +232,22 @@ var
   ReturnValue: TSfmlSound;
 begin
   ReturnValue := FSfmlSound.Copy;
-
-  CheckEquals(FSfmlSound.Attenuation, ReturnValue.Attenuation);
-  CheckEquals(Pointer(FSfmlSound.GetBuffer), Pointer(ReturnValue.GetBuffer));
-  CheckEquals(FSfmlSound.Loop, ReturnValue.Loop);
-  CheckEquals(FSfmlSound.MinDistance, ReturnValue.MinDistance);
-  CheckEquals(FSfmlSound.Pitch, ReturnValue.Pitch);
-  CheckEquals(FSfmlSound.PlayingOffset.MicroSeconds, ReturnValue.PlayingOffset.MicroSeconds);
-  CheckEquals(FSfmlSound.Position.X, ReturnValue.Position.X);
-  CheckEquals(FSfmlSound.Position.Y, ReturnValue.Position.Y);
-  CheckEquals(FSfmlSound.Position.Z, ReturnValue.Position.Z);
-  CheckEquals(FSfmlSound.RelativeToListener, ReturnValue.RelativeToListener);
-  CheckEquals(Integer(FSfmlSound.Status), Integer(ReturnValue.Status));
-  CheckEquals(FSfmlSound.Volume, ReturnValue.Volume);
+  try
+    CheckEquals(FSfmlSound.Attenuation, ReturnValue.Attenuation);
+    CheckEquals(Pointer(FSfmlSound.GetBuffer), Pointer(ReturnValue.GetBuffer));
+    CheckEquals(FSfmlSound.Loop, ReturnValue.Loop);
+    CheckEquals(FSfmlSound.MinDistance, ReturnValue.MinDistance);
+    CheckEquals(FSfmlSound.Pitch, ReturnValue.Pitch);
+    CheckEquals(FSfmlSound.PlayingOffset.MicroSeconds, ReturnValue.PlayingOffset.MicroSeconds);
+    CheckEquals(FSfmlSound.Position.X, ReturnValue.Position.X);
+    CheckEquals(FSfmlSound.Position.Y, ReturnValue.Position.Y);
+    CheckEquals(FSfmlSound.Position.Z, ReturnValue.Position.Z);
+    CheckEquals(FSfmlSound.RelativeToListener, ReturnValue.RelativeToListener);
+    CheckEquals(Integer(FSfmlSound.Status), Integer(ReturnValue.Status));
+    CheckEquals(FSfmlSound.Volume, ReturnValue.Volume);
+  finally
+    ReturnValue.Free;
+  end;
 end;
 
 procedure TestTSfmlSound.TestGetBuffer;
@@ -339,11 +345,15 @@ end;
 
 procedure TestTSfmlSoundRecorder.TestStartStop;
 begin
+  if not SfmlSoundRecorderIsAvailable then
+    Exit;
+
   // reset callback called flags
   StartCallbackCalled := False;
   ProcessCallbackCalled := False;
   StopCallbackCalled := False;
 
+  // check device
   CheckTrue(FSfmlSoundRecorder.Device <> '');
 
   // set processing time (10 times a second)
@@ -352,7 +362,9 @@ begin
   // start & stop recording (approx. 1 second)
   FSfmlSoundRecorder.Start(44100);
   SfmlSleep(SfmlMilliseconds(1000));
+  CheckEquals(44100, FSfmlSoundRecorder.SampleRate);
   FSfmlSoundRecorder.Stop;
+  SfmlSleep(SfmlMilliseconds(100));
 
   // check whether the callback has been called
   CheckTrue(StartCallbackCalled, 'StartCallback not called');
