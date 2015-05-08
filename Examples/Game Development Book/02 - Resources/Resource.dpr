@@ -4,27 +4,26 @@ uses
   SysUtils,
   SfmlGraphics in '..\..\..\Source\SfmlGraphics.pas',
   SfmlSystem in '..\..\..\Source\SfmlSystem.pas',
-  SfmlWindow in '..\..\..\Source\SfmlWindow.pas';
-
-type
-  TTextureID = (tiLandscape, tiAirplane);
+  SfmlWindow in '..\..\..\Source\SfmlWindow.pas',
+  ResourceHolder;
 
 var
   Window: TSfmlRenderWindow;
   Landscape, Airplane: TSfmlSprite;
-  Textures: array [TTextureID] of TSfmlTexture;
+  Textures: TResourceHolder;
   Event: TSfmlEvent;
 begin
   Window := TSfmlRenderWindow.Create(SfmlVideoMode(640, 480), 'Resources');
   Window.SetFramerateLimit(20);
 
   // Try to load resources
+  Textures := TResourceHolder.Create;
   try
     Assert(FileExists('../Resources/Desert.png'));
-    Textures[tiLandscape] := TSfmlTexture.Create('../../Textures/Desert.png');
+    Textures.Load(tiLandscape, '../Resources/Desert.png');
 
     Assert(FileExists('../Resources/Eagle.png'));
-    Textures[tiAirplane] := TSfmlTexture.Create('../../Textures/Eagle.png');
+    Textures.Load(tiAirplane, '../Resources/Eagle.png');
   except
     on E: Exception do
       WriteLn('Exception: ', e.Message);
