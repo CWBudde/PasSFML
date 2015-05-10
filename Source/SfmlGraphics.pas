@@ -530,7 +530,6 @@ type
   TSfmlTextureBind = procedure (const Texture: PSfmlTexture); cdecl;
   TsfmlTextureGetMaximumSize = function : Cardinal; cdecl;
 
-  TSfmlTransformIdentity = function : TSfmlTransform; cdecl;
   TSfmlTransformFromMatrix = function (a00, a01, a02, a10, a11, a12, a20, a21, a22: Single): TSfmlTransform; cdecl;
   TSfmlTransformGetMatrix = procedure (const Transform: PSfmlTransform; Matrix: PSingle); cdecl;
   TSfmlTransformGetInverse = function (const Transform: PSfmlTransform): TSfmlTransform; cdecl;
@@ -609,6 +608,8 @@ var
   SfmlColorFromRGBA: TSfmlColorFromRGBA;
   SfmlColorAdd: TSfmlColorAdd;
   SfmlColorModulate: TSfmlColorModulate;
+
+  SfmlTransformIdentity: TSfmlTransform;
 
   SfmlCircleShapeCreate: TSfmlCircleShapeCreate;
   SfmlCircleShapeCopy: TSfmlCircleShapeCopy;
@@ -968,7 +969,6 @@ var
   SfmlTextureGetSize: TSfmlTextureGetSize;
 {$ENDIF}
 
-  SfmlTransformIdentity: TSfmlTransformIdentity;
   SfmlTransformFromMatrix: TSfmlTransformFromMatrix;
   SfmlTransformGetMatrix: TSfmlTransformGetMatrix;
   SfmlTransformGetInverse: TSfmlTransformGetInverse;
@@ -1047,6 +1047,8 @@ const
   SfmlMagenta: TSfmlColor = (R: $FF; G: 0; B: $FF; A: $FF);
   SfmlCyan: TSfmlColor = (R: 0; G: $FF; B: $FF; A: $FF);
   SfmlTransparent: TSfmlColor = (R: 0; G: 0; B: 0; A: 0);
+
+  SfmlTransformIdentity: TSfmlTransform = (Matrix: (1, 0, 0, 0, 1, 0, 0, 0, 1));
 
   SfmlBlendAlpha: TSfmlBlendMode = (
     ColorSrcFactor: sfBlendFactorSrcAlpha;
@@ -1448,7 +1450,6 @@ const
   function SfmlTextureGetSize(const Texture: PSfmlTexture): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_getSize';
 {$ENDIF}
 
-  function SfmlTransformIdentity: TSfmlTransform; cdecl; external CSfmlGraphicsLibrary name 'sfTransform_identity';
   function SfmlTransformFromMatrix(a00, a01, a02, a10, a11, a12, a20, a21, a22: Single): TSfmlTransform; cdecl; external CSfmlGraphicsLibrary name 'sfTransform_fromMatrix';
   procedure SfmlTransformGetMatrix(const Transform: PSfmlTransform; Matrix: PSingle); cdecl; external CSfmlGraphicsLibrary name 'sfTransform_getMatrix';
   function SfmlTransformGetInverse(const Transform: PSfmlTransform): TSfmlTransform; cdecl; external CSfmlGraphicsLibrary name 'sfTransform_getInverse';
@@ -1983,12 +1984,43 @@ type
     property VertexCount: Cardinal read GetVertexCount;
   end;
 
+  TSfmlView = class
+  private
+    FHandle: PSfmlView;
+
+    constructor Create(Handle: PSfmlView); overload;
+    function GetCenter: TSfmlVector2f;
+    function GetRotation: Single;
+    function GetSize: TSfmlVector2f;
+    function GetViewport: TSfmlFloatRect;
+    procedure SetCenter(Center: TSfmlVector2f);
+    procedure SetRotation(Angle: Single);
+    procedure SetSize(Size: TSfmlVector2f);
+    procedure SetViewport(Viewport: TSfmlFloatRect);
+  public
+    constructor Create; overload;
+    constructor Create(Rectangle: TSfmlFloatRect); overload;
+    destructor Destroy; override;
+
+    function Copy: TSfmlView;
+    procedure Move(Offset: TSfmlVector2f);
+    procedure Reset(Rectangle: TSfmlFloatRect);
+    procedure Rotate(Angle: Single);
+    procedure Zoom(Factor: Single);
+
+    property Center: TSfmlVector2f read GetCenter write SetCenter;
+    property Handle: PSfmlView read FHandle;
+    property Rotation: Single read GetRotation write SetRotation;
+    property Size: TSfmlVector2f read GetSize write SetSize;
+    property Viewport: TSfmlFloatRect read GetViewport write SetViewport;
+  end;
+
   ISfmlRenderTarget = interface
-    function GetDefaultView: PSfmlView;
-    function GetView: PSfmlView;
+    function GetDefaultView: TSfmlView;
+    function GetView: TSfmlView;
     function GetSize: TSfmlVector2u;
     function GetViewport(const View: PSfmlView): TSfmlIntRect;
-    procedure SetView(const View: PSfmlView);
+    procedure SetView(const View: TSfmlView);
 
     procedure Clear(Color: TSfmlColor);
 
@@ -2014,11 +2046,11 @@ type
 
   TSfmlRenderTarget = class(TInterfacedObject, ISfmlRenderTarget)
   protected
-    function GetDefaultView: PSfmlView; virtual; abstract;
-    function GetView: PSfmlView; virtual; abstract;
+    function GetDefaultView: TSfmlView; virtual; abstract;
+    function GetView: TSfmlView; virtual; abstract;
     function GetSize: TSfmlVector2u; virtual; abstract;
     function GetViewport(const View: PSfmlView): TSfmlIntRect; virtual; abstract;
-    procedure SetView(const View: PSfmlView); virtual; abstract;
+    procedure SetView(const View: TSfmlView); virtual; abstract;
   public
     procedure Clear(Color: TSfmlColor); overload; virtual; abstract;
     procedure Clear; overload;
@@ -2040,26 +2072,30 @@ type
     procedure PushGLStates; virtual; abstract;
     procedure ResetGLStates; virtual; abstract;
   public
+    property DefaultView: TSfmlView read GetDefaultView;
     property Size: TSfmlVector2u read GetSize;
+    property View: TSfmlView read GetView write SetView;
   end;
 
   TSfmlRenderTexture = class(TSfmlRenderTarget)
   private
     FHandle: PSfmlRenderTexture;
     FTexture: TSfmlTexture;
-    procedure SetRepeated(Repeated: Boolean);
-    procedure SetSmooth(Smooth: Boolean);
+    FView, FDefaultView: TSfmlView;
     function GetRepeated: Boolean;
     function GetSmooth: Boolean;
+    procedure SetRepeated(Repeated: Boolean);
+    procedure SetSmooth(Smooth: Boolean);
   protected
     function GetSize: TSfmlVector2u; override;
+    function GetDefaultView: TSfmlView; override;
+    function GetView: TSfmlView; override;
+    procedure SetView(const View: TSfmlView); override;
   public
     constructor Create(Width, Height: Cardinal; DepthBuffer: Boolean = False);
     destructor Destroy; override;
 
-    function GetDefaultView: PSfmlView; override;
     function GetTexture: TSfmlTexture;
-    function GetView: PSfmlView; override;
     function GetViewport(const View: PSfmlView): TSfmlIntRect; override;
     function MapCoordsToPixel(Point: TSfmlVector2i; const View: PSfmlView = nil): TSfmlVector2i; override;
     function MapPixelToCoords(Point: TSfmlVector2i; const View: PSfmlView = nil): TSfmlVector2f; override;
@@ -2089,8 +2125,6 @@ type
     procedure PushGLStates; override;
     procedure ResetGLStates; override;
 
-    procedure SetView(const View: PSfmlView); override;
-
     property Handle: PSfmlRenderTexture read FHandle;
     property Repeated: Boolean read GetRepeated write SetRepeated;
     property Smooth: Boolean read GetSmooth write SetSmooth;
@@ -2099,12 +2133,16 @@ type
   TSfmlRenderWindow = class(TSfmlRenderTarget, ISfmlWindow)
   private
     FHandle: PSfmlRenderWindow;
+    FView, FDefaultView: TSfmlView;
     function GetMousePosition: TSfmlVector2i;
     function GetPosition: TSfmlVector2i;
     procedure SetMousePosition(Position: TSfmlVector2i);
     procedure SetPosition(Position: TSfmlVector2i);
   protected
     function GetSize: TSfmlVector2u; override;
+    function GetDefaultView: TSfmlView; override;
+    function GetView: TSfmlView; override;
+    procedure SetView(const View: TSfmlView); override;
   public
     constructor Create(Mode: TSfmlVideoMode; const Title: AnsiString; Style: TSfmlWindowStyles = [sfTitleBar, sfClose]); overload;
     constructor Create(Mode: TSfmlVideoMode; const Title: UnicodeString; Style: TSfmlWindowStyles = [sfTitleBar, sfClose]); overload;
@@ -2113,10 +2151,8 @@ type
     constructor Create(Handle: TSfmlWindowHandle; const Settings: PSfmlContextSettings = nil); overload;
     destructor Destroy; override;
 
-    function GetDefaultView: PSfmlView; override;
     function GetSettings: TSfmlContextSettings;
     function GetSystemHandle: TSfmlWindowHandle;
-    function GetView: PSfmlView; override;
     function GetViewport(const View: PSfmlView): TSfmlIntRect; override;
 
     function MapCoordsToPixel(Point: TSfmlVector2i; const View: PSfmlView = nil): TSfmlVector2i; override;
@@ -2164,7 +2200,6 @@ type
     procedure SetTitle(const Title: AnsiString); overload;
     procedure SetTitle(const Title: UnicodeString); overload;
     procedure SetVerticalSyncEnabled(Enabled: Boolean);
-    procedure SetView(const View: PSfmlView); override;
     procedure SetVisible(Visible: Boolean);
 
     property Handle: PSfmlRenderWindow read FHandle;
@@ -2194,37 +2229,6 @@ type
     procedure Bind;
 
     property Handle: PSfmlShader read FHandle;
-  end;
-
-  TSfmlView = class
-  private
-    FHandle: PSfmlView;
-
-    constructor Create(Handle: PSfmlView); overload;
-    function GetCenter: TSfmlVector2f;
-    function GetRotation: Single;
-    function GetSize: TSfmlVector2f;
-    function GetViewport: TSfmlFloatRect;
-    procedure SetCenter(Center: TSfmlVector2f);
-    procedure SetRotation(Angle: Single);
-    procedure SetSize(Size: TSfmlVector2f);
-    procedure SetViewport(Viewport: TSfmlFloatRect);
-  public
-    constructor Create; overload;
-    constructor Create(Rectangle: TSfmlFloatRect); overload;
-    destructor Destroy; override;
-
-    function Copy: TSfmlView;
-    procedure Move(Offset: TSfmlVector2f);
-    procedure Reset(Rectangle: TSfmlFloatRect);
-    procedure Rotate(Angle: Single);
-    procedure Zoom(Factor: Single);
-
-    property Center: TSfmlVector2f read GetCenter write SetCenter;
-    property Handle: PSfmlView read FHandle;
-    property Rotation: Single read GetRotation write SetRotation;
-    property Size: TSfmlVector2f read GetSize write SetSize;
-    property Viewport: TSfmlFloatRect read GetViewport write SetViewport;
   end;
 
 {$IFDEF INT64RETURNWORKAROUND}
@@ -3127,9 +3131,28 @@ begin
   SfmlRenderTextureDrawVertexArray(FHandle, &Object, States);
 end;
 
-function TSfmlRenderTexture.GetDefaultView: PSfmlView;
+function TSfmlRenderTexture.GetDefaultView: TSfmlView;
+var
+  DefaultViewHandle: PSfmlView;
 begin
-  Result := SfmlRenderTextureGetDefaultView(FHandle);
+  DefaultViewHandle := SfmlRenderTextureGetDefaultView(FHandle);
+
+  // check if a texture object is already assigned
+  if Assigned(FDefaultView) then
+  begin
+    // now check if the handle is identical
+    if FDefaultView.Handle <> DefaultViewHandle then
+    begin
+      FDefaultView.Free;
+      FDefaultView := nil;
+    end;
+  end;
+
+  // create View object if not present already
+  if not Assigned(FDefaultView) then
+    FDefaultView := TSfmlView.Create(DefaultViewHandle);
+
+  Result := FDefaultView;
 end;
 
 function TSfmlRenderTexture.GetSize: TSfmlVector2u;
@@ -3161,9 +3184,28 @@ begin
   Result := FTexture;
 end;
 
-function TSfmlRenderTexture.GetView: PSfmlView;
+function TSfmlRenderTexture.GetView: TSfmlView;
+var
+  ViewHandle: PSfmlView;
 begin
-  Result := SfmlRenderTextureGetView(FHandle);
+  ViewHandle := SfmlRenderTextureGetView(FHandle);
+
+  // check if a texture object is already assigned
+  if Assigned(FDefaultView) then
+  begin
+    // now check if the handle is identical
+    if FDefaultView.Handle <> ViewHandle then
+    begin
+      FDefaultView.Free;
+      FDefaultView := nil;
+    end;
+  end;
+
+  // create View object if not present already
+  if not Assigned(FDefaultView) then
+    FDefaultView := TSfmlView.Create(ViewHandle);
+
+  Result := FDefaultView;
 end;
 
 function TSfmlRenderTexture.GetViewport(const View: PSfmlView): TSfmlIntRect;
@@ -3223,9 +3265,10 @@ begin
   SfmlRenderTextureSetSmooth(FHandle, Smooth);
 end;
 
-procedure TSfmlRenderTexture.SetView(const View: PSfmlView);
+procedure TSfmlRenderTexture.SetView(const View: TSfmlView);
 begin
-  SfmlRenderTextureSetView(FHandle, View);
+  FView := View;
+  SfmlRenderTextureSetView(FHandle, View.Handle);
 end;
 
 
@@ -3380,9 +3423,28 @@ begin
   SfmlRenderWindowDrawVertexArray(FHandle, &Object.Handle, States);
 end;
 
-function TSfmlRenderWindow.GetDefaultView: PSfmlView;
+function TSfmlRenderWindow.GetDefaultView: TSfmlView;
+var
+  DefaultViewHandle: PSfmlView;
 begin
-  Result := SfmlRenderWindowGetDefaultView(FHandle);
+  DefaultViewHandle := SfmlRenderWindowGetDefaultView(FHandle);
+
+  // check if a texture object is already assigned
+  if Assigned(FDefaultView) then
+  begin
+    // now check if the handle is identical
+    if FDefaultView.Handle <> DefaultViewHandle then
+    begin
+      FDefaultView.Free;
+      FDefaultView := nil;
+    end;
+  end;
+
+  // create View object if not present already
+  if not Assigned(FDefaultView) then
+    FDefaultView := TSfmlView.Create(DefaultViewHandle);
+
+  Result := FDefaultView;
 end;
 
 function TSfmlRenderWindow.GetMousePosition: TSfmlVector2i;
@@ -3410,9 +3472,28 @@ begin
   Result := SfmlRenderWindowGetSystemHandle(FHandle);
 end;
 
-function TSfmlRenderWindow.GetView: PSfmlView;
+function TSfmlRenderWindow.GetView: TSfmlView;
+var
+  ViewHandle: PSfmlView;
 begin
-  Result := SfmlRenderWindowGetView(FHandle);
+  ViewHandle := SfmlRenderWindowGetView(FHandle);
+
+  // check if a texture object is already assigned
+  if Assigned(FView) then
+  begin
+    // now check if the handle is identical
+    if FView.Handle <> ViewHandle then
+    begin
+      FView.Free;
+      FView := nil;
+    end;
+  end;
+
+  // create View object if not present already
+  if not Assigned(FView) then
+    FView := TSfmlView.Create(ViewHandle);
+
+  Result := FView;
 end;
 
 function TSfmlRenderWindow.GetViewport(const View: PSfmlView): TSfmlIntRect;
@@ -3529,9 +3610,10 @@ begin
   SfmlRenderWindowSetVerticalSyncEnabled(FHandle, Enabled);
 end;
 
-procedure TSfmlRenderWindow.SetView(const View: PSfmlView);
+procedure TSfmlRenderWindow.SetView(const View: TSfmlView);
 begin
-  SfmlRenderWindowSetView(FHandle, View);
+  FView := View;
+  SfmlRenderWindowSetView(FHandle, View.Handle);
 end;
 
 procedure TSfmlRenderWindow.SetVisible(Visible: Boolean);
@@ -4580,6 +4662,8 @@ begin
       Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfCyan'))^, SfmlCyan, SizeOf(TSfmlColor));
       Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransparent'))^, SfmlTransparent, SizeOf(TSfmlColor));
 
+      Move(GetProcAddress(CSfmlGraphicsHandle, PAnsiChar('sfTransform_Identity'))^, SfmlTransformIdentity, SizeOf(TSfmlTransform));
+
       SfmlColorFromRGB := BindFunction('sfColor_fromRGB');
       SfmlColorFromRGBA := BindFunction('sfColor_fromRGBA');
       SfmlColorAdd := BindFunction('sfColor_add');
@@ -4880,7 +4964,6 @@ begin
       SfmlTextureIsRepeated := BindFunction('sfTexture_isRepeated');
       SfmlTextureBind := BindFunction('sfTexture_bind');
       SfmlTextureGetMaximumSize := BindFunction('sfTexture_getMaximumSize');
-      SfmlTransformidentity := BindFunction('sfTransform_Identity');
       SfmlTransformFromMatrix := BindFunction('sfTransform_fromMatrix');
       SfmlTransformGetMatrix := BindFunction('sfTransform_getMatrix');
       SfmlTransformGetInverse := BindFunction('sfTransform_getInverse');
