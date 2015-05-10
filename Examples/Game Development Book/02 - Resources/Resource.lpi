@@ -28,7 +28,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\..\Binaries\$(TargetOS)\Resource"/>
+            <Filename Value="..\..\..\Binaries\$(TargetOS)\Resource"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="..\..\Source;$(ProjOutDir)"/>
@@ -106,7 +106,7 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="..\..\Binaries\$(TargetOS)\Resource"/>
+      <Filename Value="..\..\..\Binaries\$(TargetOS)\Resource"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="..\..\Source;$(ProjOutDir)"/>
