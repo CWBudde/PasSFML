@@ -10,7 +10,7 @@ var
   Button: HWND;
 
 function OnEvent(Handle: HWND; &Message: Cardinal; WParam: WPARAM;
-  LParam: LPARAM): LRESULT;
+  LParam: LPARAM): LRESULT; stdcall;
 begin
   Result := 0;
   case (message) of
