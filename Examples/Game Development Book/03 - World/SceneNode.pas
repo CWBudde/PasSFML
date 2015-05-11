@@ -11,17 +11,18 @@ type
     FChildren: array of TSceneNode;
     FParent: TSceneNode;
     procedure UpdateChildren(dt: TSfmlTime);
-    procedure DrawChildren(Target: TSfmlRenderTarget; States: PSfmlRenderStates);
+    procedure DrawChildren(Target: TSfmlRenderTarget;
+      States: PSfmlRenderStates = nil);
   protected
     procedure UpdateCurrent(dt: TSfmlTime); virtual;
-    procedure Draw(Target: TSfmlRenderTarget; States: PSfmlRenderStates); virtual;
-    procedure DrawCurrent(Target: TSfmlRenderTarget; States: PSfmlRenderStates); virtual;
+    procedure DrawCurrent(Target: TSfmlRenderTarget; States: PSfmlRenderStates = nil); virtual;
   public
     constructor Create;
 
     procedure AttachChild(Child: TSceneNode);
     function DetachChild(const Node: TSceneNode): TSceneNode;
 
+    procedure Draw(Target: TSfmlRenderTarget; States: PSfmlRenderStates = nil); virtual;
     procedure Update(dt: TSfmlTime);
 
     function GetWorldPosition: TSfmlVector2f;
@@ -87,7 +88,8 @@ begin
     FChildren[Index].Update(dt);
 end;
 
-procedure TSceneNode.Draw(Target: TSfmlRenderTarget; States: PSfmlRenderStates);
+procedure TSceneNode.Draw(Target: TSfmlRenderTarget;
+  States: PSfmlRenderStates = nil);
 begin
   // Apply transform of current node
   States.Transform := States.Transform * Transform; // eventually use this in case of an error: SfmlTransformCombine(States.Transform, @Transform);
@@ -97,12 +99,14 @@ begin
   DrawChildren(Target, States);
 end;
 
-procedure TSceneNode.DrawCurrent(Target: TSfmlRenderTarget; States: PSfmlRenderStates);
+procedure TSceneNode.DrawCurrent(Target: TSfmlRenderTarget;
+  States: PSfmlRenderStates = nil);
 begin
   // Do nothing by default
 end;
 
-procedure TSceneNode.DrawChildren(Target: TSfmlRenderTarget; States: PSfmlRenderStates);
+procedure TSceneNode.DrawChildren(Target: TSfmlRenderTarget;
+  States: PSfmlRenderStates = nil);
 var
   Index: Integer;
 begin

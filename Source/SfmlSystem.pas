@@ -71,12 +71,22 @@ type
     {$IFDEF RecordConstructors}
     constructor Create(X, Y: LongInt);
     {$ENDIF}
+    {$IFDEF RecordOperators}
+    class operator Equal(const Lhs, Rhs: TSfmlVector2i): Boolean;
+    class operator Add(const Lhs, Rhs: TSfmlVector2i): TSfmlVector2i;
+    class operator Subtract(const Lhs, Rhs: TSfmlVector2i): TSfmlVector2i;
+    {$ENDIF}
   end;
 
   TSfmlVector2u = record
     X, Y: Cardinal;
     {$IFDEF RecordConstructors}
     constructor Create(X, Y: Cardinal);
+    {$ENDIF}
+    {$IFDEF RecordOperators}
+    class operator Equal(const Lhs, Rhs: TSfmlVector2u): Boolean;
+    class operator Add(const Lhs, Rhs: TSfmlVector2u): TSfmlVector2u;
+    class operator Subtract(const Lhs, Rhs: TSfmlVector2u): TSfmlVector2u;
     {$ENDIF}
   end;
 
@@ -85,12 +95,26 @@ type
     {$IFDEF RecordConstructors}
     constructor Create(X, Y: Double);
     {$ENDIF}
+    {$IFDEF RecordOperators}
+    class operator Equal(const Lhs, Rhs: TSfmlVector2f): Boolean;
+    class operator Add(const Lhs, Rhs: TSfmlVector2f): TSfmlVector2f;
+    class operator Subtract(const Lhs, Rhs: TSfmlVector2f): TSfmlVector2f;
+    class operator Multiply(const Lhs, Rhs: TSfmlVector2f): TSfmlVector2f;
+    class operator Divide(const Lhs, Rhs: TSfmlVector2f): TSfmlVector2f;
+    class operator Multiply(const Lhs: TSfmlVector2f; Rhs: Single): TSfmlVector2f;
+    class operator Divide(const Lhs: TSfmlVector2f; Rhs: Single): TSfmlVector2f;
+    {$ENDIF}
   end;
 
   TSfmlVector3f = record
     X, Y, Z: Single;
     {$IFDEF RecordConstructors}
     constructor Create(X, Y, Z: Single);
+    {$ENDIF}
+    {$IFDEF RecordOperators}
+    class operator Equal(const Lhs, Rhs: TSfmlVector3f): Boolean;
+    class operator Add(const Lhs, Rhs: TSfmlVector3f): TSfmlVector3f;
+    class operator Subtract(const Lhs, Rhs: TSfmlVector3f): TSfmlVector3f;
     {$ENDIF}
   end;
 
@@ -356,6 +380,100 @@ end;
 class operator TSfmlTime.Subtract(const Lhs, Rhs: TSfmlTime): TSfmlTime;
 begin
   Result.MicroSeconds := Lhs.MicroSeconds - Rhs.MicroSeconds;
+end;
+
+class operator TSfmlVector2i.Equal(const Lhs, Rhs: TSfmlVector2i): Boolean;
+begin
+  Result := (Lhs.X = Rhs.X) and (Lhs.Y = Rhs.Y);
+end;
+
+class operator TSfmlVector2i.Add(const Lhs, Rhs: TSfmlVector2i): TSfmlVector2i;
+begin
+  Result.X := Lhs.X + Rhs.X;
+  Result.Y := Lhs.Y + Rhs.Y;
+end;
+
+class operator TSfmlVector2i.Subtract(const Lhs, Rhs: TSfmlVector2i): TSfmlVector2i;
+begin
+  Result.X := Lhs.X - Rhs.X;
+  Result.Y := Lhs.Y - Rhs.Y;
+end;
+
+class operator TSfmlVector2u.Equal(const Lhs, Rhs: TSfmlVector2u): Boolean;
+begin
+  Result := (Lhs.X = Rhs.X) and (Lhs.Y = Rhs.Y);
+end;
+
+class operator TSfmlVector2u.Add(const Lhs, Rhs: TSfmlVector2u): TSfmlVector2u;
+begin
+  Result.X := Lhs.X + Rhs.X;
+  Result.Y := Lhs.Y + Rhs.Y;
+end;
+
+class operator TSfmlVector2u.Subtract(const Lhs, Rhs: TSfmlVector2u): TSfmlVector2u;
+begin
+  Result.X := Lhs.X - Rhs.X;
+  Result.Y := Lhs.Y - Rhs.Y;
+end;
+
+class operator TSfmlVector2f.Equal(const Lhs, Rhs: TSfmlVector2f): Boolean;
+begin
+  Result := (Lhs.X = Rhs.X) and (Lhs.Y = Rhs.Y);
+end;
+
+class operator TSfmlVector2f.Add(const Lhs, Rhs: TSfmlVector2f): TSfmlVector2f;
+begin
+  Result.X := Lhs.X + Rhs.X;
+  Result.Y := Lhs.Y + Rhs.Y;
+end;
+
+class operator TSfmlVector2f.Subtract(const Lhs, Rhs: TSfmlVector2f): TSfmlVector2f;
+begin
+  Result.X := Lhs.X - Rhs.X;
+  Result.Y := Lhs.Y - Rhs.Y;
+end;
+
+class operator TSfmlVector2f.Multiply(const Lhs, Rhs: TSfmlVector2f): TSfmlVector2f;
+begin
+  Result.X := Lhs.X * Rhs.X;
+  Result.Y := Lhs.Y * Rhs.Y;
+end;
+
+class operator TSfmlVector2f.Divide(const Lhs, Rhs: TSfmlVector2f): TSfmlVector2f;
+begin
+  Result.X := Lhs.X / Rhs.X;
+  Result.Y := Lhs.Y / Rhs.Y;
+end;
+
+class operator TSfmlVector2f.Multiply(const Lhs: TSfmlVector2f; Rhs: Single): TSfmlVector2f;
+begin
+  Result.X := Lhs.X * Rhs;
+  Result.Y := Lhs.Y * Rhs;
+end;
+
+class operator TSfmlVector2f.Divide(const Lhs: TSfmlVector2f; Rhs: Single): TSfmlVector2f;
+begin
+  Result.X := Lhs.X / Rhs;
+  Result.Y := Lhs.Y / Rhs;
+end;
+
+class operator TSfmlVector3f.Equal(const Lhs, Rhs: TSfmlVector3f): Boolean;
+begin
+  Result := (Lhs.X = Rhs.X) and (Lhs.Y = Rhs.Y) and (Lhs.Z = Rhs.Z);
+end;
+
+class operator TSfmlVector3f.Add(const Lhs, Rhs: TSfmlVector3f): TSfmlVector3f;
+begin
+  Result.X := Lhs.X + Rhs.X;
+  Result.Y := Lhs.Y + Rhs.Y;
+  Result.Z := Lhs.Z + Rhs.Z;
+end;
+
+class operator TSfmlVector3f.Subtract(const Lhs, Rhs: TSfmlVector3f): TSfmlVector3f;
+begin
+  Result.X := Lhs.X - Rhs.X;
+  Result.Y := Lhs.Y - Rhs.Y;
+  Result.Z := Lhs.Z - Rhs.Z;
 end;
 {$ENDIF}
 

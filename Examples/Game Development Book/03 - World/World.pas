@@ -36,6 +36,8 @@ type
 
 implementation
 
+{ TWorld }
+
 constructor TWorld.Create(Window: TSfmlRenderWindow);
 begin
   FWindow := Window;
@@ -78,9 +80,15 @@ begin
 end;
 
 procedure TWorld.Draw;
+var
+  RenderStates: TSfmlRenderStates;
 begin
   FWindow.View := FWorldView;
-// Todo  FWindow.Draw(FSceneGraph);
+  FillChar(RenderStates, SizeOf(TSfmlRenderStates), 0);
+  RenderStates.BlendMode := SfmlBlendAlpha;
+  RenderStates.Transform := SfmlTransformIdentity;
+  FSceneGraph.Draw(FWindow, @RenderStates);
+//  FWindow.Draw(FSceneGraph);
 end;
 
 procedure TWorld.LoadTextures;
@@ -90,7 +98,7 @@ begin
   FTextures.Load(tiDesert, '../Resources/Desert.png');
 end;
 
-procedure TWorld.buildScene;
+procedure TWorld.BuildScene;
 var
   i: TLayer;
   Layer: TSceneNode;

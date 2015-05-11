@@ -19,6 +19,8 @@ type
 
 implementation
 
+{ TEntity }
+
 procedure TEntity.SetVelocity(Velocity: TSfmlVector2f);
 begin
   FVelocity := Velocity;

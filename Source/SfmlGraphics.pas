@@ -2272,8 +2272,10 @@ type
   function SfmlViewGetSize(const View: PSfmlView): TSfmlVector2f; cdecl;
 {$ENDIF}
 
-function SfmlFloatRect(Left, Top, Width, Height: Single): TSfmlFloatRect;
-function SfmlIntRect(Left, Top, Width, Height: LongInt): TSfmlIntRect;
+function SfmlFloatRect(Left, Top, Width, Height: Single): TSfmlFloatRect; overload;
+function SfmlFloatRect(TopLeft, Size: TSfmlVector2f): TSfmlFloatRect; overload;
+function SfmlIntRect(Left, Top, Width, Height: LongInt): TSfmlIntRect; overload;
+function SfmlIntRect(TopLeft, Size: TSfmlVector2i): TSfmlIntRect; overload;
 
 function SfmlVertex(Position: TSfmlVector2f; Color: TSfmlColor;
   TexCoords: TSfmlVector2f): TSfmlVertex; overload;
@@ -2314,12 +2316,28 @@ begin
   Result.Height := Height;
 end;
 
+function SfmlFloatRect(TopLeft, Size: TSfmlVector2f): TSfmlFloatRect; overload;
+begin
+  Result.Left := TopLeft.X;
+  Result.Top := TopLeft.Y;
+  Result.Width := Size.X;
+  Result.Height := Size.Y;
+end;
+
 function SfmlIntRect(Left, Top, Width, Height: LongInt): TSfmlIntRect;
 begin
   Result.Left := Left;
   Result.Top := Top;
   Result.Width := Width;
   Result.Height := Height;
+end;
+
+function SfmlIntRect(TopLeft, Size: TSfmlVector2i): TSfmlIntRect; overload;
+begin
+  Result.Left := TopLeft.X;
+  Result.Top := TopLeft.Y;
+  Result.Width := Size.X;
+  Result.Height := Size.Y;
 end;
 
 
