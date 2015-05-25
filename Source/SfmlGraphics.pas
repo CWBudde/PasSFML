@@ -828,12 +828,12 @@ var
   SfmlRenderWindowPopGLStates: TSfmlRenderWindowPopGLStates;
   SfmlRenderWindowResetGLStates: TSfmlRenderWindowResetGLStates;
   SfmlRenderWindowCapture: TSfmlRenderWindowCapture;
-  SfmlMouseGetPositionRenderWindow: TSfmlMouseGetPositionRenderWindow;
   SfmlMouseSetPositionRenderWindow: TSfmlMouseSetPositionRenderWindow;
-  SfmlTouchGetPositionRenderWindow: TSfmlTouchGetPositionRenderWindow;
 {$IFNDEF INT64RETURNWORKAROUND}
   SfmlRenderWindowMapPixelToCoords: TSfmlRenderWindowMapPixelToCoords;
   SfmlRenderWindowMapCoordsToPixel: TSfmlRenderWindowMapCoordsToPixel;
+  SfmlMouseGetPositionRenderWindow: TSfmlMouseGetPositionRenderWindow;
+  SfmlTouchGetPositionRenderWindow: TSfmlTouchGetPositionRenderWindow;
 {$ENDIF}
 
   SfmlShaderCreateFromFile: TSfmlShaderCreateFromFile;
@@ -1311,11 +1311,11 @@ const
   function SfmlRenderWindowGetSize(const RenderWindow: PSfmlRenderWindow): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_getSize';
   function SfmlRenderWindowMapPixelToCoords(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_mapPixelToCoords';
   function SfmlRenderWindowMapCoordsToPixel(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_mapCoordsToPixel';
+  function SfmlMouseGetPositionRenderWindow(const RelativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfMouse_getPositionRenderWindow';
+  function SfmlTouchGetPositionRenderWindow(Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfTouch_getPositionRenderWindow';
 {$ENDIF}
 
-  function SfmlMouseGetPositionRenderWindow(const relativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfMouse_getPositionRenderWindow';
-  procedure SfmlMouseSetPositionRenderWindow(position: TSfmlVector2i; const RelativeTo: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfMouse_setPositionRenderWindow';
-  function SfmlTouchGetPositionRenderWindow(Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl; external CSfmlGraphicsLibrary name 'sfTouch_getPositionRenderWindow';
+  procedure SfmlMouseSetPositionRenderWindow(Position: TSfmlVector2i; const RelativeTo: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfMouse_setPositionRenderWindow';
 
   function SfmlShaderCreateFromFile(const VertexShaderFilename: PAnsiChar; const FragmentShaderFilename: PAnsiChar): PSfmlShader; cdecl; external CSfmlGraphicsLibrary name 'sfShader_createFromFile';
   function SfmlShaderCreateFromMemory(const VertexShader: PAnsiChar; const FragmentShader: PAnsiChar): PSfmlShader; cdecl; external CSfmlGraphicsLibrary name 'sfShader_createFromMemory';
@@ -2252,6 +2252,8 @@ type
   function SfmlRenderWindowGetSize(const RenderWindow: PSfmlRenderWindow): TSfmlVector2u; cdecl;
   function SfmlRenderWindowMapPixelToCoords(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl;
   function SfmlRenderWindowMapCoordsToPixel(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2i; cdecl;
+  function SfmlMouseGetPositionRenderWindow(const RelativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl;
+  function SfmlTouchGetPositionRenderWindow(Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl;
   function SfmlShapeGetOrigin(const Shape: PSfmlShape): TSfmlVector2f; cdecl;
   function SfmlShapeGetPoint(const Shape: PSfmlShape; Index: Cardinal): TSfmlVector2f; cdecl;
   function SfmlShapeGetPosition(const Shape: PSfmlShape): TSfmlVector2f; cdecl;
@@ -3659,9 +3661,19 @@ begin
 end;
 
 constructor TSfmlShader.CreateFromFile(const VertexShaderFilename, FragmentShaderFilename: AnsiString);
+var
+  FileNames: array [0..1] of PAnsiChar;
 begin
-  FHandle := SfmlShaderCreateFromFile(PAnsiChar(VertexShaderFilename),
-    PAnsiChar(FragmentShaderFilename));
+  FileNames[0] := nil;
+  FileNames[1] := nil;
+
+  if VertexShaderFilename <> '' then
+    FileNames[0] := PAnsiChar(VertexShaderFilename);
+
+  if FragmentShaderFilename <> '' then
+    FileNames[1] := PAnsiChar(FragmentShaderFilename);
+
+  FHandle := SfmlShaderCreateFromFile(FileNames[0], FileNames[1]);
 end;
 
 destructor TSfmlShader.Destroy;
@@ -4627,6 +4639,8 @@ var
   sfRenderWindow_getSize: function(const RenderWindow: PSfmlRenderWindow): Int64; cdecl;
   sfRenderWindow_mapPixelToCoords: function (const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl;
   sfRenderWindow_mapCoordsToPixel: function (const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl;
+  sfMouse_getPositionRenderWindow: function (const RelativeTo: PSfmlRenderWindow): Int64; cdecl;
+  sfTouch_getPositionRenderWindow: function (Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): Int64; cdecl;
   sfShape_getOrigin: function (const Shape: PSfmlShape): Int64; cdecl;
   sfShape_getPoint: function (const Shape: PSfmlShape; Index: Cardinal): Int64; cdecl;
   sfShape_getPosition: function (const Shape: PSfmlShape): Int64; cdecl;
@@ -4871,9 +4885,7 @@ begin
       SfmlRenderWindowPopGLStates := BindFunction('sfRenderWindow_popGLStates');
       SfmlRenderWindowResetGLStates := BindFunction('sfRenderWindow_resetGLStates');
       SfmlRenderWindowCapture := BindFunction('sfRenderWindow_capture');
-      SfmlMouseGetPositionRenderWindow := BindFunction('sfMouse_getPositionRenderWindow');
       SfmlMouseSetPositionRenderWindow := BindFunction('sfMouse_setPositionRenderWindow');
-      SfmlTouchGetPositionRenderWindow := BindFunction('sfTouch_getPositionRenderWindow');
       SfmlShaderCreateFromFile := BindFunction('sfShader_createFromFile');
       SfmlShaderCreateFromMemory := BindFunction('sfShader_createFromMemory');
       SfmlShaderCreateFromStream := BindFunction('sfShader_createFromStream');
@@ -5052,6 +5064,8 @@ begin
       sfRenderWindow_getSize := BindFunction('sfRenderWindow_getSize');
       sfRenderWindow_mapPixelToCoords := BindFunction('sfRenderWindow_mapPixelToCoords');
       sfRenderWindow_mapCoordsToPixel := BindFunction('sfRenderWindow_mapCoordsToPixel');
+      sfMouse_getPositionRenderWindow := BindFunction('sfMouse_getPositionRenderWindow');
+      sfTouch_getPositionRenderWindow := BindFunction('sfTouch_getPositionRenderWindow');
       sfShape_getPosition := BindFunction('sfShape_getPosition');
       sfShape_getScale := BindFunction('sfShape_getScale');
       sfShape_getOrigin := BindFunction('sfShape_getOrigin');
@@ -5089,6 +5103,8 @@ begin
       SfmlRenderTextureMapCoordsToPixel := BindFunction('sfRenderTexture_mapCoordsToPixel');
       SfmlRenderWindowMapPixelToCoords := BindFunction('sfRenderWindow_mapPixelToCoords');
       SfmlRenderWindowMapCoordsToPixel := BindFunction('sfRenderWindow_mapCoordsToPixel');
+      SfmlMouseGetPositionRenderWindow := BindFunction('sfMouse_getPositionRenderWindow');
+      SfmlTouchGetPositionRenderWindow := BindFunction('sfTouch_getPositionRenderWindow');
       SfmlShapeGetPosition := BindFunction('sfShape_getPosition');
       SfmlShapeGetScale := BindFunction('sfShape_getScale');
       SfmlShapeGetOrigin := BindFunction('sfShape_getOrigin');
@@ -5142,6 +5158,8 @@ function sfRenderTexture_mapCoordsToPixel(const RenderTexture: PSfmlRenderTextur
 function sfRenderWindow_getSize(const RenderWindow: PSfmlRenderWindow): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfRenderWindow_mapPixelToCoords(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfRenderWindow_mapCoordsToPixel(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfMouse_getPositionRenderWindow(const RelativeTo: PSfmlRenderWindow): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfTouch_getPositionRenderWindow(Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfShape_getOrigin(const Shape: PSfmlShape): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfShape_getPoint(const Shape: PSfmlShape; Index: Cardinal): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfShape_getPosition(const Shape: PSfmlShape): Int64; cdecl; external CSfmlGraphicsLibrary;
@@ -5437,6 +5455,20 @@ var
   Val: Int64 absolute Result;
 begin
   Val := sfRenderWindow_mapCoordsToPixel(RenderWindow, Point, View);
+end;
+
+function SfmlMouseGetPositionRenderWindow(const RelativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfMouse_getPositionRenderWindow(RelativeTo);
+end;
+
+function SfmlTouchGetPositionRenderWindow(Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl;
+var
+  Val: Int64 absolute Result;
+begin
+  Val := sfTouch_getPositionRenderWindow(Finger, RelativeTo);
 end;
 
 function SfmlShapeGetOrigin(const Shape: PSfmlShape): TSfmlVector2f; cdecl;
