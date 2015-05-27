@@ -64,6 +64,7 @@ type
 constructor TPixelate.Create;
 begin
   inherited Create('Pixelate');
+  FSprite := TSfmlSprite.Create;
 end;
 
 procedure TPixelate.OnDraw(Target: TSfmlRenderTarget;
@@ -76,11 +77,13 @@ end;
 function TPixelate.OnLoad: Boolean;
 begin
   // Load the texture and initialize the sprite
-  FTexture := TSfmlTexture.Create('../Resources/Background.jpg');
+  Assert(FileExists('../Resources/OncaPintada.jpg'));
+  FTexture := TSfmlTexture.Create('../Resources/OncaPintada.jpg');
   FSprite.SetTexture(FTexture);
 
   // Load the Shader
-  FShader := TSfmlShader.CreateFromFile('../Resources/Pixelate.frag', '');
+  Assert(FileExists('../Resources/Pixelate.frag'));
+  FShader := TSfmlShader.CreateFromFile('', '../Resources/Pixelate.frag');
   FShader.SetCurrentTextureParameter('texture');
   Result := True;
 end;
@@ -133,6 +136,8 @@ begin
   FText.Position := SfmlVector2f(30, 20);
 
   // Load the Shader
+  Assert(FileExists('../Resources/Wave.vert'));
+  Assert(FileExists('../Resources/Blur.frag'));
   FShader := TSfmlShader.CreateFromFile('../Resources/Wave.vert', '../Resources/Blur.frag');
   Result := True;
 end;
@@ -149,6 +154,7 @@ end;
 constructor TStormBlink.Create;
 begin
   inherited Create('storm + blink');
+  FPoints := TSfmlVertexArray.Create;
 end;
 
 procedure TStormBlink.OnDraw(Target: TSfmlRenderTarget;
@@ -177,6 +183,8 @@ begin
   end;
 
   // Load the Shader
+  Assert(FileExists('../Resources/storm.vert'));
+  Assert(FileExists('../Resources/blink.frag'));
   FShader := TSfmlShader.Create('../Resources/storm.vert', '../Resources/blink.frag');
   Result := True;
 end;
@@ -198,6 +206,7 @@ end;
 constructor TEdge.Create;
 begin
   inherited Create('edge post-effect');
+  FBackgroundSprite := TSfmlSprite.Create;
 end;
 
 procedure TEdge.OnDraw(Target: TSfmlRenderTarget; States: PSfmlRenderStates);
@@ -215,13 +224,15 @@ begin
   FSurface.Smooth := True;
 
   // Load the textures
-  FBackgroundTexture := TSfmlTexture.Create('resources/sfml.png');
+  Assert(FileExists('../Resources/sfml.png'));
+  FBackgroundTexture := TSfmlTexture.Create('../Resources/sfml.png');
   FBackgroundTexture.Smooth := True;
-  FEntityTexture := TSfmlTexture.Create('resources/devices.png');
+  Assert(FileExists('../Resources/devices.png'));
+  FEntityTexture := TSfmlTexture.Create('../Resources/devices.png');
   FEntityTexture.Smooth := True;
 
   // Initialize the background sprite
-  FBackgroundSprite.setTexture(FBackgroundTexture);
+  FBackgroundSprite.SetTexture(FBackgroundTexture);
   FBackgroundSprite.Position := SfmlVector2f(135, 100);
 
   // Load the moving entities
@@ -232,7 +243,8 @@ begin
   end;
 
   // Load the Shader
-  FShader := TSfmlShader.CreateFromFile('resources/edge.frag', '');
+  Assert(FileExists('../Resources/edge.frag'));
+  FShader := TSfmlShader.CreateFromFile('', '../Resources/edge.frag');
   FShader.SetCurrentTextureParameter('texture');
 
   Result := True;
@@ -281,24 +293,24 @@ begin
   // Load the application font and pass it to the Effect class
   Font := TSfmlFont.Create('../Resources/sansation.ttf');
 
-  SetLength(Effects, 1);
-  Effects[0] := TWaveBlur.Create;
-  Effects[0].Font := Font;
-(*
   // Create the effects
-  effects.push_back(new Pixelate);
-  effects.push_back(new WaveBlur);
-  effects.push_back(new StormBlink);
-  effects.push_back(new Edge);
-*)
+  SetLength(Effects, 4);
+  Effects[0] := TPixelate.Create;
+  Effects[1] := TWaveBlur.Create;
+  Effects[2] := TStormBlink.Create;
+  Effects[3] := TEdge.Create;
   Current := 0;
 
   // Initialize them
   for Index := Low(Effects) to High(Effects) do
+  begin
+    Effects[Index].Font := Font;
     Effects[Index].Load;
+  end;
 
   // Create the messages background
-  TextBackgroundTexture := TSfmlTexture.Create('resources/text-background.png');
+  Assert(FileExists('../Resources/Text-Background.png'));
+  TextBackgroundTexture := TSfmlTexture.Create('../Resources/Text-Background.png');
 
   TextBackground := TSfmlSprite.Create;
   TextBackground.SetTexture(TextBackgroundTexture);

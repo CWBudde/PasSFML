@@ -54,7 +54,7 @@ end;
 
 procedure TEffect.Load;
 begin
-  FIsLoaded := SfmlShaderIsAvailable and OnLoad;;
+  FIsLoaded := SfmlShaderIsAvailable and OnLoad;
 end;
 
 procedure TEffect.Update(Time, X, Y: Single);
