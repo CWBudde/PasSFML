@@ -21,7 +21,7 @@ type
     procedure Load;
 
     procedure Update(Time, X, Y: Single);
-    procedure Draw(Target: TSfmlRenderTarget; States: PSfmlRenderStates);
+    procedure Draw(Target: TSfmlRenderTarget; States: PSfmlRenderStates = nil);
 
     property Font: TSfmlFont read FFont write FFont;
     property Name: string read FName;
@@ -48,7 +48,7 @@ begin
     Error.&String := 'Shader not supported';
     Error.Position := SfmlVector2F(320, 200);
     Error.CharacterSize := 36;
-    Target.Draw(error, states);
+    Target.Draw(Error, States);
   end;
 end;
 

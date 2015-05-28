@@ -62,7 +62,7 @@
     {$DEFINE RecordOperators}
     {$DEFINE RecordConstructors}
   {$ENDIF VER280}
-{$ENDIF BORLAND}
+{$ENDIF}
 
 {-$DEFINE DynLink}
 

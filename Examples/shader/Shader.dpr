@@ -59,6 +59,7 @@ type
     procedure OnDraw(Target: TSfmlRenderTarget; States: PSfmlRenderStates); override;
   end;
 
+
 { TPixelate }
 
 constructor TPixelate.Create;
@@ -85,13 +86,13 @@ begin
   Assert(FileExists('../Resources/Pixelate.frag'));
   FShader := TSfmlShader.CreateFromFile('', '../Resources/Pixelate.frag');
   FShader.SetCurrentTextureParameter('texture');
-  Result := True;
+  Result := Assigned(FShader);
 end;
 
 procedure TPixelate.OnUpdate(Time, X, Y: Single);
 begin
   inherited;
-  FShader.SetParameter('pixel_threshold', (x + y) / 30);
+  FShader.SetParameter('pixel_threshold', (X + Y) / 30);
 end;
 
 
@@ -99,7 +100,7 @@ end;
 
 constructor TWaveBlur.Create;
 begin
-  inherited Create('wave + blur');
+  inherited Create('Wave + Blur');
   FText := TSfmlText.Create;
 end;
 
@@ -139,21 +140,22 @@ begin
   Assert(FileExists('../Resources/Wave.vert'));
   Assert(FileExists('../Resources/Blur.frag'));
   FShader := TSfmlShader.CreateFromFile('../Resources/Wave.vert', '../Resources/Blur.frag');
-  Result := True;
+  Result := Assigned(FShader);
 end;
 
 procedure TWaveBlur.OnUpdate(Time, X, Y: Single);
 begin
-  FShader.SetParameter('wave_phase', time);
-  FShader.SetParameter('wave_amplitude', x * 40, y * 40);
-  FShader.SetParameter('blur_radius', (x + y) * 0.008);
+  FShader.SetParameter('wave_phase', Time);
+  FShader.SetParameter('wave_amplitude', X * 40, Y * 40);
+  FShader.SetParameter('blur_radius', (X + Y) * 0.008);
 end;
+
 
 { TStormBlink }
 
 constructor TStormBlink.Create;
 begin
-  inherited Create('storm + blink');
+  inherited Create('Storm + Blink');
   FPoints := TSfmlVertexArray.Create;
 end;
 
@@ -183,10 +185,10 @@ begin
   end;
 
   // Load the Shader
-  Assert(FileExists('../Resources/storm.vert'));
-  Assert(FileExists('../Resources/blink.frag'));
-  FShader := TSfmlShader.Create('../Resources/storm.vert', '../Resources/blink.frag');
-  Result := True;
+  Assert(FileExists('../Resources/Storm.vert'));
+  Assert(FileExists('../Resources/Blink.frag'));
+  FShader := TSfmlShader.CreateFromFile('../Resources/Storm.vert', '../Resources/Blink.frag');
+  Result := Assigned(FShader);
 end;
 
 procedure TStormBlink.OnUpdate(Time, X, Y: Single);
@@ -194,10 +196,10 @@ var
   Radius: Single;
 begin
   Radius := 200 + Cos(Time) * 150;
-  FShader.setParameter('storm_position', x * 800, y * 600);
-  FShader.setParameter('storm_inner_radius', radius / 3);
-  FShader.setParameter('storm_total_radius', radius);
-  FShader.setParameter('blink_alpha', 0.5 + Cos(Time * 3) * 0.25);
+  FShader.SetParameter('storm_position', X * 800, Y * 600);
+  FShader.SetParameter('storm_inner_radius', Radius / 3);
+  FShader.SetParameter('storm_total_radius', Radius);
+  FShader.SetParameter('blink_alpha', 0.5 + Cos(Time * 3) * 0.25);
 end;
 
 
@@ -205,30 +207,38 @@ end;
 
 constructor TEdge.Create;
 begin
-  inherited Create('edge post-effect');
+  inherited Create('Edge Post-Effect');
   FBackgroundSprite := TSfmlSprite.Create;
 end;
 
 procedure TEdge.OnDraw(Target: TSfmlRenderTarget; States: PSfmlRenderStates);
+var
+  Sprite: TSfmlSprite;
 begin
   States.Shader := FShader.Handle;
-  Target.Draw(TSfmlSprite(FSurface.getTexture()), States);
+  Sprite := TSfmlSprite.Create(FSurface.GetTexture);
+  try
+    Target.Draw(Sprite, States);
+  finally
+    Sprite.Free;
+  end;
 end;
 
 function TEdge.OnLoad: Boolean;
 var
   Index: Integer;
+  Entity: TSfmlSprite;
 begin
   // Create the off-screen surface
   FSurface := TSfmlRenderTexture.Create(800, 600, False);
   FSurface.Smooth := True;
 
   // Load the textures
-  Assert(FileExists('../Resources/sfml.png'));
-  FBackgroundTexture := TSfmlTexture.Create('../Resources/sfml.png');
+  Assert(FileExists('../Resources/Sfml.png'));
+  FBackgroundTexture := TSfmlTexture.Create('../Resources/Sfml.png');
   FBackgroundTexture.Smooth := True;
-  Assert(FileExists('../Resources/devices.png'));
-  FEntityTexture := TSfmlTexture.Create('../Resources/devices.png');
+  Assert(FileExists('../Resources/Devices.png'));
+  FEntityTexture := TSfmlTexture.Create('../Resources/Devices.png');
   FEntityTexture.Smooth := True;
 
   // Initialize the background sprite
@@ -238,16 +248,17 @@ begin
   // Load the moving entities
   for Index := 0 to 5 do
   begin
-//    SfmlSpriteEntity(FEntityTexture, TSfmlIntRect(96 * i, 0, 96, 96));
-//    FEntities.push_back(entity);
+    Entity := TSfmlSprite.Create(FEntityTexture, SfmlIntRect(96 * Index, 0, 96, 96));
+    SetLength(FEntities, Length(FEntities) + 1);
+    FEntities[Length(FEntities) - 1] := Entity;
   end;
 
   // Load the Shader
-  Assert(FileExists('../Resources/edge.frag'));
-  FShader := TSfmlShader.CreateFromFile('', '../Resources/edge.frag');
+  Assert(FileExists('../Resources/Edge.frag'));
+  FShader := TSfmlShader.CreateFromFile('', '../Resources/Edge.frag');
   FShader.SetCurrentTextureParameter('texture');
 
-  Result := True;
+  Result := Assigned(FShader);
 end;
 
 procedure TEdge.OnUpdate(Time, X, Y: Single);
@@ -278,17 +289,21 @@ var
   Font: TSfmlFont;
   Description, Instructions: TSfmlText;
   TextBackgroundTexture: TSfmlTexture;
-  textBackground: TSfmlSprite;
+  TextBackground: TSfmlSprite;
+  State: TSfmlRenderStates;
   Clock: TSfmlClock;
   Current, Index: Integer;
   Effects: array of TEffect;
   Event: TSfmlEvent;
   X, Y: Single;
 begin
+  State.BlendMode := SfmlBlendAlpha;
+  State.Transform := SfmlTransformIdentity;
+
   // Create the main Window
   Window := TSfmlRenderWindow.Create(SfmlVideoMode(800, 600), 'SFML Shader',
     [sfTitleBar, sfClose]);
-  Window.setVerticalSyncEnabled(true);
+  Window.SetVerticalSyncEnabled(true);
 
   // Load the application font and pass it to the Effect class
   Font := TSfmlFont.Create('../Resources/sansation.ttf');
@@ -352,7 +367,7 @@ begin
                 Current := Length(Effects) - 1
               else
                 Dec(Current);
-              Description.&String := 'Current effect: ' + AnsiString(Effects[current].Name);
+              Description.&String := 'Current effect: ' + AnsiString(Effects[Current].Name);
             end;
 
           // Right arrow key: next Shader
@@ -371,13 +386,13 @@ begin
     // Update the current example
     X := Window.MousePosition.X / Window.Size.X;
     Y := Window.MousePosition.Y / Window.Size.Y;
-    Effects[current].Update(Clock.ElapsedTime.AsSeconds, X, Y);
+    Effects[Current].Update(Clock.ElapsedTime.AsSeconds, X, Y);
 
     // Clear the Window
     Window.Clear(SfmlColorFromRGB(255, 128, 0));
 
     // Draw the current example
-//    Window.Draw( *effects[current]);
+    Effects[Current].Draw(Window, @State);
 
     // Draw the text
     Window.Draw(TextBackground);
