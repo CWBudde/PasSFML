@@ -2084,6 +2084,7 @@ type
     FView, FDefaultView: TSfmlView;
     function GetRepeated: Boolean;
     function GetSmooth: Boolean;
+    function GetTexture: TSfmlTexture;
     procedure SetRepeated(Repeated: Boolean);
     procedure SetSmooth(Smooth: Boolean);
   protected
@@ -2095,7 +2096,6 @@ type
     constructor Create(Width, Height: Cardinal; DepthBuffer: Boolean = False);
     destructor Destroy; override;
 
-    function GetTexture: TSfmlTexture;
     function GetViewport(const View: PSfmlView): TSfmlIntRect; override;
     function MapCoordsToPixel(Point: TSfmlVector2i; const View: PSfmlView = nil): TSfmlVector2i; override;
     function MapPixelToCoords(Point: TSfmlVector2i; const View: PSfmlView = nil): TSfmlVector2f; override;
@@ -2128,6 +2128,7 @@ type
     property Handle: PSfmlRenderTexture read FHandle;
     property Repeated: Boolean read GetRepeated write SetRepeated;
     property Smooth: Boolean read GetSmooth write SetSmooth;
+    property Texture: TSfmlTexture read GetTexture;
   end;
 
   TSfmlRenderWindow = class(TSfmlRenderTarget, ISfmlWindow)
