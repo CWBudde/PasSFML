@@ -216,7 +216,7 @@ var
   Sprite: TSfmlSprite;
 begin
   States.Shader := FShader.Handle;
-  Sprite := TSfmlSprite.Create(FSurface.GetTexture);
+  Sprite := TSfmlSprite.Create(FSurface.Texture);
   try
     Target.Draw(Sprite, States);
   finally
