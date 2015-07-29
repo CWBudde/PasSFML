@@ -34,7 +34,7 @@ const
 {$ELSEIF Defined(DARWIN) or Defined(MACOS)}
   CSfmlSystemLibrary = 'csfml-system-2.dylib';
 {$ELSEIF Defined(UNIX)}
-  CSfmlSystemLibrary = 'csfml-system-2.so';
+  CSfmlSystemLibrary = 'csfml-system.so';
 {$IFEND}
 
   CSFML_VERSION_MAJOR = 2;
