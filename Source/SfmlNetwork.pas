@@ -37,7 +37,7 @@ const
 {$ELSEIF Defined(DARWIN) or Defined(MACOS)}
   CSfmlNetworkLibrary = 'csfml-network-2.dylib';
 {$ELSEIF Defined(UNIX)}
-  CSfmlNetworkLibrary = 'csfml-network-2.so';
+  CSfmlNetworkLibrary = 'csfml-network.so';
 {$IFEND}
 
 type

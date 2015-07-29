@@ -37,7 +37,7 @@ const
 {$ELSEIF Defined(DARWIN) or Defined(MACOS)}
   CSfmlGraphicsLibrary = 'csfml-graphics-2.dylib';
 {$ELSEIF Defined(UNIX)}
-  CSfmlGraphicsLibrary = 'csfml-graphics-2.so';
+  CSfmlGraphicsLibrary = 'csfml-graphics.so';
 {$IFEND}
 
 type

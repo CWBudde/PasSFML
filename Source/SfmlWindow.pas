@@ -42,7 +42,7 @@ const
 {$ELSEIF Defined(DARWIN) or Defined(MACOS)}
   CSfmlWindowLibrary = 'csfml-window-2.dylib';
 {$ELSEIF Defined(UNIX)}
-  CSfmlWindowLibrary = 'csfml-window-2.so';
+  CSfmlWindowLibrary = 'csfml-window.so';
 {$IFEND}
 
   CSflmJoystickCount       = 8;

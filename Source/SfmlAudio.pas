@@ -37,7 +37,7 @@ const
 {$ELSEIF Defined(DARWIN) or Defined(MACOS)}
   CSfmlAudioLibrary = 'csfml-audio-2.dylib';
 {$ELSEIF Defined(UNIX)}
-  CSfmlAudioLibrary = 'csfml-audio-2.so';
+  CSfmlAudioLibrary = 'csfml-audio.so';
 {$IFEND}
 
 type
