@@ -187,7 +187,12 @@ type
 {$IFDEF DynLink}
   TSfmlColorFromRGB = function (Red, Green, Blue: Byte): TSfmlColor; cdecl;
   TSfmlColorFromRGBA = function (Red, Green, Blue, Alpha: Byte): TSfmlColor; cdecl;
+
+  TSfmlColorFromInteger = function (Color: Cardinal): TSfmlColor; cdecl;
+  TSfmlColorToInteger = function (Color: TSfmlColor): Cardinal; cdecl;
+
   TSfmlColorAdd = function (color1, color2: TSfmlColor): TSfmlColor; cdecl;
+  TSfmlColorSubtract = function (color1, color2: TSfmlColor): TSfmlColor; cdecl;
   TSfmlColorModulate = function (color1, color2: TSfmlColor): TSfmlColor; cdecl;
 
   TSfmlCircleShapeCreate = function : PSfmlCircleShape; cdecl;
@@ -419,6 +424,7 @@ type
   TSfmlShaderSetTransformParameter = procedure (Shader: PSfmlShader; const Name: PAnsiChar; Transform: TSfmlTransform); cdecl;
   TSfmlShaderSetTextureParameter = procedure (Shader: PSfmlShader; const Name: PAnsiChar; const Texture: PSfmlTexture); cdecl;
   TSfmlShaderSetCurrentTextureParameter = procedure (Shader: PSfmlShader; const Name: PAnsiChar); cdecl;
+  TSfmlShaderGetNativeHandle = function (Shader: PSfmlShader): Cardinal; cdecl;
   TSfmlShaderBind = procedure (const Shader: PSfmlShader); cdecl;
   TSfmlShaderIsAvailable = function : Boolean; cdecl;
 
@@ -527,6 +533,7 @@ type
   TSfmlTextureIsSmooth = function (const Texture: PSfmlTexture): Boolean; cdecl;
   TSfmlTextureSetRepeated = procedure (Texture: PSfmlTexture; Repeated: Boolean); cdecl;
   TSfmlTextureIsRepeated = function (const Texture: PSfmlTexture): Boolean; cdecl;
+  TSfmlTextureGetNativeHandle = function (const Texture: PSfmlTexture): Cardinal; cdecl;
   TSfmlTextureBind = procedure (const Texture: PSfmlTexture); cdecl;
   TsfmlTextureGetMaximumSize = function : Cardinal; cdecl;
 
@@ -565,7 +572,7 @@ type
   TSfmlVertexArrayGetVertexCount = function (const VertexArray: PSfmlVertexArray): NativeUInt; cdecl;
   TSfmlVertexArrayGetVertex = function (VertexArray: PSfmlVertexArray; Index: NativeUInt): PSfmlVertex; cdecl;
   TSfmlVertexArrayClear = procedure (VertexArray: PSfmlVertexArray); cdecl;
-  TSfmlVertexArrayResize = procedure (VertexArray: PSfmlVertexArray; VertexCount: Cardinal); cdecl;
+  TSfmlVertexArrayResize = procedure (VertexArray: PSfmlVertexArray; VertexCount: NativeUInt); cdecl;
   TSfmlVertexArrayAppend = procedure (VertexArray: PSfmlVertexArray; Vertex: TSfmlVertex); cdecl;
   TSfmlVertexArraySetPrimitiveType = procedure (VertexArray: PSfmlVertexArray; &Type: TSfmlPrimitiveType); cdecl;
   TSfmlVertexArrayGetPrimitiveType = function (VertexArray: PSfmlVertexArray): TSfmlPrimitiveType; cdecl;
@@ -606,7 +613,10 @@ var
 
   SfmlColorFromRGB: TSfmlColorFromRGB;
   SfmlColorFromRGBA: TSfmlColorFromRGBA;
+  SfmlColorFromInteger: TSfmlColorFromInteger;
+  SfmlColorToInteger: TSfmlColorToInteger;
   SfmlColorAdd: TSfmlColorAdd;
+  SfmlColorSubtract: TSfmlColorSubtract;
   SfmlColorModulate: TSfmlColorModulate;
 
   SfmlTransformIdentity: TSfmlTransform;
@@ -850,6 +860,7 @@ var
   SfmlShaderSetTransformParameter: TSfmlShaderSetTransformParameter;
   SfmlShaderSetTextureParameter: TSfmlShaderSetTextureParameter;
   SfmlShaderSetCurrentTextureParameter: TSfmlShaderSetCurrentTextureParameter;
+  SfmlShaderGetNativeHandle: TSfmlShaderGetNativeHandle;
   SfmlShaderBind: TSfmlShaderBind;
   SfmlShaderIsAvailable: TSfmlShaderIsAvailable;
 
@@ -963,6 +974,7 @@ var
   SfmlTextureIsSmooth: TSfmlTextureIsSmooth;
   SfmlTextureSetRepeated: TSfmlTextureSetRepeated;
   SfmlTextureIsRepeated: TSfmlTextureIsRepeated;
+  SfmlTextureGetNativeHandle: TSfmlTextureGetNativeHandle;
   SfmlTextureBind: TSfmlTextureBind;
   SfmlTextureGetMaximumSize: TsfmlTextureGetMaximumSize;
 {$IFNDEF INT64RETURNWORKAROUND}
@@ -1086,7 +1098,12 @@ const
   // static linking
   function SfmlColorFromRGB(Red, Green, Blue: Byte): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfColor_fromRGB';
   function SfmlColorFromRGBA(Red, Green, Blue, Alpha: Byte): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfColor_fromRGBA';
+
+  function SfmlColorFromInteger(Color: Cardinal): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfColor_fromInteger';
+  function SfmlColorToInteger(Color: TSfmlColor): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfColor_toInteger';
+
   function SfmlColorAdd(color1, color2: TSfmlColor): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfColor_add';
+  function SfmlColorSubtract(color1, color2: TSfmlColor): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfColor_subtract';
   function SfmlColorModulate(color1, color2: TSfmlColor): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfColor_modulate';
 
   function SfmlCircleShapeCreate: PSfmlCircleShape; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_create';
@@ -1331,6 +1348,7 @@ const
   procedure SfmlShaderSetTransformParameter(Shader: PSfmlShader; const Name: PAnsiChar; Transform: TSfmlTransform); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setTransformParameter';
   procedure SfmlShaderSetTextureParameter(Shader: PSfmlShader; const Name: PAnsiChar; const Texture: PSfmlTexture); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setTextureParameter';
   procedure SfmlShaderSetCurrentTextureParameter(Shader: PSfmlShader; const Name: PAnsiChar); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setCurrentTextureParameter';
+  function SfmlShaderGetNativeHandle(Shader: PSfmlShader): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfShader_getNativeHandle';
   procedure SfmlShaderBind(const Shader: PSfmlShader); cdecl; external CSfmlGraphicsLibrary name 'sfShader_bind';
   function SfmlShaderIsAvailable: Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfShader_isAvailable';
 
@@ -1444,6 +1462,7 @@ const
   function SfmlTextureIsSmooth(const Texture: PSfmlTexture): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_isSmooth';
   procedure SfmlTextureSetRepeated(Texture: PSfmlTexture; Repeated: Boolean); cdecl; external CSfmlGraphicsLibrary name 'sfTexture_setRepeated';
   function SfmlTextureIsRepeated(const Texture: PSfmlTexture): Boolean; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_isRepeated';
+  function SfmlTextureGetNativeHandle(const Texture: PSfmlTexture): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_getNativeHandle';
   procedure SfmlTextureBind(const Texture: PSfmlTexture); cdecl; external CSfmlGraphicsLibrary name 'sfTexture_bind';
   function sfmlTextureGetMaximumSize: Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_getMaximumSize';
 {$IFNDEF INT64RETURNWORKAROUND}
@@ -1489,7 +1508,7 @@ const
   function SfmlVertexArrayGetVertexCount(const VertexArray: PSfmlVertexArray): NativeUInt; cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_getVertexCount';
   function SfmlVertexArrayGetVertex(VertexArray: PSfmlVertexArray; Index: NativeUInt): PSfmlVertex; cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_getVertex';
   procedure SfmlVertexArrayClear(VertexArray: PSfmlVertexArray); cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_clear';
-  procedure SfmlVertexArrayResize(VertexArray: PSfmlVertexArray; VertexCount: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_resize';
+  procedure SfmlVertexArrayResize(VertexArray: PSfmlVertexArray; VertexCount: NativeUInt); cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_resize';
   procedure SfmlVertexArrayAppend(VertexArray: PSfmlVertexArray; Vertex: TSfmlVertex); cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_append';
   procedure SfmlVertexArraySetPrimitiveType(VertexArray: PSfmlVertexArray; &Type: TSfmlPrimitiveType); cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_setPrimitiveType';
   function SfmlVertexArrayGetPrimitiveType(VertexArray: PSfmlVertexArray): TSfmlPrimitiveType; cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_getPrimitiveType';
@@ -1787,6 +1806,7 @@ type
     FHandle: PSfmlTexture;
 
     constructor Create(Handle: PSfmlTexture); overload;
+    function GetNativeHandle: Cardinal;
     function GetRepeated: Boolean;
     function GetSmooth: Boolean;
     function GetSize: TSfmlVector2u;
@@ -1814,6 +1834,7 @@ type
     property Repeated: Boolean read GetRepeated write SetRepeated;
     property Smooth: Boolean read GetSmooth write SetSmooth;
     property Size: TSfmlVector2u read GetSize;
+    property NativeHandle: Cardinal read GetNativeHandle;
   end;
 
   TSfmlSprite = class(TSfmlTransformable)
@@ -1975,7 +1996,7 @@ type
     function Copy: TSfmlVertexArray;
     procedure Append(Vertex: TSfmlVertex);
     procedure Clear;
-    procedure Resize(VertexCount: Cardinal);
+    procedure Resize(VertexCount: NativeUInt);
 
     property Bounds: TSfmlFloatRect read GetBounds;
     property Handle: PSfmlVertexArray read FHandle;
@@ -2211,6 +2232,7 @@ type
   TSfmlShader = class
   private
     FHandle: PSfmlShader;
+    function GetNativeHandle: Cardinal;
   public
     constructor Create(const VertexShader: AnsiString; const FragmentShader: AnsiString); overload;
     constructor Create(VertexShaderStream: PSfmlInputStream; FragmentShaderStream: PSfmlInputStream); overload;
@@ -2230,6 +2252,7 @@ type
     procedure Bind;
 
     property Handle: PSfmlShader read FHandle;
+    property NativeHandle: Cardinal read GetNativeHandle;
   end;
 
 {$IFDEF INT64RETURNWORKAROUND}
@@ -3686,6 +3709,11 @@ begin
   inherited;
 end;
 
+function TSfmlShader.GetNativeHandle: Cardinal;
+begin
+  Result := SfmlShaderGetNativeHandle(FHandle);
+end;
+
 procedure TSfmlShader.Bind;
 begin
   SfmlShaderBind(FHandle);
@@ -4319,6 +4347,11 @@ begin
   Result := SfmlTextureGetSize(FHandle);
 end;
 
+function TSfmlTexture.GetNativeHandle: Cardinal;
+begin
+  Result := SfmlTextureGetNativeHandle(FHandle);
+end;
+
 function TSfmlTexture.GetRepeated: Boolean;
 begin
   Result := SfmlTextureIsRepeated(FHandle);
@@ -4520,7 +4553,7 @@ begin
   Result := SfmlVertexArrayGetVertexCount(FHandle);
 end;
 
-procedure TSfmlVertexArray.Resize(VertexCount: Cardinal);
+procedure TSfmlVertexArray.Resize(VertexCount: NativeUInt);
 begin
   SfmlVertexArrayResize(FHandle, VertexCount);
 end;
@@ -4702,7 +4735,10 @@ begin
 
       SfmlColorFromRGB := BindFunction('sfColor_fromRGB');
       SfmlColorFromRGBA := BindFunction('sfColor_fromRGBA');
+      SfmlColorFromInteger := BindFunction('sfColor_fromInteger');
+      SfmlColorToInteger := BindFunction('sfColor_toInteger');
       SfmlColorAdd := BindFunction('sfColor_add');
+      SfmlColorSubtract := BindFunction('sfColor_subtract');
       SfmlColorModulate := BindFunction('sfColor_modulate');
       SfmlCircleShapeCreate := BindFunction('sfCircleShape_create');
       SfmlCircleShapeCopy := BindFunction('sfCircleShape_copy');
@@ -4904,6 +4940,7 @@ begin
       SfmlShaderSetTransformParameter := BindFunction('sfShader_setTransformParameter');
       SfmlShaderSetTextureParameter := BindFunction('sfShader_setTextureParameter');
       SfmlShaderSetCurrentTextureParameter := BindFunction('sfShader_setCurrentTextureParameter');
+      SfmlShaderGetNativeHandle := BindFunction('sfShader_getNativeHandle');
       SfmlShaderBind := BindFunction('sfShader_bind');
       SfmlShaderIsAvailable := BindFunction('sfShader_isAvailable');
       SfmlShapeCreate := BindFunction('sfShape_create');
@@ -4996,6 +5033,7 @@ begin
       SfmlTextureIsSmooth := BindFunction('sfTexture_isSmooth');
       SfmlTextureSetRepeated := BindFunction('sfTexture_setRepeated');
       SfmlTextureIsRepeated := BindFunction('sfTexture_isRepeated');
+      SfmlTextureGetNativeHandle := BindFunction('sfTexture_getNativeHandle');
       SfmlTextureBind := BindFunction('sfTexture_bind');
       SfmlTextureGetMaximumSize := BindFunction('sfTexture_getMaximumSize');
       SfmlTransformFromMatrix := BindFunction('sfTransform_fromMatrix');

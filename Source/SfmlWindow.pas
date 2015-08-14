@@ -162,6 +162,13 @@ type
 
   TSfmlMouseWheelEvent = record
     EventType: TSfmlEventType;
+    Wheel: TSfmlMouseWheel;
+    Delta: Single;
+    X, Y: LongInt;
+  end;
+
+  TSfmlMouseWheelScrollEvent = record
+    EventType: TSfmlEventType;
     Delta, X, Y: LongInt;
   end;
 
