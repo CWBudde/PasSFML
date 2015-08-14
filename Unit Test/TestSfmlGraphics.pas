@@ -859,10 +859,11 @@ end;
 
 procedure TestTSfmlRenderTexture.TestGetDefaultView;
 var
-  ReturnValue: PSfmlView;
+  ReturnValue: TSfmlView;
 begin
-  ReturnValue := FSfmlRenderTexture.GetDefaultView;
-  CheckTrue(ReturnValue <> nil);
+  ReturnValue := FSfmlRenderTexture.DefaultView;
+  CheckTrue(Assigned(ReturnValue));
+  CheckTrue(ReturnValue.Handle <> nil);
 end;
 
 procedure TestTSfmlRenderTexture.TestGetTexture;
@@ -880,7 +881,7 @@ begin
   FSfmlRenderTexture.Display;
 
   // get texture
-  ReturnValue := FSfmlRenderTexture.GetTexture;
+  ReturnValue := FSfmlRenderTexture.Texture;
 
   // check results
   CheckEquals(TextureSize.X, ReturnValue.Size.X);
@@ -889,8 +890,7 @@ end;
 
 procedure TestTSfmlRenderTexture.TestGetView;
 var
-  ReturnValue: PSfmlView;
-  View: TSfmlView;
+  View, ReturnValue: TSfmlView;
   ViewportRect: TSfmlFloatRect;
 begin
   View := TSfmlView.Create;
@@ -899,10 +899,10 @@ begin
   ViewportRect := SfmlFloatRect(0, 0, 200, 200);
   View.Viewport := ViewportRect;
 
-  FSfmlRenderTexture.SetView(View.Handle);
-  ReturnValue := FSfmlRenderTexture.GetView;
+  FSfmlRenderTexture.View := View;
+  ReturnValue := FSfmlRenderTexture.View;
 
-  CheckEquals(Integer(View.Handle), Integer(ReturnValue));
+  CheckEquals(Integer(View.Handle), Integer(ReturnValue.Handle));
 end;
 
 procedure TestTSfmlRenderTexture.TestGetViewport;
@@ -1306,7 +1306,7 @@ begin
   View.Size := SfmlVector2f(64, 64);
   View.Viewport := SfmlFloatRect(0, 0, 200, 200);
 
-  FSfmlRenderTexture.SetView(View.Handle);
+  FSfmlRenderTexture.View := View;
   // TODO: Check results
 end;
 
@@ -1371,10 +1371,11 @@ end;
 
 procedure TestTSfmlRenderWindow.TestGetDefaultView;
 var
-  ReturnValue: PSfmlView;
+  ReturnValue: TSfmlView;
 begin
-  ReturnValue := FSfmlRenderWindow.GetDefaultView;
-  // TODO: Check results
+  ReturnValue := FSfmlRenderWindow.DefaultView;
+  CheckTrue(Assigned(ReturnValue));
+  CheckTrue(ReturnValue.Handle <> nil);
 end;
 
 procedure TestTSfmlRenderWindow.TestGetSystemHandle;
@@ -1387,8 +1388,7 @@ end;
 
 procedure TestTSfmlRenderWindow.TestGetView;
 var
-  ReturnValue: PSfmlView;
-  View: TSfmlView;
+  View, ReturnValue: TSfmlView;
   ViewportRect: TSfmlFloatRect;
 begin
   View := TSfmlView.Create;
@@ -1397,10 +1397,10 @@ begin
   ViewportRect := SfmlFloatRect(0, 0, 200, 200);
   View.Viewport := ViewportRect;
 
-  FSfmlRenderWindow.SetView(View.Handle);
-  ReturnValue := FSfmlRenderWindow.GetView;
+  FSfmlRenderWindow.View := View;
+  ReturnValue := FSfmlRenderWindow.View;
 
-  CheckEquals(Integer(View.Handle), Integer(ReturnValue));
+  CheckEquals(Integer(View.Handle), Integer(ReturnValue.Handle));
 end;
 
 procedure TestTSfmlRenderWindow.TestGetViewport;
