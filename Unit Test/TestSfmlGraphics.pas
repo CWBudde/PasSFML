@@ -608,10 +608,12 @@ end;
 procedure TestTSfmlFont.TestGetInfo;
 var
   ReturnValue: TSfmlFontInfo;
+  FontFamily: AnsiString;
 begin
   ReturnValue := FSfmlFont.GetInfo;
 
-  CheckTrue(ReturnValue.Family <> '');
+  FontFamily := ReturnValue.Family;
+  CheckTrue(FontFamily <> '');
 end;
 
 
@@ -907,24 +909,21 @@ end;
 
 procedure TestTSfmlRenderTexture.TestGetViewport;
 var
-  ReturnValue: TSfmlIntRect;
-  View: TSfmlView;
-  ViewportRect: TSfmlFloatRect;
+  OldRect, NewRect: TSfmlIntRect;
 begin
-  View := TSfmlView.Create;
+  // get old viewport
+  OldRect := FSfmlRenderTexture.GetViewport(FSfmlRenderTexture.View.Handle);
 
-  View.Size := SfmlVector2f(64, 64);
-  ViewportRect := SfmlFloatRect(0, 0, 200, 200);
-  View.Viewport := ViewportRect;
+  // change viewport
+  FSfmlRenderTexture.View.Viewport := SfmlFloatRect(0, 0, 0.5, 0.5);
 
-  ReturnValue := FSfmlRenderTexture.GetViewport(View.Handle);
+  // get new viewport
+  NewRect := FSfmlRenderTexture.GetViewport(FSfmlRenderTexture.View.Handle);
 
-  CheckEquals(ViewportRect.Left, ReturnValue.Left);
-  CheckEquals(ViewportRect.Top, ReturnValue.Top);
-  CheckEquals(ViewportRect.Width, ReturnValue.Width);
-  CheckEquals(ViewportRect.Height, ReturnValue.Height);
-
-  // TODO: Check results
+  CheckEquals(NewRect.Left, OldRect.Left);
+  CheckEquals(NewRect.Top, OldRect.Top);
+  CheckEquals(NewRect.Width, 0.5 * OldRect.Width);
+  CheckEquals(NewRect.Height, 0.5 * OldRect.Height);
 end;
 
 procedure TestTSfmlRenderTexture.TestMapCoordsToPixel;
@@ -1146,12 +1145,12 @@ begin
   // TODO: Check results
 end;
 
-function TriangleGetPointCountCallback(UserData: Pointer): Cardinal; cdecl;
+function TriangleGetPointCountCallback(UserData: Pointer): NativeUInt; cdecl;
 begin
   Result := 3;
 end;
 
-function TriangleGetPointCallback(Index: Cardinal; UserData: Pointer): TSfmlVector2f; cdecl;
+function TriangleGetPointCallback(Index: NativeUInt; UserData: Pointer): TSfmlVector2f; cdecl;
 begin
   case Index of
     0:
@@ -1405,23 +1404,21 @@ end;
 
 procedure TestTSfmlRenderWindow.TestGetViewport;
 var
-  ReturnValue: TSfmlIntRect;
-  View: TSfmlView;
-  ViewportRect: TSfmlFloatRect;
+  OldRect, NewRect: TSfmlIntRect;
 begin
-  View := TSfmlView.Create;
+  // get old viewport
+  OldRect := FSfmlRenderWindow.GetViewport(FSfmlRenderWindow.View.Handle);
 
-  View.Size := SfmlVector2f(64, 64);
-  ViewportRect := SfmlFloatRect(0, 0, 200, 200);
-  View.Viewport := ViewportRect;
+  // change viewport
+  FSfmlRenderWindow.View.Viewport := SfmlFloatRect(0, 0, 0.5, 0.5);
 
-  ReturnValue := FSfmlRenderWindow.GetViewport(View.Handle);
+  // get new viewport
+  NewRect := FSfmlRenderWindow.GetViewport(FSfmlRenderWindow.View.Handle);
 
-  CheckEquals(ViewportRect.Left, ReturnValue.Left);
-  CheckEquals(ViewportRect.Top, ReturnValue.Top);
-  CheckEquals(ViewportRect.Width, ReturnValue.Width);
-  CheckEquals(ViewportRect.Height, ReturnValue.Height);
-  // TODO: Check results
+  CheckEquals(NewRect.Left, OldRect.Left);
+  CheckEquals(NewRect.Top, OldRect.Top);
+  CheckEquals(NewRect.Width, 0.5 * OldRect.Width);
+  CheckEquals(NewRect.Height, 0.5 * OldRect.Height);
 end;
 
 procedure TestTSfmlRenderWindow.TestMapCoordsToPixel;
@@ -1843,14 +1840,14 @@ end;
 
 { TestTSfmlShape }
 
-function GetPointCountCallback(UserData: Pointer): Cardinal; cdecl;
+function GetPointCountCallback(UserData: Pointer): NativeUInt; cdecl;
 begin
   Assert(TObject(UserData) is TestTSfmlShape);
 
   Result := 1;
 end;
 
-function GetPointCallback(Index: Cardinal; UserData: Pointer): TSfmlVector2f; cdecl;
+function GetPointCallback(Index: NativeUInt; UserData: Pointer): TSfmlVector2f; cdecl;
 begin
   Assert(TObject(UserData) is TestTSfmlShape);
 

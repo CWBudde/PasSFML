@@ -170,8 +170,8 @@ type
   end;
   PSfmlRenderStates = ^TSfmlRenderStates;
 
-  TSfmlShapeGetPointCountCallback = function (UserData: Pointer): Cardinal; cdecl;
-  TSfmlShapeGetPointCallback = function (Index: Cardinal; UserData: Pointer): TSfmlVector2f; cdecl;
+  TSfmlShapeGetPointCountCallback = function (UserData: Pointer): NativeUInt; cdecl;
+  TSfmlShapeGetPointCallback = function (Index: NativeUInt; UserData: Pointer): TSfmlVector2f; cdecl;
 
   TSfmlTextStyle = (sfTextBold, sfTextItalic, sfTextUnderlined,
     sfTextStrikeThrough);
@@ -216,11 +216,11 @@ type
   TSfmlCircleShapeGetFillColor = function (const Shape: PSfmlCircleShape): TSfmlColor; cdecl;
   TSfmlCircleShapeGetOutlineColor = function (const Shape: PSfmlCircleShape): TSfmlColor; cdecl;
   TSfmlCircleShapeGetOutlineThickness = function (const Shape: PSfmlCircleShape): Single; cdecl;
-  TSfmlCircleShapeGetPointCount = function (const Shape: PSfmlCircleShape): Cardinal; cdecl;
-  TSfmlCircleShapeGetPoint = function (const Shape: PSfmlCircleShape; Index: Cardinal): TSfmlVector2f; cdecl;
+  TSfmlCircleShapeGetPointCount = function (const Shape: PSfmlCircleShape): NativeUInt; cdecl;
+  TSfmlCircleShapeGetPoint = function (const Shape: PSfmlCircleShape; Index: NativeUInt): TSfmlVector2f; cdecl;
   TSfmlCircleShapeSetRadius = procedure (Shape: PSfmlCircleShape; Radius: Single); cdecl;
   TSfmlCircleShapeGetRadius = function (const Shape: PSfmlCircleShape): Single; cdecl;
-  TSfmlCircleShapeSetPointCount = procedure (Shape: PSfmlCircleShape; Count: Cardinal); cdecl;
+  TSfmlCircleShapeSetPointCount = procedure (Shape: PSfmlCircleShape; Count: NativeUInt); cdecl;
   TSfmlCircleShapeGetLocalBounds = function (const Shape: PSfmlCircleShape): TSfmlFloatRect; cdecl;
   TSfmlCircleShapeGetGlobalBounds = function (const Shape: PSfmlCircleShape): TSfmlFloatRect; cdecl;
 
@@ -250,10 +250,10 @@ type
   TSfmlConvexShapeGetFillColor = function (const Shape: PSfmlConvexShape): TSfmlColor; cdecl;
   TSfmlConvexShapeGetOutlineColor = function (const Shape: PSfmlConvexShape): TSfmlColor; cdecl;
   TSfmlConvexShapeGetOutlineThickness = function (const Shape: PSfmlConvexShape): Single; cdecl;
-  TSfmlConvexShapeGetPointCount = function (const Shape: PSfmlConvexShape): Cardinal; cdecl;
-  TSfmlConvexShapeGetPoint = function (const Shape: PSfmlConvexShape; Index: Cardinal): TSfmlVector2f; cdecl;
-  TSfmlConvexShapeSetPointCount = procedure (Shape: PSfmlConvexShape; Count: Cardinal); cdecl;
-  TSfmlConvexShapeSetPoint = procedure (Shape: PSfmlConvexShape; Index: Cardinal; Point: TSfmlVector2f); cdecl;
+  TSfmlConvexShapeGetPointCount = function (const Shape: PSfmlConvexShape): NativeUInt; cdecl;
+  TSfmlConvexShapeGetPoint = function (const Shape: PSfmlConvexShape; Index: NativeUInt): TSfmlVector2f; cdecl;
+  TSfmlConvexShapeSetPointCount = procedure (Shape: PSfmlConvexShape; Count: NativeUInt); cdecl;
+  TSfmlConvexShapeSetPoint = procedure (Shape: PSfmlConvexShape; Index: NativeUInt; Point: TSfmlVector2f); cdecl;
   TSfmlConvexShapeGetLocalBounds = function (const Shape: PSfmlConvexShape): TSfmlFloatRect; cdecl;
   TSfmlConvexShapeGetGlobalBounds = function (const Shape: PSfmlConvexShape): TSfmlFloatRect; cdecl;
 
@@ -319,8 +319,8 @@ type
   TSfmlRectangleShapeGetFillColor = function (const Shape: PSfmlRectangleShape): TSfmlColor; cdecl;
   TSfmlRectangleShapeGetOutlineColor = function (const Shape: PSfmlRectangleShape): TSfmlColor; cdecl;
   TSfmlRectangleShapeGetOutlineThickness = function (const Shape: PSfmlRectangleShape): Single; cdecl;
-  TSfmlRectangleShapeGetPointCount = function (const Shape: PSfmlRectangleShape): Cardinal; cdecl;
-  TSfmlRectangleShapeGetPoint = function (const Shape: PSfmlRectangleShape; Index: Cardinal): TSfmlVector2f; cdecl;
+  TSfmlRectangleShapeGetPointCount = function (const Shape: PSfmlRectangleShape): NativeUInt; cdecl;
+  TSfmlRectangleShapeGetPoint = function (const Shape: PSfmlRectangleShape; Index: NativeUInt): TSfmlVector2f; cdecl;
   TSfmlRectangleShapeSetSize = procedure (Shape: PSfmlRectangleShape; Size: TSfmlVector2f); cdecl;
   TSfmlRectangleShapeGetSize = function (const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
   TSfmlRectangleShapeGetLocalBounds = function (const Shape: PSfmlRectangleShape): TSfmlFloatRect; cdecl;
@@ -345,7 +345,7 @@ type
   TSfmlRenderTextureDrawConvexShape = procedure (RenderTexture: PSfmlRenderTexture; const &Object: PSfmlConvexShape; const States: PSfmlRenderStates); cdecl;
   TSfmlRenderTextureDrawRectangleShape = procedure (RenderTexture: PSfmlRenderTexture; const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates); cdecl;
   TSfmlRenderTextureDrawVertexArray = procedure (RenderTexture: PSfmlRenderTexture; const &Object: PSfmlVertexArray; const States: PSfmlRenderStates); cdecl;
-  TSfmlRenderTextureDrawPrimitives = procedure (RenderTexture: PSfmlRenderTexture; const Vertices: PSfmlVertex; VertexCount: Cardinal; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates); cdecl;
+  TSfmlRenderTextureDrawPrimitives = procedure (RenderTexture: PSfmlRenderTexture; const Vertices: PSfmlVertex; VertexCount: NativeUInt; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates); cdecl;
   TSfmlRenderTexturePushGLStates = procedure (RenderTexture: PSfmlRenderTexture); cdecl;
   TSfmlRenderTexturePopGLStates = procedure (RenderTexture: PSfmlRenderTexture); cdecl;
   TSfmlRenderTextureResetGLStates = procedure (RenderTexture: PSfmlRenderTexture); cdecl;
@@ -396,7 +396,7 @@ type
   TSfmlRenderWindowDrawConvexShape = procedure (RenderWindow: PSfmlRenderWindow; const &Object: PSfmlConvexShape; const States: PSfmlRenderStates); cdecl;
   TSfmlRenderWindowDrawRectangleShape = procedure (RenderWindow: PSfmlRenderWindow; const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates); cdecl;
   TSfmlRenderWindowDrawVertexArray = procedure (RenderWindow: PSfmlRenderWindow; const &Object: PSfmlVertexArray; const States: PSfmlRenderStates); cdecl;
-  TSfmlRenderWindowDrawPrimitives = procedure (RenderWindow: PSfmlRenderWindow; const Vertices: PSfmlVertex; VertexCount: Cardinal; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates); cdecl;
+  TSfmlRenderWindowDrawPrimitives = procedure (RenderWindow: PSfmlRenderWindow; const Vertices: PSfmlVertex; VertexCount: NativeUInt; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates); cdecl;
   TSfmlRenderWindowPushGLStates = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
   TSfmlRenderWindowPopGLStates = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
   TSfmlRenderWindowResetGLStates = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
@@ -447,8 +447,8 @@ type
   TSfmlShapeGetFillColor = function (const Shape: PSfmlShape): TSfmlColor; cdecl;
   TSfmlShapeGetOutlineColor = function (const Shape: PSfmlShape): TSfmlColor; cdecl;
   TSfmlShapeGetOutlineThickness = function (const Shape: PSfmlShape): Single; cdecl;
-  TSfmlShapeGetPointCount = function (const Shape: PSfmlShape): Cardinal; cdecl;
-  TSfmlShapeGetPoint = function (const Shape: PSfmlShape; Index: Cardinal): TSfmlVector2f; cdecl;
+  TSfmlShapeGetPointCount = function (const Shape: PSfmlShape): NativeUInt; cdecl;
+  TSfmlShapeGetPoint = function (const Shape: PSfmlShape; Index: NativeUInt): TSfmlVector2f; cdecl;
   TSfmlShapeGetLocalBounds = function (const Shape: PSfmlShape): TSfmlFloatRect; cdecl;
   TSfmlShapeGetGlobalBounds = function (const Shape: PSfmlShape): TSfmlFloatRect; cdecl;
   TSfmlShapeUpdate = procedure (Shape: PSfmlShape); cdecl;
@@ -562,8 +562,8 @@ type
   TSfmlVertexArrayCreate = function : PSfmlVertexArray; cdecl;
   TSfmlVertexArrayCopy = function (const VertexArray: PSfmlVertexArray): PSfmlVertexArray; cdecl;
   TSfmlVertexArrayDestroy = procedure (VertexArray: PSfmlVertexArray); cdecl;
-  TSfmlVertexArrayGetVertexCount = function (const VertexArray: PSfmlVertexArray): Cardinal; cdecl;
-  TSfmlVertexArrayGetVertex = function (VertexArray: PSfmlVertexArray; Index: Cardinal): PSfmlVertex; cdecl;
+  TSfmlVertexArrayGetVertexCount = function (const VertexArray: PSfmlVertexArray): NativeUInt; cdecl;
+  TSfmlVertexArrayGetVertex = function (VertexArray: PSfmlVertexArray; Index: NativeUInt): PSfmlVertex; cdecl;
   TSfmlVertexArrayClear = procedure (VertexArray: PSfmlVertexArray); cdecl;
   TSfmlVertexArrayResize = procedure (VertexArray: PSfmlVertexArray; VertexCount: Cardinal); cdecl;
   TSfmlVertexArrayAppend = procedure (VertexArray: PSfmlVertexArray; Vertex: TSfmlVertex); cdecl;
@@ -1112,15 +1112,15 @@ const
   function SfmlCircleShapeGetFillColor(const Shape: PSfmlCircleShape): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getFillColor';
   function SfmlCircleShapeGetOutlineColor(const Shape: PSfmlCircleShape): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getOutlineColor';
   function SfmlCircleShapeGetOutlineThickness(const Shape: PSfmlCircleShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getOutlineThickness';
-  function SfmlCircleShapeGetPointCount(const Shape: PSfmlCircleShape): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getPointCount';
+  function SfmlCircleShapeGetPointCount(const Shape: PSfmlCircleShape): NativeUInt; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getPointCount';
   procedure SfmlCircleShapeSetRadius(Shape: PSfmlCircleShape; Radius: Single); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setRadius';
   function SfmlCircleShapeGetRadius(const Shape: PSfmlCircleShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getRadius';
-  procedure SfmlCircleShapeSetPointCount(Shape: PSfmlCircleShape; Count: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setPointCount';
+  procedure SfmlCircleShapeSetPointCount(Shape: PSfmlCircleShape; Count: NativeUInt); cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_setPointCount';
   function SfmlCircleShapeGetLocalBounds(const Shape: PSfmlCircleShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getLocalBounds';
   function SfmlCircleShapeGetGlobalBounds(const Shape: PSfmlCircleShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getGlobalBounds';
 {$IFNDEF INT64RETURNWORKAROUND}
   function SfmlCircleShapeGetOrigin(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getOrigin';
-  function SfmlCircleShapeGetPoint(const Shape: PSfmlCircleShape; Index: Cardinal): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getPoint';
+  function SfmlCircleShapeGetPoint(const Shape: PSfmlCircleShape; Index: NativeUInt): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getPoint';
   function SfmlCircleShapeGetPosition(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getPosition';
   function SfmlCircleShapeGetScale(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfCircleShape_getScale';
 {$ENDIF}
@@ -1148,14 +1148,14 @@ const
   function SfmlConvexShapeGetFillColor(const Shape: PSfmlConvexShape): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getFillColor';
   function SfmlConvexShapeGetOutlineColor(const Shape: PSfmlConvexShape): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getOutlineColor';
   function SfmlConvexShapeGetOutlineThickness(const Shape: PSfmlConvexShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getOutlineThickness';
-  function SfmlConvexShapeGetPointCount(const Shape: PSfmlConvexShape): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getPointCount';
-  procedure SfmlConvexShapeSetPointCount(Shape: PSfmlConvexShape; Count: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_setPointCount';
-  procedure SfmlConvexShapeSetPoint(Shape: PSfmlConvexShape; Index: Cardinal; Point: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_setPoint';
+  function SfmlConvexShapeGetPointCount(const Shape: PSfmlConvexShape): NativeUInt; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getPointCount';
+  procedure SfmlConvexShapeSetPointCount(Shape: PSfmlConvexShape; Count: NativeUInt); cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_setPointCount';
+  procedure SfmlConvexShapeSetPoint(Shape: PSfmlConvexShape; Index: NativeUInt; Point: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_setPoint';
   function SfmlConvexShapeGetLocalBounds(const Shape: PSfmlConvexShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getLocalBounds';
   function SfmlConvexShapeGetGlobalBounds(const Shape: PSfmlConvexShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getGlobalBounds';
 {$IFNDEF INT64RETURNWORKAROUND}
   function SfmlConvexShapeGetOrigin(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getOrigin';
-  function SfmlConvexShapeGetPoint(const Shape: PSfmlConvexShape; Index: Cardinal): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getPoint';
+  function SfmlConvexShapeGetPoint(const Shape: PSfmlConvexShape; Index: NativeUInt): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getPoint';
   function SfmlConvexShapeGetPosition(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getPosition';
   function SfmlConvexShapeGetScale(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfConvexShape_getScale';
 {$ENDIF}
@@ -1221,13 +1221,13 @@ const
   function SfmlRectangleShapeGetFillColor(const Shape: PSfmlRectangleShape): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getFillColor';
   function SfmlRectangleShapeGetOutlineColor(const Shape: PSfmlRectangleShape): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getOutlineColor';
   function SfmlRectangleShapeGetOutlineThickness(const Shape: PSfmlRectangleShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getOutlineThickness';
-  function SfmlRectangleShapeGetPointCount(const Shape: PSfmlRectangleShape): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getPointCount';
+  function SfmlRectangleShapeGetPointCount(const Shape: PSfmlRectangleShape): NativeUInt; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getPointCount';
   procedure SfmlRectangleShapeSetSize(Shape: PSfmlRectangleShape; Size: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_setSize';
   function SfmlRectangleShapeGetLocalBounds(const Shape: PSfmlRectangleShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getLocalBounds';
   function SfmlRectangleShapeGetGlobalBounds(const Shape: PSfmlRectangleShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getGlobalBounds';
 {$IFNDEF INT64RETURNWORKAROUND}
   function SfmlRectangleShapeGetOrigin(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getOrigin';
-  function SfmlRectangleShapeGetPoint(const Shape: PSfmlRectangleShape; Index: Cardinal): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getPoint';
+  function SfmlRectangleShapeGetPoint(const Shape: PSfmlRectangleShape; Index: NativeUInt): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getPoint';
   function SfmlRectangleShapeGetPosition(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getPosition';
   function SfmlRectangleShapeGetScale(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getScale';
   function SfmlRectangleShapeGetSize(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRectangleShape_getSize';
@@ -1249,7 +1249,7 @@ const
   procedure SfmlRenderTextureDrawConvexShape(RenderTexture: PSfmlRenderTexture; const &Object: PSfmlConvexShape; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_drawConvexShape';
   procedure SfmlRenderTextureDrawRectangleShape(RenderTexture: PSfmlRenderTexture; const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_drawRectangleShape';
   procedure SfmlRenderTextureDrawVertexArray(RenderTexture: PSfmlRenderTexture; const &Object: PSfmlVertexArray; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_drawVertexArray';
-  procedure SfmlRenderTextureDrawPrimitives(RenderTexture: PSfmlRenderTexture; const Vertices: PSfmlVertex; VertexCount: Cardinal; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_drawPrimitives';
+  procedure SfmlRenderTextureDrawPrimitives(RenderTexture: PSfmlRenderTexture; const Vertices: PSfmlVertex; VertexCount: NativeUInt; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_drawPrimitives';
   procedure SfmlRenderTexturePushGLStates(RenderTexture: PSfmlRenderTexture); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_pushGLStates';
   procedure SfmlRenderTexturePopGLStates(RenderTexture: PSfmlRenderTexture); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_popGLStates';
   procedure SfmlRenderTextureResetGLStates(RenderTexture: PSfmlRenderTexture); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_resetGLStates';
@@ -1302,7 +1302,7 @@ const
   procedure SfmlRenderWindowDrawConvexShape(RenderWindow: PSfmlRenderWindow; const &Object: PSfmlConvexShape; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_drawConvexShape';
   procedure SfmlRenderWindowDrawRectangleShape(RenderWindow: PSfmlRenderWindow; const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_drawRectangleShape';
   procedure SfmlRenderWindowDrawVertexArray(RenderWindow: PSfmlRenderWindow; const &Object: PSfmlVertexArray; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_drawVertexArray';
-  procedure SfmlRenderWindowDrawPrimitives(RenderWindow: PSfmlRenderWindow; const Vertices: PSfmlVertex; VertexCount: Cardinal; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_drawPrimitives';
+  procedure SfmlRenderWindowDrawPrimitives(RenderWindow: PSfmlRenderWindow; const Vertices: PSfmlVertex; VertexCount: NativeUInt; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_drawPrimitives';
   procedure SfmlRenderWindowPushGLStates(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_pushGLStates';
   procedure SfmlRenderWindowPopGLStates(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_popGLStates';
   procedure SfmlRenderWindowResetGLStates(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_resetGLStates';
@@ -1356,13 +1356,13 @@ const
   function SfmlShapeGetFillColor(const Shape: PSfmlShape): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getFillColor';
   function SfmlShapeGetOutlineColor(const Shape: PSfmlShape): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getOutlineColor';
   function SfmlShapeGetOutlineThickness(const Shape: PSfmlShape): Single; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getOutlineThickness';
-  function SfmlShapeGetPointCount(const Shape: PSfmlShape): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getPointCount';
+  function SfmlShapeGetPointCount(const Shape: PSfmlShape): NativeUInt; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getPointCount';
   function SfmlShapeGetLocalBounds(const Shape: PSfmlShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getLocalBounds';
   function SfmlShapeGetGlobalBounds(const Shape: PSfmlShape): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getGlobalBounds';
   procedure SfmlShapeUpdate(Shape: PSfmlShape); cdecl; external CSfmlGraphicsLibrary name 'sfShape_update';
 {$IFNDEF INT64RETURNWORKAROUND}
   function SfmlShapeGetOrigin(const Shape: PSfmlShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getOrigin';
-  function SfmlShapeGetPoint(const Shape: PSfmlShape; Index: Cardinal): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getPoint';
+  function SfmlShapeGetPoint(const Shape: PSfmlShape; Index: NativeUInt): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getPoint';
   function SfmlShapeGetPosition(const Shape: PSfmlShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getPosition';
   function SfmlShapeGetScale(const Shape: PSfmlShape): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfShape_getScale';
 {$ENDIF}
@@ -1486,8 +1486,8 @@ const
   function SfmlVertexArrayCreate: PSfmlVertexArray; cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_create';
   function SfmlVertexArrayCopy(const VertexArray: PSfmlVertexArray): PSfmlVertexArray; cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_copy';
   procedure SfmlVertexArrayDestroy(VertexArray: PSfmlVertexArray); cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_destroy';
-  function SfmlVertexArrayGetVertexCount(const VertexArray: PSfmlVertexArray): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_getVertexCount';
-  function SfmlVertexArrayGetVertex(VertexArray: PSfmlVertexArray; Index: Cardinal): PSfmlVertex; cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_getVertex';
+  function SfmlVertexArrayGetVertexCount(const VertexArray: PSfmlVertexArray): NativeUInt; cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_getVertexCount';
+  function SfmlVertexArrayGetVertex(VertexArray: PSfmlVertexArray; Index: NativeUInt): PSfmlVertex; cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_getVertex';
   procedure SfmlVertexArrayClear(VertexArray: PSfmlVertexArray); cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_clear';
   procedure SfmlVertexArrayResize(VertexArray: PSfmlVertexArray; VertexCount: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_resize';
   procedure SfmlVertexArrayAppend(VertexArray: PSfmlVertexArray; Vertex: TSfmlVertex); cdecl; external CSfmlGraphicsLibrary name 'sfVertexArray_append';
@@ -1567,8 +1567,8 @@ type
     function GetOrigin: TSfmlVector2f; override;
     function GetOutlineColor: TSfmlColor; virtual;
     function GetOutlineThickness: Single; virtual;
-    function GetPoint(Index: Cardinal): TSfmlVector2f; virtual;
-    function GetPointCount: Cardinal; virtual;
+    function GetPoint(Index: NativeUInt): TSfmlVector2f; virtual;
+    function GetPointCount: NativeUInt; virtual;
     function GetPosition: TSfmlVector2f; override;
     function GetRotation: Single; override;
     function GetScale: TSfmlVector2f; override;
@@ -1601,8 +1601,8 @@ type
     property LocalBounds: TSfmlFloatRect read GetLocalBounds;
     property OutlineColor: TSfmlColor read GetOutlineColor write SetOutlineColor;
     property OutlineThickness: Single read GetOutlineThickness write SetOutlineThickness;
-    property Point[Index: Cardinal]: TSfmlVector2f read GetPoint;
-    property PointCount: Cardinal read GetPointCount;
+    property Point[Index: NativeUInt]: TSfmlVector2f read GetPoint;
+    property PointCount: NativeUInt read GetPointCount;
     property Texture: PSfmlTexture read GetTexture;
     property TextureRect: TSfmlIntRect read GetTextureRect write SetTextureRect;
   end;
@@ -1614,7 +1614,7 @@ type
     constructor Create(Handle: PSfmlCircleShape); overload;
     function GetRadius: Single;
     procedure SetRadius(Radius: Single);
-    procedure SetPointCount(Count: Cardinal);
+    procedure SetPointCount(Count: NativeUInt);
   protected
     function GetFillColor: TSfmlColor; override;
     function GetGlobalBounds: TSfmlFloatRect; override;
@@ -1623,8 +1623,8 @@ type
     function GetOrigin: TSfmlVector2f; override;
     function GetOutlineColor: TSfmlColor; override;
     function GetOutlineThickness: Single; override;
-    function GetPoint(Index: Cardinal): TSfmlVector2f; override;
-    function GetPointCount: Cardinal; override;
+    function GetPoint(Index: NativeUInt): TSfmlVector2f; override;
+    function GetPointCount: NativeUInt; override;
     function GetPosition: TSfmlVector2f; override;
     function GetRotation: Single; override;
     function GetScale: TSfmlVector2f; override;
@@ -1652,7 +1652,7 @@ type
     procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
 
     property Handle: PSfmlCircleShape read FHandle;
-    property PointCount: Cardinal read GetPointCount write SetPointCount;
+    property PointCount: NativeUInt read GetPointCount write SetPointCount;
     property Radius: Single read GetRadius write SetRadius;
   end;
 
@@ -1661,8 +1661,8 @@ type
     FHandle: PSfmlConvexShape;
 
     constructor Create(Handle: PSfmlConvexShape); overload;
-    procedure SetPoint(Index: Cardinal; Point: TSfmlVector2f);
-    procedure SetPointCount(Count: Cardinal);
+    procedure SetPoint(Index: NativeUInt; Point: TSfmlVector2f);
+    procedure SetPointCount(Count: NativeUInt);
   protected
     function GetFillColor: TSfmlColor; override;
     function GetGlobalBounds: TSfmlFloatRect; override;
@@ -1671,8 +1671,8 @@ type
     function GetOrigin: TSfmlVector2f; override;
     function GetOutlineColor: TSfmlColor; override;
     function GetOutlineThickness: Single; override;
-    function GetPoint(Index: Cardinal): TSfmlVector2f; override;
-    function GetPointCount: Cardinal; override;
+    function GetPoint(Index: NativeUInt): TSfmlVector2f; override;
+    function GetPointCount: NativeUInt; override;
     function GetPosition: TSfmlVector2f; override;
     function GetRotation: Single; override;
     function GetScale: TSfmlVector2f; override;
@@ -1700,8 +1700,8 @@ type
     procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
 
     property Handle: PSfmlConvexShape read FHandle;
-    property PointCount: Cardinal read GetPointCount write SetPointCount;
-    property Point[Index: Cardinal]: TSfmlVector2f read GetPoint write SetPoint;
+    property PointCount: NativeUInt read GetPointCount write SetPointCount;
+    property Point[Index: NativeUInt]: TSfmlVector2f read GetPoint write SetPoint;
   end;
 
   TSfmlRectangleShape = class(TSfmlShape)
@@ -1719,8 +1719,8 @@ type
     function GetOrigin: TSfmlVector2f; override;
     function GetOutlineColor: TSfmlColor; override;
     function GetOutlineThickness: Single; override;
-    function GetPoint(Index: Cardinal): TSfmlVector2f; override;
-    function GetPointCount: Cardinal; override;
+    function GetPoint(Index: NativeUInt): TSfmlVector2f; override;
+    function GetPointCount: NativeUInt; override;
     function GetPosition: TSfmlVector2f; override;
     function GetRotation: Single; override;
     function GetScale: TSfmlVector2f; override;
@@ -1747,7 +1747,7 @@ type
     procedure SetTexture(const Texture: PSfmlTexture; ResetRect: Boolean);
 
     property Handle: PSfmlRectangleShape read FHandle;
-    property PointCount: Cardinal read GetPointCount;
+    property PointCount: NativeUInt read GetPointCount;
     property Size: TSfmlVector2f read GetSize write SetSize;
   end;
 
@@ -1965,8 +1965,8 @@ type
     constructor Create(Handle: PSfmlVertexArray); overload;
     function GetBounds: TSfmlFloatRect;
     function GetPrimitiveType: TSfmlPrimitiveType;
-    function GetVertex(Index: Cardinal): PSfmlVertex;
-    function GetVertexCount: Cardinal;
+    function GetVertex(Index: NativeUInt): PSfmlVertex;
+    function GetVertexCount: NativeUInt;
     procedure SetPrimitiveType(&Type: TSfmlPrimitiveType);
   public
     constructor Create; overload;
@@ -1980,8 +1980,8 @@ type
     property Bounds: TSfmlFloatRect read GetBounds;
     property Handle: PSfmlVertexArray read FHandle;
     property PrimitiveType: TSfmlPrimitiveType read GetPrimitiveType write SetPrimitiveType;
-    property Vertex[Index: Cardinal]: PSfmlVertex read GetVertex;
-    property VertexCount: Cardinal read GetVertexCount;
+    property Vertex[Index: NativeUInt]: PSfmlVertex read GetVertex;
+    property VertexCount: NativeUInt read GetVertexCount;
   end;
 
   TSfmlView = class
@@ -2114,7 +2114,7 @@ type
 
     procedure DrawCircleShape(const &Object: PSfmlCircleShape; const States: PSfmlRenderStates = nil);
     procedure DrawConvexShape(const &Object: PSfmlConvexShape; const States: PSfmlRenderStates = nil);
-    procedure DrawPrimitives(const Vertices: PSfmlVertex; VertexCount: Cardinal; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates = nil);
+    procedure DrawPrimitives(const Vertices: PSfmlVertex; VertexCount: NativeUInt; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates = nil);
     procedure DrawRectangleShape(const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates = nil);
     procedure DrawShape(const &Object: PSfmlShape; const States: PSfmlRenderStates = nil);
     procedure DrawSprite(const &Object: PSfmlSprite; const States: PSfmlRenderStates = nil);
@@ -2181,7 +2181,7 @@ type
 
     procedure DrawCircleShape(const &Object: PSfmlCircleShape; const States: PSfmlRenderStates = nil);
     procedure DrawConvexShape(const &Object: PSfmlConvexShape; const States: PSfmlRenderStates = nil);
-    procedure DrawPrimitives(const Vertices: PSfmlVertex; VertexCount: Cardinal; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates = nil);
+    procedure DrawPrimitives(const Vertices: PSfmlVertex; VertexCount: NativeUInt; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates = nil);
     procedure DrawRectangleShape(const &Object: PSfmlRectangleShape; const States: PSfmlRenderStates = nil);overload;
     procedure DrawShape(const &Object: PSfmlShape; const States: PSfmlRenderStates = nil);
     procedure DrawSprite(const &Object: PSfmlSprite; const States: PSfmlRenderStates = nil);
@@ -2233,17 +2233,17 @@ type
   end;
 
 {$IFDEF INT64RETURNWORKAROUND}
-  function SfmlCircleShapeGetPoint(const Shape: PSfmlCircleShape; Index: Cardinal): TSfmlVector2f; cdecl;
+  function SfmlCircleShapeGetPoint(const Shape: PSfmlCircleShape; Index: NativeUInt): TSfmlVector2f; cdecl;
   function SfmlCircleShapeGetPosition(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl;
   function SfmlCircleShapeGetOrigin(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl;
   function SfmlCircleShapeGetScale(const Shape: PSfmlCircleShape): TSfmlVector2f; cdecl;
   function SfmlConvexShapeGetOrigin(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl;
-  function SfmlConvexShapeGetPoint(const Shape: PSfmlConvexShape; Index: Cardinal): TSfmlVector2f; cdecl;
+  function SfmlConvexShapeGetPoint(const Shape: PSfmlConvexShape; Index: NativeUInt): TSfmlVector2f; cdecl;
   function SfmlConvexShapeGetPosition(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl;
   function SfmlConvexShapeGetScale(const Shape: PSfmlConvexShape): TSfmlVector2f; cdecl;
   function SfmlImageGetSize(const Image: PSfmlImage): TSfmlVector2u; cdecl;
   function SfmlRectangleShapeGetOrigin(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
-  function SfmlRectangleShapeGetPoint(const Shape: PSfmlRectangleShape; Index: Cardinal): TSfmlVector2f; cdecl;
+  function SfmlRectangleShapeGetPoint(const Shape: PSfmlRectangleShape; Index: NativeUInt): TSfmlVector2f; cdecl;
   function SfmlRectangleShapeGetPosition(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
   function SfmlRectangleShapeGetScale(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
   function SfmlRectangleShapeGetSize(const Shape: PSfmlRectangleShape): TSfmlVector2f; cdecl;
@@ -2256,7 +2256,7 @@ type
   function SfmlMouseGetPositionRenderWindow(const RelativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl;
   function SfmlTouchGetPositionRenderWindow(Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl;
   function SfmlShapeGetOrigin(const Shape: PSfmlShape): TSfmlVector2f; cdecl;
-  function SfmlShapeGetPoint(const Shape: PSfmlShape; Index: Cardinal): TSfmlVector2f; cdecl;
+  function SfmlShapeGetPoint(const Shape: PSfmlShape; Index: NativeUInt): TSfmlVector2f; cdecl;
   function SfmlShapeGetPosition(const Shape: PSfmlShape): TSfmlVector2f; cdecl;
   function SfmlShapeGetScale(const Shape: PSfmlShape): TSfmlVector2f; cdecl;
   function SfmlSpriteGetOrigin(const Sprite: PSfmlSprite): TSfmlVector2f; cdecl;
@@ -2402,12 +2402,12 @@ begin
   Result := SfmlCircleShapeGetOutlineThickness(FHandle);
 end;
 
-function TSfmlCircleShape.GetPoint(Index: Cardinal): TSfmlVector2f;
+function TSfmlCircleShape.GetPoint(Index: NativeUInt): TSfmlVector2f;
 begin
   Result := SfmlCircleShapeGetPoint(FHandle, Index);
 end;
 
-function TSfmlCircleShape.GetPointCount: Cardinal;
+function TSfmlCircleShape.GetPointCount: NativeUInt;
 begin
   Result := SfmlCircleShapeGetPointCount(FHandle);
 end;
@@ -2482,7 +2482,7 @@ begin
   SfmlCircleShapeSetOutlineThickness(FHandle, OutlineThickness);
 end;
 
-procedure TSfmlCircleShape.SetPointCount(Count: Cardinal);
+procedure TSfmlCircleShape.SetPointCount(Count: NativeUInt);
 begin
   SfmlCircleShapeSetPointCount(FHandle, Count);
 end;
@@ -2577,12 +2577,12 @@ begin
   Result := SfmlConvexShapeGetOutlineThickness(FHandle);
 end;
 
-function TSfmlConvexShape.GetPoint(Index: Cardinal): TSfmlVector2f;
+function TSfmlConvexShape.GetPoint(Index: NativeUInt): TSfmlVector2f;
 begin
   Result := SfmlConvexShapeGetPoint(FHandle, Index);
 end;
 
-function TSfmlConvexShape.GetPointCount: Cardinal;
+function TSfmlConvexShape.GetPointCount: NativeUInt;
 begin
   Result := SfmlConvexShapeGetPointCount(FHandle);
 end;
@@ -2652,12 +2652,12 @@ begin
   SfmlConvexShapeSetOutlineThickness(FHandle, Thickness);
 end;
 
-procedure TSfmlConvexShape.SetPoint(Index: Cardinal; Point: TSfmlVector2f);
+procedure TSfmlConvexShape.SetPoint(Index: NativeUInt; Point: TSfmlVector2f);
 begin
   SfmlConvexShapeSetPoint(FHandle, Index, Point);
 end;
 
-procedure TSfmlConvexShape.SetPointCount(Count: Cardinal);
+procedure TSfmlConvexShape.SetPointCount(Count: NativeUInt);
 begin
   SfmlConvexShapeSetPointCount(FHandle, Count);
 end;
@@ -2918,12 +2918,12 @@ begin
   Result := SfmlRectangleShapeGetOutlineThickness(FHandle);
 end;
 
-function TSfmlRectangleShape.GetPoint(Index: Cardinal): TSfmlVector2f;
+function TSfmlRectangleShape.GetPoint(Index: NativeUInt): TSfmlVector2f;
 begin
   Result := SfmlRectangleShapeGetPoint(FHandle, Index);
 end;
 
-function TSfmlRectangleShape.GetPointCount: Cardinal;
+function TSfmlRectangleShape.GetPointCount: NativeUInt;
 begin
   Result := SfmlRectangleShapeGetPointCount(FHandle);
 end;
@@ -3116,7 +3116,7 @@ begin
 end;
 
 procedure TSfmlRenderTexture.DrawPrimitives(const Vertices: PSfmlVertex;
-  VertexCount: Cardinal; &Type: TSfmlPrimitiveType;
+  VertexCount: NativeUInt; &Type: TSfmlPrimitiveType;
   const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderTextureDrawPrimitives(FHandle, Vertices, VertexCount, &Type, States);
@@ -3288,8 +3288,11 @@ end;
 
 procedure TSfmlRenderTexture.SetView(const View: TSfmlView);
 begin
-  FView := View;
-  SfmlRenderTextureSetView(FHandle, View.Handle);
+  if FView <> View then
+  begin
+    FView := View;
+    SfmlRenderTextureSetView(FHandle, View.Handle);
+  end;
 end;
 
 
@@ -3367,7 +3370,7 @@ begin
 end;
 
 procedure TSfmlRenderWindow.DrawPrimitives(const Vertices: PSfmlVertex;
-  VertexCount: Cardinal; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates = nil);
+  VertexCount: NativeUInt; &Type: TSfmlPrimitiveType; const States: PSfmlRenderStates = nil);
 begin
   SfmlRenderWindowDrawPrimitives(FHandle, Vertices, VertexCount, &Type, States);
 end;
@@ -3795,12 +3798,12 @@ begin
   Result := SfmlShapeGetOutlineThickness(FHandle);
 end;
 
-function TSfmlShape.GetPoint(Index: Cardinal): TSfmlVector2f;
+function TSfmlShape.GetPoint(Index: NativeUInt): TSfmlVector2f;
 begin
   Result := SfmlShapeGetPoint(FHandle, Index);
 end;
 
-function TSfmlShape.GetPointCount: Cardinal;
+function TSfmlShape.GetPointCount: NativeUInt;
 begin
   Result := SfmlShapeGetPointCount(FHandle);
 end;
@@ -4507,12 +4510,12 @@ begin
   Result := SfmlVertexArrayGetPrimitiveType(FHandle);
 end;
 
-function TSfmlVertexArray.GetVertex(Index: Cardinal): PSfmlVertex;
+function TSfmlVertexArray.GetVertex(Index: NativeUInt): PSfmlVertex;
 begin
   Result := SfmlVertexArrayGetVertex(FHandle, Index);
 end;
 
-function TSfmlVertexArray.GetVertexCount: Cardinal;
+function TSfmlVertexArray.GetVertexCount: NativeUInt;
 begin
   Result := SfmlVertexArrayGetVertexCount(FHandle);
 end;
@@ -4620,17 +4623,17 @@ end;
 var
   CSfmlGraphicsHandle: {$IFDEF FPC}TLibHandle{$ELSE}HINST{$ENDIF};
 {$IFDEF INT64RETURNWORKAROUND}
-  sfCircleShape_getPoint: function (const Shape: PSfmlCircleShape; Index: Cardinal): Int64; cdecl;
+  sfCircleShape_getPoint: function (const Shape: PSfmlCircleShape; Index: NativeUInt): Int64; cdecl;
   sfCircleShape_getPosition: function (const Shape: PSfmlCircleShape): Int64; cdecl;
   sfCircleShape_getOrigin: function (const Shape: PSfmlCircleShape): Int64; cdecl;
   sfCircleShape_getScale: function (const Shape: PSfmlCircleShape): Int64; cdecl;
   sfConvexShape_getOrigin: function (const Shape: PSfmlConvexShape): Int64; cdecl;
-  sfConvexShape_getPoint: function (const Shape: PSfmlConvexShape; Index: Cardinal): Int64; cdecl;
+  sfConvexShape_getPoint: function (const Shape: PSfmlConvexShape; Index: NativeUInt): Int64; cdecl;
   sfConvexShape_getPosition: function (const Shape: PSfmlConvexShape): Int64; cdecl;
   sfConvexShape_getScale: function (const Shape: PSfmlConvexShape): Int64; cdecl;
   sfImage_getSize: function (const Image: PSfmlImage): Int64; cdecl;
   sfRectangleShape_getOrigin: function (const Shape: PSfmlRectangleShape): Int64; cdecl;
-  sfRectangleShape_getPoint: function (const Shape: PSfmlRectangleShape; Index: Cardinal): Int64; cdecl;
+  sfRectangleShape_getPoint: function (const Shape: PSfmlRectangleShape; Index: NativeUInt): Int64; cdecl;
   sfRectangleShape_getPosition: function (const Shape: PSfmlRectangleShape): Int64; cdecl;
   sfRectangleShape_getScale: function (const Shape: PSfmlRectangleShape): Int64; cdecl;
   sfRectangleShape_getSize: function (const Shape: PSfmlRectangleShape): Int64; cdecl;
@@ -4643,7 +4646,7 @@ var
   sfMouse_getPositionRenderWindow: function (const RelativeTo: PSfmlRenderWindow): Int64; cdecl;
   sfTouch_getPositionRenderWindow: function (Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): Int64; cdecl;
   sfShape_getOrigin: function (const Shape: PSfmlShape): Int64; cdecl;
-  sfShape_getPoint: function (const Shape: PSfmlShape; Index: Cardinal): Int64; cdecl;
+  sfShape_getPoint: function (const Shape: PSfmlShape; Index: NativeUInt): Int64; cdecl;
   sfShape_getPosition: function (const Shape: PSfmlShape): Int64; cdecl;
   sfShape_getScale: function (const Shape: PSfmlShape): Int64; cdecl;
   sfSprite_getOrigin: function (const Sprite: PSfmlSprite): Int64; cdecl;
@@ -5139,17 +5142,17 @@ end;
 
 {$ELSE}
 {$IFDEF INT64RETURNWORKAROUND}
-function sfCircleShape_getPoint(const Shape: PSfmlCircleShape; Index: Cardinal): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfCircleShape_getPoint(const Shape: PSfmlCircleShape; Index: NativeUInt): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfCircleShape_getPosition(const Shape: PSfmlCircleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfCircleShape_getOrigin(const Shape: PSfmlCircleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfCircleShape_getScale(const Shape: PSfmlCircleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfConvexShape_getOrigin(const Shape: PSfmlConvexShape): Int64; cdecl; external CSfmlGraphicsLibrary;
-function sfConvexShape_getPoint(const Shape: PSfmlConvexShape; Index: Cardinal): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfConvexShape_getPoint(const Shape: PSfmlConvexShape; Index: NativeUInt): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfConvexShape_getPosition(const Shape: PSfmlConvexShape): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfConvexShape_getScale(const Shape: PSfmlConvexShape): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfImage_getSize(const Image: PSfmlImage): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfRectangleShape_getOrigin(const Shape: PSfmlRectangleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
-function sfRectangleShape_getPoint(const Shape: PSfmlRectangleShape; Index: Cardinal): Int64; cdecl; external CSfmlGraphicsLibrary;
+function sfRectangleShape_getPoint(const Shape: PSfmlRectangleShape; Index: NativeUInt): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfRectangleShape_getPosition(const Shape: PSfmlRectangleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfRectangleShape_getScale(const Shape: PSfmlRectangleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
 function sfRectangleShape_getSize(const Shape: PSfmlRectangleShape): Int64; cdecl; external CSfmlGraphicsLibrary;
@@ -5318,7 +5321,7 @@ end;
 
 
 {$IFDEF INT64RETURNWORKAROUND}
-function SfmlCircleShapeGetPoint(const Shape: PSfmlCircleShape; Index: Cardinal): TSfmlVector2f; cdecl;
+function SfmlCircleShapeGetPoint(const Shape: PSfmlCircleShape; Index: NativeUInt): TSfmlVector2f; cdecl;
 var
   Val: Int64 absolute Result;
 begin
@@ -5353,7 +5356,7 @@ begin
   Val := sfConvexShape_getOrigin(Shape);
 end;
 
-function SfmlConvexShapeGetPoint(const Shape: PSfmlConvexShape; Index: Cardinal): TSfmlVector2f; cdecl;
+function SfmlConvexShapeGetPoint(const Shape: PSfmlConvexShape; Index: NativeUInt): TSfmlVector2f; cdecl;
 var
   Val: Int64 absolute Result;
 begin
@@ -5388,7 +5391,7 @@ begin
   Val := sfRectangleShape_getOrigin(Shape);
 end;
 
-function SfmlRectangleShapeGetPoint(const Shape: PSfmlRectangleShape; Index: Cardinal): TSfmlVector2f; cdecl;
+function SfmlRectangleShapeGetPoint(const Shape: PSfmlRectangleShape; Index: NativeUInt): TSfmlVector2f; cdecl;
 var
   Val: Int64 absolute Result;
 begin
@@ -5479,7 +5482,7 @@ begin
   Val := sfShape_getOrigin(Shape);
 end;
 
-function SfmlShapeGetPoint(const Shape: PSfmlShape; Index: Cardinal): TSfmlVector2f; cdecl;
+function SfmlShapeGetPoint(const Shape: PSfmlShape; Index: NativeUInt): TSfmlVector2f; cdecl;
 var
   Val: Int64 absolute Result;
 begin
