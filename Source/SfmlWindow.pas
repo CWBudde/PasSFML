@@ -77,12 +77,17 @@ type
   TSfmlWindowStyle = (sfTitleBar, sfResize, sfClose, sfFullscreen);
   TSfmlWindowStyles = set of TSfmlWindowStyle;
 
+  TSfmlContextAttributeFlag = (sfContextCore, sfContextUndefined,
+    sfContextDebug);
+  TSfmlContextAttributeFlags = set of TSfmlContextAttributeFlag;
+
   TSfmlContextSettings = record
     DepthBits: Cardinal;
     StencilBits: Cardinal;
     AntialiasingLevel: Cardinal;
     MajorVersion: Cardinal;
     MinorVersion: Cardinal;
+    AttributeFlags: TSfmlContextAttributeFlags;
   end;
   PSfmlContextSettings = ^TSfmlContextSettings;
 
@@ -92,8 +97,7 @@ type
     sfEvtMouseMoved, sfEvtMouseEntered, sfEvtMouseLeft,
     sfEvtJoystickButtonPressed, sfEvtJoystickButtonReleased,
     sfEvtJoystickMoved, sfEvtJoystickConnected, sfEvtJoystickDisconnected,
-    sfEvtTouchBegan, sfEvtTouchMoved, sfEvtTouchEnded, sfEvtSensorChanged,
-    sfEvtCount);
+    sfEvtTouchBegan, sfEvtTouchMoved, sfEvtTouchEnded, sfEvtSensorChanged);
 
   TSfmlKeyCode = (sfKeyUnknown = -1, sfKeyA, sfKeyB, sfKeyC, sfKeyD,
     sfKeyE, sfKeyF, sfKeyG, sfKeyH, sfKeyI, sfKeyJ, sfKeyK, sfKeyL, sfKeyM,
@@ -111,17 +115,19 @@ type
     sfKeyNumpad3, sfKeyNumpad4, sfKeyNumpad5, sfKeyNumpad6, sfKeyNumpad7,
     sfKeyNumpad8, sfKeyNumpad9, sfKeyF1, sfKeyF2, sfKeyF3, sfKeyF4, sfKeyF5,
     sfKeyF6, sfKeyF7, sfKeyF8, sfKeyF9, sfKeyF10, sfKeyF11, sfKeyF12, sfKeyF13,
-    sfKeyF14, sfKeyF15, sfKeyPause, sfKeyCount);
+    sfKeyF14, sfKeyF15, sfKeyPause);
 
   TSfmlJoystickAxis = (sfJoystickX, sfJoystickY, sfJoystickZ, sfJoystickR,
     sfJoystickU, sfJoystickV, sfJoystickPovX, sfJoystickPovY);
 
   TSfmlMouseButton = (sfMouseLeft, sfMouseRight, sfMouseMiddle,
-    sfMouseXButton1, sfMouseXButton2, sfMouseButtonCount);
+    sfMouseXButton1, sfMouseXButton2);
+
+  TSfmlMouseWheel = (sfMouseVerticalWheel, sfMouseHorizontalWheel);
 
   TSfmlSensorType = (sfSensorAccelerometer, sfSensorGyroscope,
     sfSensorMagnetometer, sfSensorGravity, sfSensorUserAcceleration,
-    sfSensorOrientation, sfSensorCount);
+    sfSensorOrientation);
 
   TSfmlKeyEvent = record
     EventType: TSfmlEventType;
@@ -194,7 +200,7 @@ type
   end;
 
   TSfmlEvent = record
-    case longint of
+    case LongInt of
       0 : ( EventType: TSfmlEventType );
       1 : ( Size : TSfmlSizeEvent );
       2 : ( Key : TSfmlKeyEvent );
