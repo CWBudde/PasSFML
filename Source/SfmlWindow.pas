@@ -93,9 +93,9 @@ type
 
   TSfmlEventType = (sfEvtClosed, sfEvtResized, sfEvtLostFocus,
     sfEvtGainedFocus, sfEvtTextEntered, sfEvtKeyPressed, sfEvtKeyReleased,
-    sfEvtMouseWheelMoved, sfEvtMouseButtonPressed, sfEvtMouseButtonReleased,
-    sfEvtMouseMoved, sfEvtMouseEntered, sfEvtMouseLeft,
-    sfEvtJoystickButtonPressed, sfEvtJoystickButtonReleased,
+    sfEvtMouseWheelMoved, sfEvtMouseWheelScrolled, sfEvtMouseButtonPressed,
+    sfEvtMouseButtonReleased, sfEvtMouseMoved, sfEvtMouseEntered,
+    sfEvtMouseLeft, sfEvtJoystickButtonPressed, sfEvtJoystickButtonReleased,
     sfEvtJoystickMoved, sfEvtJoystickConnected, sfEvtJoystickDisconnected,
     sfEvtTouchBegan, sfEvtTouchMoved, sfEvtTouchEnded, sfEvtSensorChanged);
 
