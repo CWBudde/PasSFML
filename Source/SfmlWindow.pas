@@ -132,10 +132,10 @@ type
   TSfmlKeyEvent = record
     EventType: TSfmlEventType;
     Code: TSfmlKeyCode;
-    Alt: Boolean;
-    Control: Boolean;
-    Shift: Boolean;
-    System: Boolean;
+    Alt: LongBool;
+    Control: LongBool;
+    Shift: LongBool;
+    System: LongBool;
   end;
 
   TSfmlJoystickIdentification = record
