@@ -61,14 +61,18 @@
   {$IFDEF VER290}
     {$DEFINE RecordOperators}
     {$DEFINE RecordConstructors}
-  {$ENDIF VER280}
+  {$ENDIF VER290}
+
+  {$IFDEF VER300}
+    {$DEFINE RecordOperators}
+    {$DEFINE RecordConstructors}
+  {$ENDIF VER300}
 {$ENDIF}
 
 {-$DEFINE DynLink}
 
 {-$UNDEF RecordConstructors}
 {-$UNDEF RecordOperators}
-
 
 {$Z4}
 {$A4}

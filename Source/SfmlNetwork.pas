@@ -155,18 +155,18 @@ type
 
 {$IFDEF DynLink}
   TSfmlFtpListingResponseDestroy = procedure (FtpListingResponse: PSfmlFtpListingResponse); cdecl;
-  TSfmlFtpListingResponseIsOk = function (const FtpListingResponse: PSfmlFtpListingResponse): Boolean; cdecl;
+  TSfmlFtpListingResponseIsOk = function (const FtpListingResponse: PSfmlFtpListingResponse): LongBool; cdecl;
   TSfmlFtpListingResponseGetStatus = function (const FtpListingResponse: PSfmlFtpListingResponse): TSfmlFtpStatus; cdecl;
   TSfmlFtpListingResponseGetMessage = function (const FtpListingResponse: PSfmlFtpListingResponse): PAnsiChar; cdecl;
   TSfmlFtpListingResponseGetCount = function (const FtpListingResponse: PSfmlFtpListingResponse): NativeUInt; cdecl;
   TSfmlFtpListingResponseGetName = function (const FtpListingResponse: PSfmlFtpListingResponse; Index: NativeUInt): PAnsiChar; cdecl;
   TSfmlFtpDirectoryResponseDestroy = procedure (FtpDirectoryResponse: PSfmlFtpDirectoryResponse); cdecl;
-  TSfmlFtpDirectoryResponseIsOk = function (const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): Boolean; cdecl;
+  TSfmlFtpDirectoryResponseIsOk = function (const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): LongBool; cdecl;
   TSfmlFtpDirectoryResponseGetStatus = function (const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): TSfmlFtpStatus; cdecl;
   TSfmlFtpDirectoryResponseGetMessage = function (const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): PAnsiChar; cdecl;
   TSfmlFtpDirectoryResponseGetDirectory = function (const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): PAnsiChar; cdecl;
   TSfmlFtpResponseDestroy = procedure (FtpResponse: PSfmlFtpResponse); cdecl;
-  TSfmlFtpResponseIsOk = function (const FtpResponse: PSfmlFtpResponse): Boolean; cdecl;
+  TSfmlFtpResponseIsOk = function (const FtpResponse: PSfmlFtpResponse): LongBool; cdecl;
   TSfmlFtpResponseGetStatus = function (const FtpResponse: PSfmlFtpResponse): TSfmlFtpStatus; cdecl;
   TSfmlFtpResponseGetMessage = function (const FtpResponse: PSfmlFtpResponse): PAnsiChar; cdecl;
   TSfmlFtpCreate = function : PSfmlFtp; cdecl;
@@ -220,9 +220,9 @@ type
   TSfmlPacketClear = procedure (Packet: PSfmlPacket); cdecl;
   TSfmlPacketGetData = function (const Packet: PSfmlPacket): Pointer; cdecl;
   TSfmlPacketGetDataSize = function (const Packet: PSfmlPacket): NativeUInt; cdecl;
-  TSfmlPacketEndOfPacket = function (const Packet: PSfmlPacket): Boolean; cdecl;
-  TSfmlPacketCanRead = function (const Packet: PSfmlPacket): Boolean; cdecl;
-  TSfmlPacketReadBool = function (Packet: PSfmlPacket): Boolean; cdecl;
+  TSfmlPacketEndOfPacket = function (const Packet: PSfmlPacket): LongBool; cdecl;
+  TSfmlPacketCanRead = function (const Packet: PSfmlPacket): LongBool; cdecl;
+  TSfmlPacketReadBool = function (Packet: PSfmlPacket): LongBool; cdecl;
   TSfmlPacketReadInt8 = function (Packet: PSfmlPacket): ShortInt; cdecl;
   TSfmlPacketReadUint8 = function (Packet: PSfmlPacket): Byte; cdecl;
   TSfmlPacketReadInt16 = function (Packet: PSfmlPacket): SmallInt; cdecl;
@@ -233,7 +233,7 @@ type
   TSfmlPacketReadDouble = function (Packet: PSfmlPacket): Double; cdecl;
   TSfmlPacketReadString = procedure (Packet: PSfmlPacket; &String: PAnsiChar); cdecl;
   TSfmlPacketReadWideString = procedure (Packet: PSfmlPacket; &String: PUCS4Char); cdecl;
-  TSfmlPacketWriteBool = procedure (Packet: PSfmlPacket; Value: Boolean); cdecl;
+  TSfmlPacketWriteBool = procedure (Packet: PSfmlPacket; Value: LongBool); cdecl;
   TSfmlPacketWriteInt8 = procedure (Packet: PSfmlPacket; Value: ShortInt); cdecl;
   TSfmlPacketWriteUint8 = procedure (Packet: PSfmlPacket; Value: Byte); cdecl;
   TSfmlPacketWriteInt16 = procedure (Packet: PSfmlPacket; Value: SmallInt); cdecl;
@@ -251,23 +251,23 @@ type
   TSfmlSocketSelectorAddTcpListener = procedure (Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener); cdecl;
   TSfmlSocketSelectorRemoveTcpListener = procedure (Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener); cdecl;
   TSfmlSocketSelectorClear = procedure (Selector: PSfmlSocketSelector); cdecl;
-  TSfmlSocketSelectorWait = function (Selector: PSfmlSocketSelector; Timeout: TSfmlTime): Boolean; cdecl;
-  TSfmlSocketSelectorIsTcpListenerReady = function (const Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener): Boolean; cdecl;
-  TSfmlSocketSelectorIsTcpSocketReady = function (const Selector: PSfmlSocketSelector; Socket: PSfmlTcpSocket): Boolean; cdecl;
-  TSfmlSocketSelectorIsUdpSocketReady = function (const Selector: PSfmlSocketSelector; Socket: PSfmlUdpSocket): Boolean; cdecl;
+  TSfmlSocketSelectorWait = function (Selector: PSfmlSocketSelector; Timeout: TSfmlTime): LongBool; cdecl;
+  TSfmlSocketSelectorIsTcpListenerReady = function (const Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener): LongBool; cdecl;
+  TSfmlSocketSelectorIsTcpSocketReady = function (const Selector: PSfmlSocketSelector; Socket: PSfmlTcpSocket): LongBool; cdecl;
+  TSfmlSocketSelectorIsUdpSocketReady = function (const Selector: PSfmlSocketSelector; Socket: PSfmlUdpSocket): LongBool; cdecl;
 
   TSfmlTcpListenerCreate = function : PSfmlTcpListener; cdecl;
   TSfmlTcpListenerDestroy = procedure (Listener: PSfmlTcpListener); cdecl;
-  TSfmlTcpListenerSetBlocking = procedure (Listener: PSfmlTcpListener; Blocking: Boolean); cdecl;
-  TSfmlTcpListenerIsBlocking = function (const Listener: PSfmlTcpListener): Boolean; cdecl;
+  TSfmlTcpListenerSetBlocking = procedure (Listener: PSfmlTcpListener; Blocking: LongBool); cdecl;
+  TSfmlTcpListenerIsBlocking = function (const Listener: PSfmlTcpListener): LongBool; cdecl;
   TSfmlTcpListenerGetLocalPort = function (const Listener: PSfmlTcpListener): Byte; cdecl;
   TSfmlTcpListenerListen = function (Listener: PSfmlTcpListener; Port: Byte): TSfmlSocketStatus; cdecl;
   TSfmlTcpListenerAccept = function (Listener: PSfmlTcpListener; out Connected: PSfmlTcpSocket): TSfmlSocketStatus; cdecl;
 
   TSfmlTcpSocketCreate = function : PSfmlTcpSocket; cdecl;
   TSfmlTcpSocketDestroy = procedure (Socket: PSfmlTcpSocket); cdecl;
-  TSfmlTcpSocketSetBlocking = procedure (Socket: PSfmlTcpSocket; Blocking: Boolean); cdecl;
-  TSfmlTcpSocketIsBlocking = function (const Socket: PSfmlTcpSocket): Boolean; cdecl;
+  TSfmlTcpSocketSetBlocking = procedure (Socket: PSfmlTcpSocket; Blocking: LongBool); cdecl;
+  TSfmlTcpSocketIsBlocking = function (const Socket: PSfmlTcpSocket): LongBool; cdecl;
   TSfmlTcpSocketGetLocalPort = function (const Socket: PSfmlTcpSocket): Byte; cdecl;
   TSfmlTcpSocketGetRemoteAddress = function (const Socket: PSfmlTcpSocket): TSfmlIpAddress; cdecl;
   TSfmlTcpSocketGetRemotePort = function (const Socket: PSfmlTcpSocket): Byte; cdecl;
@@ -280,8 +280,8 @@ type
 
   TSfmlUdpSocketCreate = function : PSfmlUdpSocket; cdecl;
   TSfmlUdpSocketDestroy = procedure (Socket: PSfmlUdpSocket); cdecl;
-  TSfmlUdpSocketSetBlocking = procedure (Socket: PSfmlUdpSocket; Blocking: Boolean); cdecl;
-  TSfmlUdpSocketIsBlocking = function (const Socket: PSfmlUdpSocket): Boolean; cdecl;
+  TSfmlUdpSocketSetBlocking = procedure (Socket: PSfmlUdpSocket; Blocking: LongBool); cdecl;
+  TSfmlUdpSocketIsBlocking = function (const Socket: PSfmlUdpSocket): LongBool; cdecl;
   TSfmlUdpSocketGetLocalPort = function (const Socket: PSfmlUdpSocket): Byte; cdecl;
   TSfmlUdpSocketBind = function (Socket: PSfmlUdpSocket; Port: Byte): TSfmlSocketStatus; cdecl;
   TSfmlUdpSocketUnbind = procedure (Socket: PSfmlUdpSocket); cdecl;
@@ -440,18 +440,18 @@ const
 
   // static linking
   procedure SfmlFtpListingResponseDestroy(FtpListingResponse: PSfmlFtpListingResponse); cdecl; external CSfmlNetworkLibrary name 'sfFtpListingResponse_destroy';
-  function SfmlFtpListingResponseIsOk(const FtpListingResponse: PSfmlFtpListingResponse): Boolean; cdecl; external CSfmlNetworkLibrary name 'sfFtpListingResponse_isOk';
+  function SfmlFtpListingResponseIsOk(const FtpListingResponse: PSfmlFtpListingResponse): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfFtpListingResponse_isOk';
   function SfmlFtpListingResponseGetStatus(const FtpListingResponse: PSfmlFtpListingResponse): TSfmlFtpStatus; cdecl; external CSfmlNetworkLibrary name 'sfFtpListingResponse_getStatus';
   function SfmlFtpListingResponseGetMessage(const FtpListingResponse: PSfmlFtpListingResponse): PAnsiChar; cdecl; external CSfmlNetworkLibrary name 'sfFtpListingResponse_getMessage';
   function SfmlFtpListingResponseGetCount(const FtpListingResponse: PSfmlFtpListingResponse): NativeUInt; cdecl; external CSfmlNetworkLibrary name 'sfFtpListingResponse_getCount';
   function SfmlFtpListingResponseGetName(const FtpListingResponse: PSfmlFtpListingResponse; Index: NativeUInt): PAnsiChar; cdecl; external CSfmlNetworkLibrary name 'sfFtpListingResponse_getName';
   procedure SfmlFtpDirectoryResponseDestroy(FtpDirectoryResponse: PSfmlFtpDirectoryResponse); cdecl; external CSfmlNetworkLibrary name 'sfFtpDirectoryResponse_destroy';
-  function SfmlFtpDirectoryResponseIsOk(const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): Boolean; cdecl; external CSfmlNetworkLibrary name 'sfFtpDirectoryResponse_isOk';
+  function SfmlFtpDirectoryResponseIsOk(const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfFtpDirectoryResponse_isOk';
   function SfmlFtpDirectoryResponseGetStatus(const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): TSfmlFtpStatus; cdecl; external CSfmlNetworkLibrary name 'sfFtpDirectoryResponse_getStatus';
   function SfmlFtpDirectoryResponseGetMessage(const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): PAnsiChar; cdecl; external CSfmlNetworkLibrary name 'sfFtpDirectoryResponse_getMessage';
   function SfmlFtpDirectoryResponseGetDirectory(const FtpDirectoryResponse: PSfmlFtpDirectoryResponse): PAnsiChar; cdecl; external CSfmlNetworkLibrary name 'sfFtpDirectoryResponse_getDirectory';
   procedure SfmlFtpResponseDestroy(FtpResponse: PSfmlFtpResponse); cdecl; external CSfmlNetworkLibrary name 'sfFtpResponse_destroy';
-  function SfmlFtpResponseIsOk(const FtpResponse: PSfmlFtpResponse): Boolean; cdecl; external CSfmlNetworkLibrary name 'sfFtpResponse_isOk';
+  function SfmlFtpResponseIsOk(const FtpResponse: PSfmlFtpResponse): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfFtpResponse_isOk';
   function SfmlFtpResponseGetStatus(const FtpResponse: PSfmlFtpResponse): TSfmlFtpStatus; cdecl; external CSfmlNetworkLibrary name 'sfFtpResponse_getStatus';
   function SfmlFtpResponseGetMessage(const FtpResponse: PSfmlFtpResponse): PAnsiChar; cdecl; external CSfmlNetworkLibrary name 'sfFtpResponse_getMessage';
   function SfmlFtpCreate: PSfmlFtp; cdecl; external CSfmlNetworkLibrary name 'sfFtp_create';
@@ -505,9 +505,9 @@ const
   procedure SfmlPacketClear(Packet: PSfmlPacket); cdecl; external CSfmlNetworkLibrary name 'sfPacket_clear';
   function SfmlPacketGetData(const Packet: PSfmlPacket): Pointer; cdecl; external CSfmlNetworkLibrary name 'sfPacket_getData';
   function SfmlPacketGetDataSize(const Packet: PSfmlPacket): NativeUInt; cdecl; external CSfmlNetworkLibrary name 'sfPacket_getDataSize';
-  function SfmlPacketEndOfPacket(const Packet: PSfmlPacket): Boolean; cdecl; external CSfmlNetworkLibrary name 'sfPacket_endOfPacket';
-  function SfmlPacketCanRead(const Packet: PSfmlPacket): Boolean; cdecl; external CSfmlNetworkLibrary name 'sfPacket_canRead';
-  function SfmlPacketReadBool(Packet: PSfmlPacket): Boolean; cdecl; external CSfmlNetworkLibrary name 'sfPacket_readBool';
+  function SfmlPacketEndOfPacket(const Packet: PSfmlPacket): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfPacket_endOfPacket';
+  function SfmlPacketCanRead(const Packet: PSfmlPacket): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfPacket_canRead';
+  function SfmlPacketReadBool(Packet: PSfmlPacket): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfPacket_readBool';
   function SfmlPacketReadInt8(Packet: PSfmlPacket): ShortInt; cdecl; external CSfmlNetworkLibrary name 'sfPacket_readInt8';
   function SfmlPacketReadUint8(Packet: PSfmlPacket): Byte; cdecl; external CSfmlNetworkLibrary name 'sfPacket_readUint8';
   function SfmlPacketReadInt16(Packet: PSfmlPacket): SmallInt; cdecl; external CSfmlNetworkLibrary name 'sfPacket_readInt16';
@@ -518,7 +518,7 @@ const
   function SfmlPacketReadDouble(Packet: PSfmlPacket): Double; cdecl; external CSfmlNetworkLibrary name 'sfPacket_readDouble';
   procedure SfmlPacketReadString(Packet: PSfmlPacket; &String: PAnsiChar); cdecl; external CSfmlNetworkLibrary name 'sfPacket_readString';
   procedure SfmlPacketReadWideString(Packet: PSfmlPacket; &String: PUCS4Char); cdecl; external CSfmlNetworkLibrary name 'sfPacket_readWideString';
-  procedure SfmlPacketWriteBool(Packet: PSfmlPacket; Value: Boolean); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeBool';
+  procedure SfmlPacketWriteBool(Packet: PSfmlPacket; Value: LongBool); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeBool';
   procedure SfmlPacketWriteInt8(Packet: PSfmlPacket; Value: ShortInt); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeInt8';
   procedure SfmlPacketWriteUint8(Packet: PSfmlPacket; Value: Byte); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeUint8';
   procedure SfmlPacketWriteInt16(Packet: PSfmlPacket; Value: SmallInt); cdecl; external CSfmlNetworkLibrary name 'sfPacket_writeInt16';
@@ -536,23 +536,23 @@ const
   procedure SfmlSocketSelectorAddTcpListener(Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener); cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_addTcpListener';
   procedure SfmlSocketSelectorRemoveTcpListener(Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener); cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_removeTcpListener';
   procedure SfmlSocketSelectorClear(Selector: PSfmlSocketSelector); cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_clear';
-  function SfmlSocketSelectorWait(Selector: PSfmlSocketSelector; Timeout: TSfmlTime): Boolean; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_wait';
-  function SfmlSocketSelectorIsTcpListenerReady(const Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener): Boolean; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_isTcpListenerReady';
-  function SfmlSocketSelectorIsTcpSocketReady(const Selector: PSfmlSocketSelector; Socket: PSfmlTcpSocket): Boolean; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_isTcpSocketReady';
-  function SfmlSocketSelectorIsUdpSocketReady(const Selector: PSfmlSocketSelector; Socket: PSfmlUdpSocket): Boolean; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_isUdpSocketReady';
+  function SfmlSocketSelectorWait(Selector: PSfmlSocketSelector; Timeout: TSfmlTime): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_wait';
+  function SfmlSocketSelectorIsTcpListenerReady(const Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_isTcpListenerReady';
+  function SfmlSocketSelectorIsTcpSocketReady(const Selector: PSfmlSocketSelector; Socket: PSfmlTcpSocket): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_isTcpSocketReady';
+  function SfmlSocketSelectorIsUdpSocketReady(const Selector: PSfmlSocketSelector; Socket: PSfmlUdpSocket): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_isUdpSocketReady';
 
   function SfmlTcpListenerCreate: PSfmlTcpListener; cdecl; external CSfmlNetworkLibrary name 'sfTcpListener_create';
   procedure SfmlTcpListenerDestroy(Listener: PSfmlTcpListener); cdecl; external CSfmlNetworkLibrary name 'sfTcpListener_destroy';
-  procedure SfmlTcpListenerSetBlocking(Listener: PSfmlTcpListener; Blocking: Boolean); cdecl; external CSfmlNetworkLibrary name 'sfTcpListener_setBlocking';
-  function SfmlTcpListenerIsBlocking(const Listener: PSfmlTcpListener): Boolean; cdecl; external CSfmlNetworkLibrary name 'sfTcpListener_isBlocking';
+  procedure SfmlTcpListenerSetBlocking(Listener: PSfmlTcpListener; Blocking: LongBool); cdecl; external CSfmlNetworkLibrary name 'sfTcpListener_setBlocking';
+  function SfmlTcpListenerIsBlocking(const Listener: PSfmlTcpListener): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfTcpListener_isBlocking';
   function SfmlTcpListenerGetLocalPort(const Listener: PSfmlTcpListener): Byte; cdecl; external CSfmlNetworkLibrary name 'sfTcpListener_getLocalPort';
   function SfmlTcpListenerListen(Listener: PSfmlTcpListener; Port: Byte): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfTcpListener_listen';
   function SfmlTcpListenerAccept(Listener: PSfmlTcpListener; out Connected: PSfmlTcpSocket): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfTcpListener_accept';
 
   function SfmlTcpSocketCreate: PSfmlTcpSocket; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_create';
   procedure SfmlTcpSocketDestroy(Socket: PSfmlTcpSocket); cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_destroy';
-  procedure SfmlTcpSocketSetBlocking(Socket: PSfmlTcpSocket; Blocking: Boolean); cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_setBlocking';
-  function SfmlTcpSocketIsBlocking(const Socket: PSfmlTcpSocket): Boolean; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_isBlocking';
+  procedure SfmlTcpSocketSetBlocking(Socket: PSfmlTcpSocket; Blocking: LongBool); cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_setBlocking';
+  function SfmlTcpSocketIsBlocking(const Socket: PSfmlTcpSocket): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_isBlocking';
   function SfmlTcpSocketGetLocalPort(const Socket: PSfmlTcpSocket): Byte; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_getLocalPort';
   function SfmlTcpSocketGetRemoteAddress(const Socket: PSfmlTcpSocket): TSfmlIpAddress; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_getRemoteAddress';
   function SfmlTcpSocketGetRemotePort(const Socket: PSfmlTcpSocket): Byte; cdecl; external CSfmlNetworkLibrary name 'sfTcpSocket_getRemotePort';
@@ -565,8 +565,8 @@ const
 
   function SfmlUdpSocketCreate: PSfmlUdpSocket; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_create';
   procedure SfmlUdpSocketDestroy(Socket: PSfmlUdpSocket); cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_destroy';
-  procedure SfmlUdpSocketSetBlocking(Socket: PSfmlUdpSocket; Blocking: Boolean); cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_setBlocking';
-  function SfmlUdpSocketIsBlocking(const Socket: PSfmlUdpSocket): Boolean; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_isBlocking';
+  procedure SfmlUdpSocketSetBlocking(Socket: PSfmlUdpSocket; Blocking: LongBool); cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_setBlocking';
+  function SfmlUdpSocketIsBlocking(const Socket: PSfmlUdpSocket): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_isBlocking';
   function SfmlUdpSocketGetLocalPort(const Socket: PSfmlUdpSocket): Byte; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_getLocalPort';
   function SfmlUdpSocketBind(Socket: PSfmlUdpSocket; Port: Byte): TSfmlSocketStatus; cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_bind';
   procedure SfmlUdpSocketUnbind(Socket: PSfmlUdpSocket); cdecl; external CSfmlNetworkLibrary name 'sfUdpSocket_unbind';
