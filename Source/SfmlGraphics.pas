@@ -165,6 +165,9 @@ type
   TSfmlRenderStates = record
     BlendMode: TSfmlBlendMode;
     Transform: TSfmlTransform;
+    {$IFDEF CPUX64}
+    Dummy: array [0..3] of Byte;
+    {$ENDIF}
     Texture: PSfmlTexture;
     Shader: PSfmlShader;
   end;
