@@ -249,7 +249,11 @@ type
   TSfmlSocketSelectorCopy = function (const Selector: PSfmlSocketSelector): PSfmlSocketSelector; cdecl;
   TSfmlSocketSelectorDestroy = procedure (Selector: PSfmlSocketSelector); cdecl;
   TSfmlSocketSelectorAddTcpListener = procedure (Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener); cdecl;
+  TSfmlSocketSelectorAddTcpSocket = procedure (Selector: PSfmlSocketSelector; Socket: PSfmlTcpSocket); cdecl;
+  TSfmlSocketSelectorAddUdpSocket = procedure (Selector: PSfmlSocketSelector; Socket: PSfmlUdpSocket); cdecl;
   TSfmlSocketSelectorRemoveTcpListener = procedure (Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener); cdecl;
+  TSfmlSocketSelectorRemoveTcpSocket = procedure (Selector: PSfmlSocketSelector; Socket: PSfmlTcpSocket); cdecl;
+  TSfmlSocketSelectorRemoveUdpSocket = procedure (Selector: PSfmlSocketSelector; Socket: PSfmlUdpSocket); cdecl;
   TSfmlSocketSelectorClear = procedure (Selector: PSfmlSocketSelector); cdecl;
   TSfmlSocketSelectorWait = function (Selector: PSfmlSocketSelector; Timeout: TSfmlTime): LongBool; cdecl;
   TSfmlSocketSelectorIsTcpListenerReady = function (const Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener): LongBool; cdecl;
@@ -391,7 +395,11 @@ var
   SfmlSocketSelectorCopy: TSfmlSocketSelectorCopy;
   SfmlSocketSelectorDestroy: TSfmlSocketSelectorDestroy;
   SfmlSocketSelectorAddTcpListener: TSfmlSocketSelectorAddTcpListener;
+  SfmlSocketSelectorAddTcpSocket: TSfmlSocketSelectorAddTcpSocket;
+  SfmlSocketSelectorAddUdpSocket: TSfmlSocketSelectorAddUdpSocket;
   SfmlSocketSelectorRemoveTcpListener: TSfmlSocketSelectorRemoveTcpListener;
+  SfmlSocketSelectorRemoveTcpSocket: TSfmlSocketSelectorRemoveTcpSocket;
+  SfmlSocketSelectorRemoveUdpSocket: TSfmlSocketSelectorRemoveUdpSocket;
   SfmlSocketSelectorClear: TSfmlSocketSelectorClear;
   SfmlSocketSelectorWait: TSfmlSocketSelectorWait;
   SfmlSocketSelectorIsTcpListenerReady: TSfmlSocketSelectorIsTcpListenerReady;
@@ -534,7 +542,11 @@ const
   function SfmlSocketSelectorCopy(const Selector: PSfmlSocketSelector): PSfmlSocketSelector; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_copy';
   procedure SfmlSocketSelectorDestroy(Selector: PSfmlSocketSelector); cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_destroy';
   procedure SfmlSocketSelectorAddTcpListener(Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener); cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_addTcpListener';
+  procedure SfmlSocketSelectorAddTcpSocket(Selector: PSfmlSocketSelector; Socket: PSfmlTcpSocket); cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_addTcpSocket';
+  procedure SfmlSocketSelectorAddUdpSocket(Selector: PSfmlSocketSelector; Socket: PSfmlUdpSocket); cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_addUdpSocket';
   procedure SfmlSocketSelectorRemoveTcpListener(Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener); cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_removeTcpListener';
+  procedure SfmlSocketSelectorRemoveTcpSocket(Selector: PSfmlSocketSelector; Socket: PSfmlTcpSocket); cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_removeTcpSocket';
+  procedure SfmlSocketSelectorRemoveUdpSocket(Selector: PSfmlSocketSelector; Socket: PSfmlUdpSocket); cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_removeUdpSocket';
   procedure SfmlSocketSelectorClear(Selector: PSfmlSocketSelector); cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_clear';
   function SfmlSocketSelectorWait(Selector: PSfmlSocketSelector; Timeout: TSfmlTime): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_wait';
   function SfmlSocketSelectorIsTcpListenerReady(const Selector: PSfmlSocketSelector; Socket: PSfmlTcpListener): LongBool; cdecl; external CSfmlNetworkLibrary name 'sfSocketSelector_isTcpListenerReady';
@@ -1682,7 +1694,11 @@ begin
       SfmlSocketSelectorCopy := BindFunction('sfSocketSelector_copy');
       SfmlSocketSelectorDestroy := BindFunction('sfSocketSelector_destroy');
       SfmlSocketSelectorAddTcpListener := BindFunction('sfSocketSelector_addTcpListener');
+      SfmlSocketSelectorAddTcpSocket := BindFunction('sfSocketSelector_addTcpSocket');
+      SfmlSocketSelectorAddUdpSocket := BindFunction('sfSocketSelector_addUdpSocket');
       SfmlSocketSelectorRemoveTcpListener := BindFunction('sfSocketSelector_removeTcpListener');
+      SfmlSocketSelectorRemoveTcpSocket := BindFunction('sfSocketSelector_removeTcpSocket');
+      SfmlSocketSelectorRemoveUdpSocket := BindFunction('sfSocketSelector_removeUdpSocket');
       SfmlSocketSelectorClear := BindFunction('sfSocketSelector_clear');
       SfmlSocketSelectorWait := BindFunction('sfSocketSelector_wait');
       SfmlSocketSelectorIsTcpListenerReady := BindFunction('sfSocketSelector_isTcpListenerReady');
