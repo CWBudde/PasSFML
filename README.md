@@ -26,6 +26,12 @@ Compiler
 
 Currently Delphi and FPC/Lazarus are supported. However, due to a compiler incompatibility with the Delphi compiler (solved with workarounds), FPC is recommended at the moment.
 
+Remarks
+-------
+
+For Linux development it is necessary to also install the libcsfml-dev package.
+
+
 Learn
 -----
 
