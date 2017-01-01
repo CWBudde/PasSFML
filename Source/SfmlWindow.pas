@@ -1,9 +1,9 @@
 unit SfmlWindow;
 
-////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 //
 // PasSFML - Simple and Fast Multimedia Library for Pascal
-// Copyright (C) 2015 Christian-W. Budde (Christian@savioursofsoul.de)
+// Copyright (C) 2015-2017 Christian-W. Budde (Christian@pcjv.de)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,7 +22,7 @@ unit SfmlWindow;
 //
 // 3. This notice may not be removed or altered from any source distribution.
 //
-////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 interface
 
