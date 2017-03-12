@@ -164,7 +164,7 @@ type
   TSfmlSoundBufferCreateFromFile = function (const FileName: PAnsiChar): PSfmlSoundBuffer; cdecl;
   TSfmlSoundBufferCreateFromMemory = function (const Data: Pointer; SizeInBytes: NativeUInt): PSfmlSoundBuffer; cdecl;
   TSfmlSoundBufferCreateFromStream = function (Stream: PSfmlInputStream): PSfmlSoundBuffer; cdecl;
-  TSfmlSoundBufferCreateFromSamples = function (const Samples: PSmallInt; SampleCount: NativeUInt; ChannelCount, SampleRate: Cardinal): PSfmlSoundBuffer; cdecl;
+  TSfmlSoundBufferCreateFromSamples = function (const Samples: PSmallInt; SampleCount: UInt64; ChannelCount, SampleRate: Cardinal): PSfmlSoundBuffer; cdecl;
   TSfmlSoundBufferCopy = function (const SoundBuffer: PSfmlSoundBuffer): PSfmlSoundBuffer; cdecl;
   TSfmlSoundBufferDestroy = procedure (SoundBuffer: PSfmlSoundBuffer); cdecl;
   TSfmlSoundBufferSaveToFile = function (const SoundBuffer: PSfmlSoundBuffer; const FileName: PAnsiChar): LongBool; cdecl;
@@ -176,10 +176,12 @@ type
 
   TSfmlSoundBufferRecorderCreate = function : PSfmlSoundBufferRecorder; cdecl;
   TSfmlSoundBufferRecorderDestroy = procedure (soundBufferRecorder: PSfmlSoundBufferRecorder); cdecl;
-  TSfmlSoundBufferRecorderStart = procedure (soundBufferRecorder: PSfmlSoundBufferRecorder; SampleRate: Cardinal); cdecl;
+  TSfmlSoundBufferRecorderStart = function (soundBufferRecorder: PSfmlSoundBufferRecorder; SampleRate: Cardinal): LongBool; cdecl;
   TSfmlSoundBufferRecorderStop = procedure (soundBufferRecorder: PSfmlSoundBufferRecorder); cdecl;
   TSfmlSoundBufferRecorderGetSampleRate = function (const soundBufferRecorder: PSfmlSoundBufferRecorder): Cardinal; cdecl;
   TSfmlSoundBufferRecorderGetBuffer = function (const soundBufferRecorder: PSfmlSoundBufferRecorder): PSfmlSoundBuffer; cdecl;
+  TSfmlSoundBufferRecorderSetDevice = function (SoundRecorder: PSfmlSoundBufferRecorder; const Name: PAnsiChar): LongBool; cdecl;
+  TSfmlSoundBufferRecorderGetDevice = function (SoundRecorder: PSfmlSoundBufferRecorder): PAnsiChar; cdecl;
 
   TSfmlSoundRecorderCreate = function (OnStart: TSfmlSoundRecorderStartCallback; OnProcess: TSfmlSoundRecorderProcessCallback; OnStop: TSfmlSoundRecorderStopCallback; UserData: Pointer): PSfmlSoundRecorder; cdecl;
   TSfmlSoundRecorderDestroy = procedure (SoundRecorder: PSfmlSoundRecorder); cdecl;
@@ -192,6 +194,8 @@ type
   TSfmlSoundRecorderGetDefaultDevice = function : PAnsiChar; cdecl;
   TSfmlSoundRecorderSetDevice = function (SoundRecorder: PSfmlSoundRecorder; const Name: PAnsiChar): LongBool; cdecl;
   TSfmlSoundRecorderGetDevice = function (SoundRecorder: PSfmlSoundRecorder): PAnsiChar; cdecl;
+  TSfmlSoundRecorderSetChannelCount = function (SoundRecorder: PSfmlSoundRecorder; const ChannelCount: Cardinal): LongBool; cdecl;
+  TSfmlSoundRecorderGetChannelCount = function (const SoundRecorder: PSfmlSoundRecorder): Cardinal; cdecl;
 
 var
   SfmlListenerSetGlobalVolume: TSfmlListenerSetGlobalVolume;
@@ -296,6 +300,8 @@ var
   SfmlSoundBufferRecorderStop: TSfmlSoundBufferRecorderStop;
   SfmlSoundBufferRecorderGetSampleRate: TSfmlSoundBufferRecorderGetSampleRate;
   SfmlSoundBufferRecorderGetBuffer: TSfmlSoundBufferRecorderGetBuffer;
+  SfmlSoundBufferRecorderSetDevice: TSfmlSoundBufferRecorderSetDevice;
+  SfmlSoundBufferRecorderGetDevice: TSfmlSoundBufferRecorderGetDevice;
 
   SfmlSoundRecorderCreate: TSfmlSoundRecorderCreate;
   SfmlSoundRecorderDestroy: TSfmlSoundRecorderDestroy;
@@ -308,6 +314,8 @@ var
   SfmlSoundRecorderGetDefaultDevice: TSfmlSoundRecorderGetDefaultDevice;
   SfmlSoundRecorderSetDevice: TSfmlSoundRecorderSetDevice;
   SfmlSoundRecorderGetDevice: TSfmlSoundRecorderGetDevice;
+  SfmlSoundRecorderSetChannelCount: TSfmlSoundRecorderSetChannelCount;
+  SfmlSoundRecorderGetChannelCount: TSfmlSoundRecorderGetChannelCount;
 
 {$IFNDEF INT64RETURNWORKAROUND}
   SfmlMusicGetDuration: TSfmlMusicGetDuration;
@@ -417,7 +425,7 @@ var
   function SfmlSoundBufferCreateFromFile(const FileName: PAnsiChar): PSfmlSoundBuffer; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_createFromFile';
   function SfmlSoundBufferCreateFromMemory(const Data: Pointer; SizeInBytes: NativeUInt): PSfmlSoundBuffer; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_createFromMemory';
   function SfmlSoundBufferCreateFromStream(Stream: PSfmlInputStream): PSfmlSoundBuffer; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_createFromStream';
-  function SfmlSoundBufferCreateFromSamples(const Samples: PSmallInt; SampleCount: NativeUInt; ChannelCount, SampleRate: Cardinal): PSfmlSoundBuffer; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_createFromSamples';
+  function SfmlSoundBufferCreateFromSamples(const Samples: PSmallInt; SampleCount: UInt64; ChannelCount, SampleRate: Cardinal): PSfmlSoundBuffer; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_createFromSamples';
   function SfmlSoundBufferCopy(const SoundBuffer: PSfmlSoundBuffer): PSfmlSoundBuffer; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_copy';
   procedure SfmlSoundBufferDestroy(SoundBuffer: PSfmlSoundBuffer); cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_destroy';
   function SfmlSoundBufferSaveToFile(const SoundBuffer: PSfmlSoundBuffer; const FileName: PAnsiChar): LongBool; cdecl; external CSfmlAudioLibrary name 'sfSoundBuffer_saveToFile';
@@ -431,10 +439,12 @@ var
 
   function SfmlSoundBufferRecorderCreate: PSfmlSoundBufferRecorder; cdecl; external CSfmlAudioLibrary name 'sfSoundBufferRecorder_create';
   procedure SfmlSoundBufferRecorderDestroy(soundBufferRecorder: PSfmlSoundBufferRecorder); cdecl; external CSfmlAudioLibrary name 'sfSoundBufferRecorder_destroy';
-  procedure SfmlSoundBufferRecorderStart(soundBufferRecorder: PSfmlSoundBufferRecorder; SampleRate: Cardinal); cdecl; external CSfmlAudioLibrary name 'sfSoundBufferRecorder_start';
+  function SfmlSoundBufferRecorderStart(soundBufferRecorder: PSfmlSoundBufferRecorder; SampleRate: Cardinal): Longbool; cdecl; external CSfmlAudioLibrary name 'sfSoundBufferRecorder_start';
   procedure SfmlSoundBufferRecorderStop(soundBufferRecorder: PSfmlSoundBufferRecorder); cdecl; external CSfmlAudioLibrary name 'sfSoundBufferRecorder_stop';
   function SfmlSoundBufferRecorderGetSampleRate(const soundBufferRecorder: PSfmlSoundBufferRecorder): Cardinal; cdecl; external CSfmlAudioLibrary name 'sfSoundBufferRecorder_getSampleRate';
   function SfmlSoundBufferRecorderGetBuffer(const soundBufferRecorder: PSfmlSoundBufferRecorder): PSfmlSoundBuffer; cdecl; external CSfmlAudioLibrary name 'sfSoundBufferRecorder_getBuffer';
+  function SfmlSoundBufferRecorderSetDevice(SoundRecorder: PSfmlSoundBufferRecorder; const Name: PAnsiChar): LongBool; cdecl; external CSfmlAudioLibrary name 'sfSoundBufferRecorder_setDevice';
+  function SfmlSoundBufferRecorderGetDevice(SoundRecorder: PSfmlSoundBufferRecorder): PAnsiChar; cdecl; external CSfmlAudioLibrary name 'sfSoundBufferRecorder_getDevice';
 
   function SfmlSoundRecorderCreate(OnStart: TSfmlSoundRecorderStartCallback; OnProcess: TSfmlSoundRecorderProcessCallback; OnStop: TSfmlSoundRecorderStopCallback; UserData: Pointer): PSfmlSoundRecorder; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_create';
   procedure SfmlSoundRecorderDestroy(SoundRecorder: PSfmlSoundRecorder); cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_destroy';
@@ -447,6 +457,8 @@ var
   function SfmlSoundRecorderGetDefaultDevice: PAnsiChar; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_getDefaultDevice';
   function SfmlSoundRecorderSetDevice(SoundRecorder: PSfmlSoundRecorder; const Name: PAnsiChar): LongBool; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_setDevice';
   function SfmlSoundRecorderGetDevice(SoundRecorder: PSfmlSoundRecorder): PAnsiChar; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_getDevice';
+  function SfmlSoundRecorderSetChannelCount(SoundRecorder: PSfmlSoundRecorder; const ChannelCount: Cardinal): LongBool; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_getChannelCount';
+  function SfmlSoundRecorderGetChannelCount(const SoundRecorder: PSfmlSoundRecorder): Cardinal; cdecl; external CSfmlAudioLibrary name 'sfSoundRecorder_setChannelCount';
 {$ENDIF}
 
 type
@@ -1382,6 +1394,8 @@ begin
       SfmlSoundBufferRecorderStop := BindFunction('sfSoundBufferRecorder_stop');
       SfmlSoundBufferRecorderGetSampleRate := BindFunction('sfSoundBufferRecorder_getSampleRate');
       SfmlSoundBufferRecorderGetBuffer := BindFunction('sfSoundBufferRecorder_getBuffer');
+      SfmlSoundBufferRecorderSetDevice := BindFunction('sfSoundBufferRecorder_setDevice');
+      SfmlSoundBufferRecorderGetDevice := BindFunction('sfSoundBufferRecorder_getDevice');
       SfmlSoundRecorderCreate := BindFunction('sfSoundRecorder_create');
       SfmlSoundRecorderDestroy := BindFunction('sfSoundRecorder_destroy');
       SfmlSoundRecorderStart := BindFunction('sfSoundRecorder_start');
@@ -1393,6 +1407,8 @@ begin
       SfmlSoundRecorderGetDefaultDevice := BindFunction('sfSoundRecorder_getDefaultDevice');
       SfmlSoundRecorderSetDevice := BindFunction('sfSoundRecorder_setDevice');
       SfmlSoundRecorderGetDevice := BindFunction('sfSoundRecorder_getDevice');
+      SfmlSoundRecorderSetChannelCount := BindFunction('sfSoundRecorder_setChannelCount');
+      SfmlSoundRecorderGetChannelCount := BindFunction('sfSoundRecorder_getChannelCount');
 
 {$IFDEF INT64RETURNWORKAROUND}
       sfMusic_getDuration := BindFunction('sfMusic_getDuration');

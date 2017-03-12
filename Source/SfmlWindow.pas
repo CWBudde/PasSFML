@@ -77,7 +77,7 @@ type
   TSfmlWindowStyle = (sfTitleBar, sfResize, sfClose, sfFullscreen);
   TSfmlWindowStyles = set of TSfmlWindowStyle;
 
-  TSfmlContextAttributeFlag = (sfContextCore, sfContextUndefined,
+  TSfmlContextAttributeFlag = (sfContextDefault, sfContextCore,
     sfContextDebug);
   TSfmlContextAttributeFlags = set of TSfmlContextAttributeFlag;
 
@@ -88,6 +88,7 @@ type
     MajorVersion: Cardinal;
     MinorVersion: Cardinal;
     AttributeFlags: TSfmlContextAttributeFlags;
+    SRgbCapable: LongBool;
   end;
   PSfmlContextSettings = ^TSfmlContextSettings;
 
@@ -227,9 +228,11 @@ type
 {$IFDEF DynLink}
   TSfmlContextCreate = function : PSfmlContext; cdecl;
   TSfmlContextDestroy = procedure (Context: PSfmlContext); cdecl;
-  TSfmlContextSetActive = procedure (Context: PSfmlContext; Active: LongBool); cdecl;
+  TSfmlContextSetActive = function (Context: PSfmlContext; Active: LongBool): LongBool; cdecl;
+  TSfmlContextGetSettings = function (const Context: PSfmlContext): TSfmlContextSettings; cdecl;
 
   TSfmlKeyboardIsKeyPressed = function (Key: TSfmlKeyCode): LongBool; cdecl;
+  TSfmlKeyboardSetVirtualKeyboardVisible =  procedure (Visible: LongBool); cdecl;
 
   TSfmlJoystickIsConnected = function (Joystick: Cardinal): LongBool; cdecl;
   TSfmlJoystickGetButtonCount = function (Joystick: Cardinal): Cardinal; cdecl;
@@ -272,6 +275,7 @@ type
   TSfmlWindowSetIcon = procedure (Window: PSfmlWindow; Width, Height: Cardinal; const Pixels: PByte); cdecl;
   TSfmlWindowSetVisible = procedure (Window: PSfmlWindow; Visible: LongBool); cdecl;
   TSfmlWindowSetMouseCursorVisible = procedure (Window: PSfmlWindow; Visible: LongBool); cdecl;
+  TSfmlWindowSetMouseCursorGrabbed = procedure (Window: PSfmlWindow; Grabbed: LongBool); cdecl;
   TSfmlWindowSetVerticalSyncEnabled = procedure (Window: PSfmlWindow; Enabled: LongBool); cdecl;
   TSfmlWindowSetKeyRepeatEnabled = procedure (Window: PSfmlWindow; Enabled: LongBool); cdecl;
   TSfmlWindowSetActive = function (Window: PSfmlWindow; Active: LongBool): LongBool; cdecl;
@@ -286,8 +290,10 @@ var
   SfmlContextCreate: TSfmlContextCreate;
   SfmlContextDestroy: TSfmlContextDestroy;
   SfmlContextSetActive: TSfmlContextSetActive;
+  SfmlContextGetSettings: TSfmlContextGetSettings;
 
   SfmlKeyboardIsKeyPressed: TSfmlKeyboardIsKeyPressed;
+  SfmlKeyboardSetVirtualKeyboardVisible: TSfmlKeyboardSetVirtualKeyboardVisible;
 
   SfmlJoystickIsConnected: TSfmlJoystickIsConnected;
   SfmlJoystickGetButtonCount: TSfmlJoystickGetButtonCount;
@@ -330,6 +336,7 @@ var
   SfmlWindowSetIcon: TSfmlWindowSetIcon;
   SfmlWindowSetVisible: TSfmlWindowSetVisible;
   SfmlWindowSetMouseCursorVisible: TSfmlWindowSetMouseCursorVisible;
+  SfmlWindowSetMouseCursorGrabbed: TSfmlWindowSetMouseCursorGrabbed;
   SfmlWindowSetVerticalSyncEnabled: TSfmlWindowSetVerticalSyncEnabled;
   SfmlWindowSetKeyRepeatEnabled: TSfmlWindowSetKeyRepeatEnabled;
   SfmlWindowSetActive: TSfmlWindowSetActive;
@@ -342,9 +349,11 @@ var
 {$ELSE}
   function SfmlContextCreate: PSfmlContext; cdecl; external CSfmlWindowLibrary name 'sfContext_create';
   procedure SfmlContextDestroy(Context: PSfmlContext); cdecl; external CSfmlWindowLibrary name 'sfContext_destroy';
-  procedure SfmlContextSetActive(Context: PSfmlContext; Active: LongBool); cdecl; external CSfmlWindowLibrary name 'sfContext_setActive';
+  function SfmlContextSetActive(Context: PSfmlContext; Active: LongBool): LongBool; cdecl; external CSfmlWindowLibrary name 'sfContext_setActive';
+  function SfmlContextGetSettings(const Context: PSfmlContext): TSfmlContextSettings; cdecl; external CSfmlWindowLibrary name 'sfContext_getSettings';
 
   function SfmlKeyboardIsKeyPressed(Key: TSfmlKeyCode): LongBool; cdecl; external CSfmlWindowLibrary name 'sfKeyboard_isKeyPressed';
+  procedure SfmlKeyboardSetVirtualKeyboardVisible(Visible: LongBool); cdecl; external CSfmlWindowLibrary name 'sfKeyboard_setVirtualKeyboardVisible';
 
   function SfmlJoystickIsConnected(Joystick: Cardinal): LongBool; cdecl; external CSfmlWindowLibrary name 'sfJoystick_isConnected';
   function SfmlJoystickGetButtonCount(Joystick: Cardinal): Cardinal; cdecl; external CSfmlWindowLibrary name 'sfJoystick_getButtonCount';
@@ -387,14 +396,15 @@ var
   procedure SfmlWindowSetIcon(Window: PSfmlWindow; Width, Height: Cardinal; const Pixels: PByte); cdecl; external CSfmlWindowLibrary name 'sfWindow_setIcon';
   procedure SfmlWindowSetVisible(Window: PSfmlWindow; Visible: LongBool); cdecl; external CSfmlWindowLibrary name 'sfWindow_setVisible';
   procedure SfmlWindowSetMouseCursorVisible(Window: PSfmlWindow; Visible: LongBool); cdecl; external CSfmlWindowLibrary name 'sfWindow_setMouseCursorVisible';
+  procedure SfmlWindowSetMouseCursorGrabbed(Window: PSfmlWindow; Grabbed: LongBool); cdecl; external CSfmlWindowLibrary name 'sfWindow_setMouseCursorGrabbed';
+  procedure SfmlWindowSetFramerateLimit(Window: PSfmlWindow; limit: Cardinal); cdecl; external CSfmlWindowLibrary name 'sfWindow_setFramerateLimit';
+  procedure SfmlWindowSetJoystickThreshold(Window: PSfmlWindow; Threshold: Single); cdecl; external CSfmlWindowLibrary name 'sfWindow_setJoystickThreshold';
   procedure SfmlWindowSetVerticalSyncEnabled(Window: PSfmlWindow; Enabled: LongBool); cdecl; external CSfmlWindowLibrary name 'sfWindow_setVerticalSyncEnabled';
   procedure SfmlWindowSetKeyRepeatEnabled(Window: PSfmlWindow; Enabled: LongBool); cdecl; external CSfmlWindowLibrary name 'sfWindow_setKeyRepeatEnabled';
   function SfmlWindowSetActive(Window: PSfmlWindow; Active: LongBool): LongBool; cdecl; external CSfmlWindowLibrary name 'sfWindow_setActive';
   procedure SfmlWindowRequestFocus(Window: PSfmlWindow); cdecl; external CSfmlWindowLibrary name 'sfWindow_requestFocus';
   function SfmlWindowHasFocus(const Window: PSfmlWindow): LongBool; cdecl; external CSfmlWindowLibrary name 'sfWindow_hasFocus';
   procedure SfmlWindowDisplay(Window: PSfmlWindow); cdecl; external CSfmlWindowLibrary name 'sfWindow_display';
-  procedure SfmlWindowSetFramerateLimit(Window: PSfmlWindow; limit: Cardinal); cdecl; external CSfmlWindowLibrary name 'sfWindow_setFramerateLimit';
-  procedure SfmlWindowSetJoystickThreshold(Window: PSfmlWindow; Threshold: Single); cdecl; external CSfmlWindowLibrary name 'sfWindow_setJoystickThreshold';
   function SfmlWindowGetSystemHandle(const Window: PSfmlWindow): TSfmlWindowHandle; cdecl; external CSfmlWindowLibrary name 'sfWindow_getSystemHandle';
 {$ENDIF}
 
@@ -475,6 +485,7 @@ type
     procedure SetVisible(Visible: Boolean);
     procedure SetVerticalSyncEnabled(Enabled: Boolean);
     procedure SetMouseCursorVisible(Visible: Boolean);
+    procedure SetMouseCursorGrabbed(Grabbed: Boolean);
     procedure SetKeyRepeatEnabled(Enabled: Boolean);
     procedure SetFramerateLimit(Limit: Cardinal);
     procedure SetJoystickThreshold(Threshold: Single);
@@ -665,6 +676,11 @@ begin
   SfmlWindowSetMouseCursorVisible(FHandle, Visible);
 end;
 
+procedure TSfmlWindow.SetMouseCursorGrabbed(Grabbed: Boolean);
+begin
+  SfmlWindowSetMouseCursorGrabbed(FHandle, Grabbed);
+end;
+
 procedure TSfmlWindow.SetMousePosition(Position: TSfmlVector2i);
 begin
   SfmlMouseSetPosition(Position, FHandle);
@@ -731,7 +747,9 @@ begin
       SfmlContextCreate := BindFunction('sfContext_create');
       SfmlContextDestroy := BindFunction('sfContext_destroy');
       SfmlContextSetActive := BindFunction('sfContext_setActive');
+      SfmlContextGetSettings := BindFunction('sfContext_getSettings');
       SfmlKeyboardIsKeyPressed := BindFunction('sfKeyboard_isKeyPressed');
+      SfmlKeyboardSetVirtualKeyboardVisible := BindFunction('sfKeyboard_setVirtualKeyboardVisible');
       SfmlJoystickIsConnected := BindFunction('sfJoystick_isConnected');
       SfmlJoystickGetButtonCount := BindFunction('sfJoystick_getButtonCount');
       SfmlJoystickHasAxis := BindFunction('sfJoystick_hasAxis');
@@ -768,6 +786,7 @@ begin
       SfmlWindowSetIcon := BindFunction('sfWindow_setIcon');
       SfmlWindowSetVisible := BindFunction('sfWindow_setVisible');
       SfmlWindowSetMouseCursorVisible := BindFunction('sfWindow_setMouseCursorVisible');
+      SfmlWindowSetMouseCursorGrabbed := BindFunction('sfWindow_setMouseCursorGrabbed');
       SfmlWindowSetVerticalSyncEnabled := BindFunction('sfWindow_setVerticalSyncEnabled');
       SfmlWindowSetKeyRepeatEnabled := BindFunction('sfWindow_setKeyRepeatEnabled');
       SfmlWindowSetActive := BindFunction('sfWindow_setActive');

@@ -81,7 +81,8 @@ type
     sfBlendFactorSrcAlpha, sfBlendFactorOneMinusSrcAlpha,
     sfBlendFactorDstAlpha, sfBlendFactorOneMinusDstAlpha);
 
-  TSfmlBlendEquation = (sfBlendEquationAdd, sfBlendEquationSubtract);
+  TSfmlBlendEquation = (sfBlendEquationAdd, sfBlendEquationSubtract,
+    sfBlendEquationReverseSubtract);
 
   TSfmlBlendMode = record
     ColorSrcFactor: TSfmlBlendFactor;
@@ -134,10 +135,58 @@ type
     TextureRect: TSfmlIntRect;
   end;
 
-  TSfmlPrimitiveType = (sfPoints, sfLines, sfLinesStrip, sfTriangles,
-    sfTrianglesStrip, sfTrianglesFan, sfQuads);
+  TSfmlPrimitiveType = (sfPoints, sfLines, sfLineStrip, sfTriangles,
+    sfTriangleStrip, sfTriangleFan, sfQuads,
+
+    sfLinesStrip, sfTrianglesStrip, sfTrianglesFan // deprecated (use version without plural 's'
+  );
 
   TMatrixData = array [0 .. 8] of Single;
+
+  // 2D vectors
+  TSfmlGlslVec2 = TSfmlVector2f;
+  PSfmlGlslVec2 = ^TSfmlGlslVec2;
+  TSfmlGlslIvec2 = TSfmlVector2i;
+  PSfmlGlslIvec2 = ^TSfmlGlslIvec2;
+
+  TSfmlGlslBvec2 = record
+    x, y: LongBool;
+  end;
+  PSfmlGlslBvec2 = ^TSfmlGlslBvec2;
+
+  // 3D vectors
+  TSfmlGlslVec3 = TSfmlVector3f;
+  PSfmlGlslVec3 = ^TSfmlGlslVec3;
+  TSfmlGlslIvec3 = record
+    X, Y, Z: Integer;
+  end;
+  PSfmlGlslIvec3 = ^TSfmlGlslIvec3;
+  TSfmlGlslBvec3 = record
+    X, Y, Z: LongBool;
+  end;
+  PSfmlGlslBvec3 = ^TSfmlGlslBvec3;
+
+  // 4D vectors
+  TSfmlGlslVec4 = record
+    X, Y, Z, W: Single;
+  end;
+  PSfmlGlslVec4 = ^TSfmlGlslVec4;
+
+  TSfmlGlslIvec4 = record
+    X, Y, Z, W: Integer;
+  end;
+  PSfmlGlslIvec4 = ^TSfmlGlslIvec4;
+
+  TSfmlGlslBvec4 = record
+    X, Y, Z, W: LongBool;
+  end;
+  PSfmlGlslBvec4 = ^TSfmlGlslBvec4;
+
+  // matrices
+  TSfmlGlslMat3 = array [0..2, 0..2] of Single;
+  PSfmlGlslMat3 = ^TSfmlGlslMat3;
+  TSfmlGlslMat4 = array [0..3, 0..3] of Single;
+  PSfmlGlslMat4 = ^TSfmlGlslMat4;
 
   TSfmlTransform = record
     Matrix : TMatrixData;
@@ -270,11 +319,11 @@ type
   TSfmlFontCreateFromStream = function (const Stream: PSfmlInputStream): PSfmlFont; cdecl;
   TSfmlFontCopy = function (const Font: PSfmlFont): PSfmlFont; cdecl;
   TSfmlFontDestroy = procedure (Font: PSfmlFont); cdecl;
-  TSfmlFontGetGlyph = function (Font: PSfmlFont; CodePoint: Cardinal; CharacterSize: Cardinal; Bold: LongBool): TSfmlGlyph; cdecl;
-  TSfmlFontGetKerning = function (Font: PSfmlFont; First, Second: Cardinal; CharacterSize: Cardinal): Single; cdecl;
-  TSfmlFontGetLineSpacing = function (Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl;
-  TSfmlFontGetUnderlinePosition = function (Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl;
-  TSfmlFontGetUnderlineThickness = function (Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl;
+  TSfmlFontGetGlyph = function (const Font: PSfmlFont; CodePoint: Cardinal; CharacterSize: Cardinal; Bold: LongBool): TSfmlGlyph; cdecl;
+  TSfmlFontGetKerning = function (const Font: PSfmlFont; First, Second: Cardinal; CharacterSize: Cardinal): Single; cdecl;
+  TSfmlFontGetLineSpacing = function (const Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl;
+  TSfmlFontGetUnderlinePosition = function (const Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl;
+  TSfmlFontGetUnderlineThickness = function (const Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl;
   TSfmlFontGetTexture = function (Font: PSfmlFont; CharacterSize: Cardinal): PSfmlTexture; cdecl;
   TSfmlFontGetInfo = function (const Font: PSfmlFont): TSfmlFontInfo; cdecl;
 
@@ -362,6 +411,7 @@ type
   TSfmlRenderTextureIsSmooth = function (const RenderTexture: PSfmlRenderTexture): LongBool; cdecl;
   TSfmlRenderTextureSetRepeated = procedure (RenderTexture: PSfmlRenderTexture; Repeated: LongBool); cdecl;
   TSfmlRenderTextureIsRepeated = function (const RenderTexture: PSfmlRenderTexture): LongBool; cdecl;
+  TSfmlRenderTextureGenerateMipmap = function (const RenderTexture: PSfmlRenderTexture): LongBool; cdecl;
 
   TSfmlRenderWindowCreate = function (Mode: TSfmlVideoMode; const Title: PAnsiChar; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl;
   TSfmlRenderWindowCreateUnicode = function (Mode: TSfmlVideoMode; const Title: PUCS4Char; Style: TSfmlWindowStyles; const Settings: PSfmlContextSettings): PSfmlRenderWindow; cdecl;
@@ -380,15 +430,16 @@ type
   TSfmlRenderWindowSetUnicodeTitle = procedure (RenderWindow: PSfmlRenderWindow; const Title: PUCS4Char); cdecl;
   TSfmlRenderWindowSetIcon = procedure (RenderWindow: PSfmlRenderWindow; Width, Height: Cardinal; const Pixels: PByte); cdecl;
   TSfmlRenderWindowSetVisible = procedure (RenderWindow: PSfmlRenderWindow; Visible: LongBool); cdecl;
-  TSfmlRenderWindowSetMouseCursorVisible = procedure (RenderWindow: PSfmlRenderWindow; Show: LongBool); cdecl;
   TSfmlRenderWindowSetVerticalSyncEnabled = procedure (RenderWindow: PSfmlRenderWindow; Enabled: LongBool); cdecl;
+  TSfmlRenderWindowSetMouseCursorVisible = procedure (RenderWindow: PSfmlRenderWindow; Show: LongBool); cdecl;
+  TSfmlRenderWindowSetMouseCursorGrabbed = procedure (RenderWindow: PSfmlRenderWindow; Grabbed: LongBool); cdecl;
   TSfmlRenderWindowSetKeyRepeatEnabled = procedure (RenderWindow: PSfmlRenderWindow; Enabled: LongBool); cdecl;
+  TSfmlRenderWindowSetFramerateLimit = procedure (RenderWindow: PSfmlRenderWindow; Limit: Cardinal); cdecl;
+  TSfmlRenderWindowSetJoystickThreshold = procedure (RenderWindow: PSfmlRenderWindow; Threshold: Single); cdecl;
   TSfmlRenderWindowSetActive = function (RenderWindow: PSfmlRenderWindow; Active: LongBool): LongBool; cdecl;
   TSfmlRenderWindowRequestFocus = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
   TSfmlRenderWindowHasFocus = function (const RenderWindow: PSfmlRenderWindow): LongBool; cdecl;
   TSfmlRenderWindowDisplay = procedure (RenderWindow: PSfmlRenderWindow); cdecl;
-  TSfmlRenderWindowSetFramerateLimit = procedure (RenderWindow: PSfmlRenderWindow; Limit: Cardinal); cdecl;
-  TSfmlRenderWindowSetJoystickThreshold = procedure (RenderWindow: PSfmlRenderWindow; Threshold: Single); cdecl;
   TSfmlRenderWindowGetSystemHandle = function (const RenderWindow: PSfmlRenderWindow): TSfmlWindowHandle; cdecl;
   TSfmlRenderWindowClear = procedure (RenderWindow: PSfmlRenderWindow; Color: TSfmlColor); cdecl;
   TSfmlRenderWindowSetView = procedure (RenderWindow: PSfmlRenderWindow; const View: PSfmlView); cdecl;
@@ -413,10 +464,34 @@ type
   TSfmlMouseSetPositionRenderWindow = procedure (position: TSfmlVector2i; const RelativeTo: PSfmlRenderWindow); cdecl;
   TSfmlTouchGetPositionRenderWindow = function (Finger: Cardinal; const RelativeTo: PSfmlRenderWindow): TSfmlVector2i; cdecl;
 
-  TSfmlShaderCreateFromFile = function (const VertexShaderFilename: PAnsiChar; const FragmentShaderFilename: PAnsiChar): PSfmlShader; cdecl;
-  TSfmlShaderCreateFromMemory = function (const VertexShader: PAnsiChar; const FragmentShader: PAnsiChar): PSfmlShader; cdecl;
-  TSfmlShaderCreateFromStream = function (VertexShaderStream: PSfmlInputStream; FragmentShaderStream: PSfmlInputStream): PSfmlShader; cdecl;
+  TSfmlShaderCreateFromFile = function (const VertexShaderFilename: PAnsiChar; GeometryShaderFilename: PAnsiChar; const FragmentShaderFilename: PAnsiChar): PSfmlShader; cdecl;
+  TSfmlShaderCreateFromMemory = function (const VertexShader: PAnsiChar; const GeometryShader: PAnsiChar; const FragmentShader: PAnsiChar): PSfmlShader; cdecl;
+  TSfmlShaderCreateFromStream = function (VertexShaderStream: PSfmlInputStream; GeometryShaderStream: PSfmlInputStream; FragmentShaderStream: PSfmlInputStream): PSfmlShader; cdecl;
   TSfmlShaderDestroy = procedure (Shader: PSfmlShader); cdecl;
+  TSfmlShaderSetFloatUniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; X: Single); cdecl;
+  TSfmlShaderSetVec2Uniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslVec2); cdecl;
+  TSfmlShaderSetVec3Uniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslVec3); cdecl;
+  TSfmlShaderSetVec4Uniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslVec4); cdecl;
+  TSfmlShaderSetColorUniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; Color: TSfmlColor); cdecl;
+  TSfmlShaderSetIntUniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; X: Integer); cdecl;
+  TSfmlShaderSetIvec2Uniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslIvec2); cdecl;
+  TSfmlShaderSetIvec3Uniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslIvec3); cdecl;
+  TSfmlShaderSetIvec4Uniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslIvec4); cdecl;
+  TSfmlShaderSetIntColorUniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; Color: TSfmlColor); cdecl;
+  TSfmlShaderSetBoolUniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; X: LongBool); cdecl;
+  TSfmlShaderSetBvec2Uniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslBvec2); cdecl;
+  TSfmlShaderSetBvec3Uniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslBvec3); cdecl;
+  TSfmlShaderSetBvec4Uniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslBvec4); cdecl;
+  TSfmlShaderSetMat3Uniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; const Matrix: PSfmlGlslMat3); cdecl;
+  TSfmlShaderSetMat4Uniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; const Matrix: PSfmlGlslMat4); cdecl;
+  TSfmlShaderSetTextureUniform = procedure (Shader: PSfmlShader; const Name: PAnsiChar; const Texture: PSfmlTexture); cdecl;
+  TSfmlShaderSetCurrentTextureUniform = procedure (Shader: PSfmlShader; Name: PAnsiChar); cdecl;
+  TSfmlShaderSetFloatUniformArray = procedure (Shader: PSfmlShader; const Name: PAnsiChar; const ScalarArray: PSingle; Length: NativeUInt); cdecl;
+  TSfmlShaderSetVec2UniformArray = procedure (Shader: PSfmlShader; const Name: PAnsiChar; const VectorArray: PSfmlGlslVec2; Length: NativeUInt); cdecl;
+  TSfmlShaderSetVec3UniformArray = procedure (Shader: PSfmlShader; const Name: PAnsiChar; const VectorArray: PSfmlGlslVec3; Length: NativeUInt); cdecl;
+  TSfmlShaderSetVec4UniformArray = procedure (Shader: PSfmlShader; const Name: PAnsiChar; const VectorArray: PSfmlGlslVec4; Length: NativeUInt); cdecl;
+  TSfmlShaderSetMat3UniformArray = procedure (Shader: PSfmlShader; const Name: PAnsiChar; const MatrixArray: PSfmlGlslMat3; Length: NativeUInt); cdecl;
+  TSfmlShaderSetMat4UniformArray = procedure (Shader: PSfmlShader; const Name: PAnsiChar; const MatrixArray: PSfmlGlslMat4; Length: NativeUInt); cdecl;
   TSfmlShaderSetFloatParameter = procedure (Shader: PSfmlShader; const Name: PAnsiChar; X: Single); cdecl;
   TSfmlShaderSetFloat2Parameter = procedure (Shader: PSfmlShader; const Name: PAnsiChar; X, Y: Single); cdecl;
   TSfmlShaderSetFloat3Parameter = procedure (Shader: PSfmlShader; const Name: PAnsiChar; X, Y, Z: Single); cdecl;
@@ -430,6 +505,8 @@ type
   TSfmlShaderGetNativeHandle = function (Shader: PSfmlShader): Cardinal; cdecl;
   TSfmlShaderBind = procedure (const Shader: PSfmlShader); cdecl;
   TSfmlShaderIsAvailable = function : LongBool; cdecl;
+  TSfmlShaderIsGeometryAvailable = function: LongBool; cdecl;
+
 
   TSfmlShapeCreate = function (GetPointCount: TSfmlShapeGetPointCountCallback; GetPoint: TSfmlShapeGetPointCallback; UserData: Pointer): PSfmlShape; cdecl;
   TSfmlShapeDestroy = procedure (Shape: PSfmlShape); cdecl;
@@ -509,12 +586,18 @@ type
   TSfmlTextSetCharacterSize = procedure (Text: PSfmlText; Size: Cardinal); cdecl;
   TSfmlTextSetStyle = procedure (Text: PSfmlText; Style: Cardinal); cdecl;
   TSfmlTextSetColor = procedure (Text: PSfmlText; Color: TSfmlColor); cdecl;
+  TSfmlTextSetFillColor = procedure (Text: PSfmlText; Color: TSfmlColor); cdecl;
+  TSfmlTextSetOutlineColor = procedure (Text: PSfmlText; Color: TSfmlColor); cdecl;
+  TSfmlTextSetOutlineThickness = procedure (Text: PSfmlText; Thickness: Single); cdecl;
   TSfmlTextGetString = function (const Text: PSfmlText): PAnsiChar; cdecl;
   TSfmlTextGetUnicodeString = function (const Text: PSfmlText): PUCS4Char; cdecl;
   TSfmlTextGetFont = function (const Text: PSfmlText): PSfmlFont; cdecl;
   TSfmlTextGetCharacterSize = function (const Text: PSfmlText): Cardinal; cdecl;
   TSfmlTextGetStyle = function (const Text: PSfmlText): Cardinal; cdecl;
   TSfmlTextGetColor = function (const Text: PSfmlText): TSfmlColor; cdecl;
+  TSfmlTextGetFillColor = function (const Text: PSfmlText): TSfmlColor; cdecl;
+  TSfmlTextGetOutlineColor = function (const Text: PSfmlText): TSfmlColor; cdecl;
+  TSfmlTextGetOutlineThickness = function (const Text: PSfmlText): Single; cdecl;
   TSfmlTextFindCharacterPos = function (const Text: PSfmlText; Index: NativeUInt): TSfmlVector2f; cdecl;
   TSfmlTextGetLocalBounds = function (const Text: PSfmlText): TSfmlFloatRect; cdecl;
   TSfmlTextGetGlobalBounds = function (const Text: PSfmlText): TSfmlFloatRect; cdecl;
@@ -534,8 +617,11 @@ type
   TSfmlTextureUpdateFromRenderWindow = procedure (Texture: PSfmlTexture; const RenderWindow: PSfmlRenderWindow; X, Y: Cardinal); cdecl;
   TSfmlTextureSetSmooth = procedure (Texture: PSfmlTexture; Smooth: LongBool); cdecl;
   TSfmlTextureIsSmooth = function (const Texture: PSfmlTexture): LongBool; cdecl;
+  TSfmlTextureSetSrgb = procedure (const Texture: PSfmlTexture; sRgb: LongBool); cdecl;
+  TSfmlTextureIsSrgb = function (const Texture: PSfmlTexture): LongBool; cdecl;
   TSfmlTextureSetRepeated = procedure (Texture: PSfmlTexture; Repeated: LongBool); cdecl;
   TSfmlTextureIsRepeated = function (const Texture: PSfmlTexture): LongBool; cdecl;
+  TSfmlTextureGenerateMipmap = procedure (const Texture: PSfmlTexture); cdecl;
   TSfmlTextureGetNativeHandle = function (const Texture: PSfmlTexture): Cardinal; cdecl;
   TSfmlTextureBind = procedure (const Texture: PSfmlTexture); cdecl;
   TsfmlTextureGetMaximumSize = function : Cardinal; cdecl;
@@ -793,6 +879,8 @@ var
   SfmlRenderTextureIsSmooth: TSfmlRenderTextureIsSmooth;
   SfmlRenderTextureSetRepeated: TSfmlRenderTextureSetRepeated;
   SfmlRenderTextureIsRepeated: TSfmlRenderTextureIsRepeated;
+  SfmlRenderTextureGenerateMipmap: TSfmlRenderTextureGenerateMipmap;
+
 {$IFNDEF INT64RETURNWORKAROUND}
   SfmlRenderTextureMapPixelToCoords: TSfmlRenderTextureMapPixelToCoords;
   SfmlRenderTextureMapCoordsToPixel: TSfmlRenderTextureMapCoordsToPixel;
@@ -814,15 +902,16 @@ var
   SfmlRenderWindowSetUnicodeTitle: TSfmlRenderWindowSetUnicodeTitle;
   SfmlRenderWindowSetIcon: TSfmlRenderWindowSetIcon;
   SfmlRenderWindowSetVisible: TSfmlRenderWindowSetVisible;
-  SfmlRenderWindowSetMouseCursorVisible: TSfmlRenderWindowSetMouseCursorVisible;
   SfmlRenderWindowSetVerticalSyncEnabled: TSfmlRenderWindowSetVerticalSyncEnabled;
+  SfmlRenderWindowSetMouseCursorVisible: TSfmlRenderWindowSetMouseCursorVisible;
+  SfmlRenderWindowSetMouseCursorGrabbed: TSfmlRenderWindowSetMouseCursorGrabbed;
+  SfmlRenderWindowSetFramerateLimit: TSfmlRenderWindowSetFramerateLimit;
+  SfmlRenderWindowSetJoystickThreshold: TSfmlRenderWindowSetJoystickThreshold;
   SfmlRenderWindowSetKeyRepeatEnabled: TSfmlRenderWindowSetKeyRepeatEnabled;
   SfmlRenderWindowSetActive: TSfmlRenderWindowSetActive;
   SfmlRenderWindowRequestFocus: TSfmlRenderWindowRequestFocus;
   SfmlRenderWindowHasFocus: TSfmlRenderWindowHasFocus;
   SfmlRenderWindowDisplay: TSfmlRenderWindowDisplay;
-  SfmlRenderWindowSetFramerateLimit: TSfmlRenderWindowSetFramerateLimit;
-  SfmlRenderWindowSetJoystickThreshold: TSfmlRenderWindowSetJoystickThreshold;
   SfmlRenderWindowGetSystemHandle: TSfmlRenderWindowGetSystemHandle;
   SfmlRenderWindowClear: TSfmlRenderWindowClear;
   SfmlRenderWindowSetView: TSfmlRenderWindowSetView;
@@ -853,6 +942,30 @@ var
   SfmlShaderCreateFromMemory: TSfmlShaderCreateFromMemory;
   SfmlShaderCreateFromStream: TSfmlShaderCreateFromStream;
   SfmlShaderDestroy: TSfmlShaderDestroy;
+  SfmlShaderSetFloatUniform: TSfmlShaderSetFloatUniform;
+  SfmlShaderSetVec2Uniform: TSfmlShaderSetVec2Uniform;
+  SfmlShaderSetVec3Uniform: TSfmlShaderSetVec3Uniform;
+  SfmlShaderSetVec4Uniform: TSfmlShaderSetVec4Uniform;
+  SfmlShaderSetColorUniform: TSfmlShaderSetColorUniform;
+  SfmlShaderSetIntUniform: TSfmlShaderSetIntUniform;
+  SfmlShaderSetIvec2Uniform: TSfmlShaderSetIvec2Uniform;
+  SfmlShaderSetIvec3Uniform: TSfmlShaderSetIvec3Uniform;
+  SfmlShaderSetIvec4Uniform: TSfmlShaderSetIvec4Uniform;
+  SfmlShaderSetIntColorUniform: TSfmlShaderSetIntColorUniform;
+  SfmlShaderSetBoolUniform: TSfmlShaderSetBoolUniform;
+  SfmlShaderSetBvec2Uniform: TSfmlShaderSetBvec2Uniform;
+  SfmlShaderSetBvec3Uniform: TSfmlShaderSetBvec3Uniform;
+  SfmlShaderSetBvec4Uniform: TSfmlShaderSetBvec4Uniform;
+  SfmlShaderSetMat3Uniform: TSfmlShaderSetMat3Uniform;
+  SfmlShaderSetMat4Uniform: TSfmlShaderSetMat4Uniform;
+  SfmlShaderSetTextureUniform: TSfmlShaderSetTextureUniform;
+  SfmlShaderSetCurrentTextureUniform: TSfmlShaderSetCurrentTextureUniform;
+  SfmlShaderSetFloatUniformArray: TSfmlShaderSetFloatUniformArray;
+  SfmlShaderSetVec2UniformArray: TSfmlShaderSetVec2UniformArray;
+  SfmlShaderSetVec3UniformArray: TSfmlShaderSetVec3UniformArray;
+  SfmlShaderSetVec4UniformArray: TSfmlShaderSetVec4UniformArray;
+  SfmlShaderSetMat3UniformArray: TSfmlShaderSetMat3UniformArray;
+  SfmlShaderSetMat4UniformArray: TSfmlShaderSetMat4UniformArray;
   SfmlShaderSetFloatParameter: TSfmlShaderSetFloatParameter;
   SfmlShaderSetFloat2Parameter: TSfmlShaderSetFloat2Parameter;
   SfmlShaderSetFloat3Parameter: TSfmlShaderSetFloat3Parameter;
@@ -866,6 +979,7 @@ var
   SfmlShaderGetNativeHandle: TSfmlShaderGetNativeHandle;
   SfmlShaderBind: TSfmlShaderBind;
   SfmlShaderIsAvailable: TSfmlShaderIsAvailable;
+  SfmlShaderIsGeometryAvailable: TSfmlShaderIsGeometryAvailable;
 
   SfmlShapeCreate: TSfmlShapeCreate;
   SfmlShapeDestroy: TSfmlShapeDestroy;
@@ -946,12 +1060,18 @@ var
   SfmlTextSetCharacterSize: TSfmlTextSetCharacterSize;
   SfmlTextSetStyle: TSfmlTextSetStyle;
   SfmlTextSetColor: TSfmlTextSetColor;
+  SfmlTextSetFillColor: TSfmlTextSetFillColor;
+  SfmlTextSetOutlineColor: TSfmlTextSetFillColor;
+  SfmlTextSetOutlineThickness: TSfmlTextSetOutlineThickness;
   SfmlTextGetString: TSfmlTextGetString;
   SfmlTextGetUnicodeString: TSfmlTextGetUnicodeString;
   SfmlTextGetFont: TSfmlTextGetFont;
   SfmlTextGetCharacterSize: TSfmlTextGetCharacterSize;
   SfmlTextGetStyle: TSfmlTextGetStyle;
   SfmlTextGetColor: TSfmlTextGetColor;
+  SfmlTextGetFillColor: TSfmlTextGetFillColor;
+  SfmlTextGetOutlineColor: TSfmlTextGetOutlineColor;
+  SfmlTextGetOutlineThickness: TSfmlTextGetOutlineThickness;
   SfmlTextGetLocalBounds: TSfmlTextGetLocalBounds;
   SfmlTextGetGlobalBounds: TSfmlTextGetGlobalBounds;
 {$IFNDEF INT64RETURNWORKAROUND}
@@ -975,8 +1095,11 @@ var
   SfmlTextureUpdateFromRenderWindow: TSfmlTextureUpdateFromRenderWindow;
   SfmlTextureSetSmooth: TSfmlTextureSetSmooth;
   SfmlTextureIsSmooth: TSfmlTextureIsSmooth;
+  SfmlTextureSetSrgb: TSfmlTextureSetSrgb;
+  SfmlTextureIsSrgb: TSfmlTextureIsSrgb;
   SfmlTextureSetRepeated: TSfmlTextureSetRepeated;
   SfmlTextureIsRepeated: TSfmlTextureIsRepeated;
+  SfmlTextureGenerateMipmap: TSfmlTextureGenerateMipmap;
   SfmlTextureGetNativeHandle: TSfmlTextureGetNativeHandle;
   SfmlTextureBind: TSfmlTextureBind;
   SfmlTextureGetMaximumSize: TsfmlTextureGetMaximumSize;
@@ -1185,11 +1308,11 @@ const
   function SfmlFontCreateFromStream(const Stream: PSfmlInputStream): PSfmlFont; cdecl; external CSfmlGraphicsLibrary name 'sfFont_createFromStream';
   function SfmlFontCopy(const Font: PSfmlFont): PSfmlFont; cdecl; external CSfmlGraphicsLibrary name 'sfFont_copy';
   procedure SfmlFontDestroy(Font: PSfmlFont); cdecl; external CSfmlGraphicsLibrary name 'sfFont_destroy';
-  function SfmlFontGetGlyph(Font: PSfmlFont; CodePoint: Cardinal; CharacterSize: Cardinal; Bold: LongBool): TSfmlGlyph; cdecl; external CSfmlGraphicsLibrary name 'sfFont_getGlyph';
-  function SfmlFontGetKerning(Font: PSfmlFont; First, Second: Cardinal; CharacterSize: Cardinal): Single; cdecl; external CSfmlGraphicsLibrary name 'sfFont_getKerning';
-  function SfmlFontGetLineSpacing(Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl; external CSfmlGraphicsLibrary name 'sfFont_getLineSpacing';
-  function SfmlFontGetUnderlinePosition(Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl; external CSfmlGraphicsLibrary name 'sfFont_getUnderlinePosition';
-  function SfmlFontGetUnderlineThickness(Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl; external CSfmlGraphicsLibrary name 'sfFont_getUnderlineThickness';
+  function SfmlFontGetGlyph(const Font: PSfmlFont; CodePoint: Cardinal; CharacterSize: Cardinal; Bold: LongBool): TSfmlGlyph; cdecl; external CSfmlGraphicsLibrary name 'sfFont_getGlyph';
+  function SfmlFontGetKerning(const Font: PSfmlFont; First, Second: Cardinal; CharacterSize: Cardinal): Single; cdecl; external CSfmlGraphicsLibrary name 'sfFont_getKerning';
+  function SfmlFontGetLineSpacing(const Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl; external CSfmlGraphicsLibrary name 'sfFont_getLineSpacing';
+  function SfmlFontGetUnderlinePosition(const Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl; external CSfmlGraphicsLibrary name 'sfFont_getUnderlinePosition';
+  function SfmlFontGetUnderlineThickness(const Font: PSfmlFont; CharacterSize: Cardinal): Single; cdecl; external CSfmlGraphicsLibrary name 'sfFont_getUnderlineThickness';
   function SfmlFontGetTexture(Font: PSfmlFont; CharacterSize: Cardinal): PSfmlTexture; cdecl; external CSfmlGraphicsLibrary name 'sfFont_getTexture';
   function SfmlFontGetInfo(const Font: PSfmlFont): TSfmlFontInfo; cdecl; external CSfmlGraphicsLibrary name 'sfFont_getInfo';
 
@@ -1278,6 +1401,7 @@ const
   function SfmlRenderTextureIsSmooth(const RenderTexture: PSfmlRenderTexture): LongBool; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_isSmooth';
   procedure SfmlRenderTextureSetRepeated(RenderTexture: PSfmlRenderTexture; Repeated: LongBool); cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_setRepeated';
   function SfmlRenderTextureIsRepeated(const RenderTexture: PSfmlRenderTexture): LongBool; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_isRepeated';
+  function SfmlRenderTextureGenerateMipmap(const RenderTexture: PSfmlRenderTexture): LongBool; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_generateMipmap';
 {$IFNDEF INT64RETURNWORKAROUND}
   function SfmlRenderTextureGetSize(const RenderTexture: PSfmlRenderTexture): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_getSize';
   function SfmlRenderTextureMapPixelToCoords(const RenderTexture: PSfmlRenderTexture; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRenderTexture_mapPixelToCoords';
@@ -1300,15 +1424,16 @@ const
   procedure SfmlRenderWindowSetUnicodeTitle(RenderWindow: PSfmlRenderWindow; const Title: PUCS4Char); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setUnicodeTitle';
   procedure SfmlRenderWindowSetIcon(RenderWindow: PSfmlRenderWindow; Width, Height: Cardinal; const Pixels: PByte); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setIcon';
   procedure SfmlRenderWindowSetVisible(RenderWindow: PSfmlRenderWindow; Visible: LongBool); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setVisible';
-  procedure SfmlRenderWindowSetMouseCursorVisible(RenderWindow: PSfmlRenderWindow; Show: LongBool); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setMouseCursorVisible';
   procedure SfmlRenderWindowSetVerticalSyncEnabled(RenderWindow: PSfmlRenderWindow; Enabled: LongBool); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setVerticalSyncEnabled';
+  procedure SfmlRenderWindowSetMouseCursorVisible(RenderWindow: PSfmlRenderWindow; Show: LongBool); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setMouseCursorVisible';
+  procedure SfmlRenderWindowSetMouseCursorGrabbed(RenderWindow: PSfmlRenderWindow; Grabbed: LongBool); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setMouseCursorGrabbed';
   procedure SfmlRenderWindowSetKeyRepeatEnabled(RenderWindow: PSfmlRenderWindow; Enabled: LongBool); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setKeyRepeatEnabled';
+  procedure SfmlRenderWindowSetFramerateLimit(RenderWindow: PSfmlRenderWindow; Limit: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setFramerateLimit';
+  procedure SfmlRenderWindowSetJoystickThreshold(RenderWindow: PSfmlRenderWindow; Threshold: Single); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setJoystickThreshold';
   function SfmlRenderWindowSetActive(RenderWindow: PSfmlRenderWindow; Active: LongBool): LongBool; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setActive';
   procedure SfmlRenderWindowRequestFocus(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_requestFocus';
   function SfmlRenderWindowHasFocus(const RenderWindow: PSfmlRenderWindow): LongBool; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_hasFocus';
   procedure SfmlRenderWindowDisplay(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_display';
-  procedure SfmlRenderWindowSetFramerateLimit(RenderWindow: PSfmlRenderWindow; Limit: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setFramerateLimit';
-  procedure SfmlRenderWindowSetJoystickThreshold(RenderWindow: PSfmlRenderWindow; Threshold: Single); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setJoystickThreshold';
   function SfmlRenderWindowGetSystemHandle(const RenderWindow: PSfmlRenderWindow): TSfmlWindowHandle; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_getSystemHandle';
   procedure SfmlRenderWindowClear(RenderWindow: PSfmlRenderWindow; Color: TSfmlColor); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_clear';
   procedure SfmlRenderWindowSetView(RenderWindow: PSfmlRenderWindow; const View: PSfmlView); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_setView';
@@ -1326,7 +1451,7 @@ const
   procedure SfmlRenderWindowPushGLStates(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_pushGLStates';
   procedure SfmlRenderWindowPopGLStates(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_popGLStates';
   procedure SfmlRenderWindowResetGLStates(RenderWindow: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_resetGLStates';
-  function SfmlRenderWindowCapture(const RenderWindow: PSfmlRenderWindow): PSfmlImage; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_capture';
+  function SfmlRenderWindowCapture(const RenderWindow: PSfmlRenderWindow): PSfmlImage; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_capture'; deprecated 'Use a sfTexture and its sfTexture_updateFromRenderWindow(sfTexture*, const sfRenderWindow*, unsigned int, unsigned int) function and copy its contents into an sfImage instead.';
 {$IFNDEF INT64RETURNWORKAROUND}
   function SfmlRenderWindowGetSize(const RenderWindow: PSfmlRenderWindow): TSfmlVector2u; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_getSize';
   function SfmlRenderWindowMapPixelToCoords(const RenderWindow: PSfmlRenderWindow; Point: TSfmlVector2i; const View: PSfmlView): TSfmlVector2f; cdecl; external CSfmlGraphicsLibrary name 'sfRenderWindow_mapPixelToCoords';
@@ -1337,23 +1462,48 @@ const
 
   procedure SfmlMouseSetPositionRenderWindow(Position: TSfmlVector2i; const RelativeTo: PSfmlRenderWindow); cdecl; external CSfmlGraphicsLibrary name 'sfMouse_setPositionRenderWindow';
 
-  function SfmlShaderCreateFromFile(const VertexShaderFilename: PAnsiChar; const FragmentShaderFilename: PAnsiChar): PSfmlShader; cdecl; external CSfmlGraphicsLibrary name 'sfShader_createFromFile';
-  function SfmlShaderCreateFromMemory(const VertexShader: PAnsiChar; const FragmentShader: PAnsiChar): PSfmlShader; cdecl; external CSfmlGraphicsLibrary name 'sfShader_createFromMemory';
-  function SfmlShaderCreateFromStream(VertexShaderStream: PSfmlInputStream; FragmentShaderStream: PSfmlInputStream): PSfmlShader; cdecl; external CSfmlGraphicsLibrary name 'sfShader_createFromStream';
+  function SfmlShaderCreateFromFile(const VertexShaderFilename: PAnsiChar; const GeometryShaderFilename: PAnsiChar; const FragmentShaderFilename: PAnsiChar): PSfmlShader; cdecl; external CSfmlGraphicsLibrary name 'sfShader_createFromFile';
+  function SfmlShaderCreateFromMemory(const VertexShader: PAnsiChar; const GeometryShader: PAnsiChar; const FragmentShader: PAnsiChar): PSfmlShader; cdecl; external CSfmlGraphicsLibrary name 'sfShader_createFromMemory';
+  function SfmlShaderCreateFromStream(VertexShaderStream: PSfmlInputStream; GeometryShaderStream: PSfmlInputStream; FragmentShaderStream: PSfmlInputStream): PSfmlShader; cdecl; external CSfmlGraphicsLibrary name 'sfShader_createFromStream';
   procedure SfmlShaderDestroy(Shader: PSfmlShader); cdecl; external CSfmlGraphicsLibrary name 'sfShader_destroy';
-  procedure SfmlShaderSetFloatParameter(Shader: PSfmlShader; const Name: PAnsiChar; X: Single); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setFloatParameter';
-  procedure SfmlShaderSetFloat2Parameter(Shader: PSfmlShader; const Name: PAnsiChar; X, Y: Single); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setFloat2Parameter';
-  procedure SfmlShaderSetFloat3Parameter(Shader: PSfmlShader; const Name: PAnsiChar; X, Y, Z: Single); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setFloat3Parameter';
-  procedure SfmlShaderSetFloat4Parameter(Shader: PSfmlShader; const Name: PAnsiChar; X, Y, Z, W: Single); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setFloat4Parameter';
-  procedure SfmlShaderSetVector2Parameter(Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setVector2Parameter';
-  procedure SfmlShaderSetVector3Parameter(Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlVector3f); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setVector3Parameter';
-  procedure SfmlShaderSetColorParameter(Shader: PSfmlShader; const Name: PAnsiChar; Color: TSfmlColor); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setColorParameter';
-  procedure SfmlShaderSetTransformParameter(Shader: PSfmlShader; const Name: PAnsiChar; Transform: TSfmlTransform); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setTransformParameter';
-  procedure SfmlShaderSetTextureParameter(Shader: PSfmlShader; const Name: PAnsiChar; const Texture: PSfmlTexture); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setTextureParameter';
-  procedure SfmlShaderSetCurrentTextureParameter(Shader: PSfmlShader; const Name: PAnsiChar); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setCurrentTextureParameter';
+  procedure SfmlShaderSetFloatUniform(Shader: PSfmlShader; const Name: PAnsiChar; X: Single); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setFloatUniform';
+  procedure SfmlShaderSetVec2Uniform(Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslVec2); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setVec2Uniform';
+  procedure SfmlShaderSetVec3Uniform(Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslVec3); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setVec3Uniform';
+  procedure SfmlShaderSetVec4Uniform(Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslVec4); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setVec4Uniform';
+  procedure SfmlShaderSetColorUniform(Shader: PSfmlShader; const Name: PAnsiChar; Color: TSfmlColor); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setColorUniform';
+  procedure SfmlShaderSetIntUniform(Shader: PSfmlShader; const Name: PAnsiChar; X: Integer); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setIntUniform';
+  procedure SfmlShaderSetIvec2Uniform(Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslIvec2); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setIvec2Uniform';
+  procedure SfmlShaderSetIvec3Uniform(Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslIvec3); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setIvec3Uniform';
+  procedure SfmlShaderSetIvec4Uniform(Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslIvec4); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setIvec4Uniform';
+  procedure SfmlShaderSetIntColorUniform(Shader: PSfmlShader; const Name: PAnsiChar; Color: TSfmlColor); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setIntColorUniform';
+  procedure SfmlShaderSetBoolUniform(Shader: PSfmlShader; const Name: PAnsiChar; X: LongBool); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setBoolUniform';
+  procedure SfmlShaderSetBvec2Uniform(Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslBvec2); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setBvec2Uniform';
+  procedure SfmlShaderSetBvec3Uniform(Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslBvec3); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setBvec3Uniform';
+  procedure SfmlShaderSetBvec4Uniform(Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlGlslBvec4); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setBvec4Uniform';
+  procedure SfmlShaderSetMat3Uniform(Shader: PSfmlShader; const Name: PAnsiChar; const Matrix: PSfmlGlslMat3); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setMat3Uniform';
+  procedure SfmlShaderSetMat4Uniform(Shader: PSfmlShader; const Name: PAnsiChar; const Matrix: PSfmlGlslMat4); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setMat4Uniform';
+  procedure SfmlShaderSetTextureUniform(Shader: PSfmlShader; const Name: PAnsiChar; const Texture: PSfmlTexture); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setTextureUniform';
+  procedure SfmlShaderSetCurrentTextureUniform(Shader: PSfmlShader; Name: PAnsiChar); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setCurrentTextureUniform';
+  procedure SfmlShaderSetFloatUniformArray(Shader: PSfmlShader; const Name: PAnsiChar; const ScalarArray: PSingle; Length: NativeUInt); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setFloatUniformArray';
+  procedure SfmlShaderSetVec2UniformArray(Shader: PSfmlShader; const Name: PAnsiChar; const VectorArray: PSfmlGlslVec2; Length: NativeUInt); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setVec2UniformArray';
+  procedure SfmlShaderSetVec3UniformArray(Shader: PSfmlShader; const Name: PAnsiChar; const VectorArray: PSfmlGlslVec3; Length: NativeUInt); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setVec3UniformArray';
+  procedure SfmlShaderSetVec4UniformArray(Shader: PSfmlShader; const Name: PAnsiChar; const VectorArray: PSfmlGlslVec4; Length: NativeUInt); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setVec4UniformArray';
+  procedure SfmlShaderSetMat3UniformArray(Shader: PSfmlShader; const Name: PAnsiChar; const MatrixArray: PSfmlGlslMat3; Length: NativeUInt); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setMat3UniformArray';
+  procedure SfmlShaderSetMat4UniformArray(Shader: PSfmlShader; const Name: PAnsiChar; const MatrixArray: PSfmlGlslMat4; Length: NativeUInt); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setMat4UniformArray';
+  procedure SfmlShaderSetFloatParameter(Shader: PSfmlShader; const Name: PAnsiChar; X: Single); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setFloatParameter'; deprecated;
+  procedure SfmlShaderSetFloat2Parameter(Shader: PSfmlShader; const Name: PAnsiChar; X, Y: Single); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setFloat2Parameter'; deprecated;
+  procedure SfmlShaderSetFloat3Parameter(Shader: PSfmlShader; const Name: PAnsiChar; X, Y, Z: Single); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setFloat3Parameter'; deprecated;
+  procedure SfmlShaderSetFloat4Parameter(Shader: PSfmlShader; const Name: PAnsiChar; X, Y, Z, W: Single); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setFloat4Parameter'; deprecated;
+  procedure SfmlShaderSetVector2Parameter(Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlVector2f); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setVector2Parameter'; deprecated;
+  procedure SfmlShaderSetVector3Parameter(Shader: PSfmlShader; const Name: PAnsiChar; Vector: TSfmlVector3f); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setVector3Parameter'; deprecated;
+  procedure SfmlShaderSetColorParameter(Shader: PSfmlShader; const Name: PAnsiChar; Color: TSfmlColor); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setColorParameter'; deprecated;
+  procedure SfmlShaderSetTransformParameter(Shader: PSfmlShader; const Name: PAnsiChar; Transform: TSfmlTransform); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setTransformParameter'; deprecated;
+  procedure SfmlShaderSetTextureParameter(Shader: PSfmlShader; const Name: PAnsiChar; const Texture: PSfmlTexture); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setTextureParameter'; deprecated;
+  procedure SfmlShaderSetCurrentTextureParameter(Shader: PSfmlShader; const Name: PAnsiChar); cdecl; external CSfmlGraphicsLibrary name 'sfShader_setCurrentTextureParameter';  deprecated;
   function SfmlShaderGetNativeHandle(Shader: PSfmlShader): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfShader_getNativeHandle';
   procedure SfmlShaderBind(const Shader: PSfmlShader); cdecl; external CSfmlGraphicsLibrary name 'sfShader_bind';
   function SfmlShaderIsAvailable: LongBool; cdecl; external CSfmlGraphicsLibrary name 'sfShader_isAvailable';
+  function SfmlShaderIsGeometryAvailable: LongBool; cdecl; external CSfmlGraphicsLibrary name 'sfShader_isGeometryAvailable';
 
   function SfmlShapeCreate(GetPointCount: TSfmlShapeGetPointCountCallback; GetPoint: TSfmlShapeGetPointCallback; UserData: Pointer): PSfmlShape; cdecl; external CSfmlGraphicsLibrary name 'sfShape_create';
   procedure SfmlShapeDestroy(Shape: PSfmlShape); cdecl; external CSfmlGraphicsLibrary name 'sfShape_destroy';
@@ -1433,13 +1583,19 @@ const
   procedure SfmlTextSetFont(Text: PSfmlText; const Font: PSfmlFont); cdecl; external CSfmlGraphicsLibrary name 'sfText_setFont';
   procedure SfmlTextSetCharacterSize(Text: PSfmlText; Size: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfText_setCharacterSize';
   procedure SfmlTextSetStyle(Text: PSfmlText; Style: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfText_setStyle';
-  procedure SfmlTextSetColor(Text: PSfmlText; Color: TSfmlColor); cdecl; external CSfmlGraphicsLibrary name 'sfText_setColor';
+  procedure SfmlTextSetColor(Text: PSfmlText; Color: TSfmlColor); cdecl; external CSfmlGraphicsLibrary name 'sfText_setColor'; deprecated 'Use sfText_setFillColor instead';
+  procedure SfmlTextSetFillColor(Text: PSfmlText; Color: TSfmlColor); cdecl; external CSfmlGraphicsLibrary name 'sfText_setFillColor';
+  procedure SfmlTextSetOutlineColor(Text: PSfmlText; Color: TSfmlColor); cdecl; external CSfmlGraphicsLibrary name 'sfText_setOutlineColor';
+  procedure SfmlTextSetOutlineThickness(Text: PSfmlText; Thickness: Single); cdecl; external CSfmlGraphicsLibrary name 'sfText_setOutlineThickness';
   function SfmlTextGetString(const Text: PSfmlText): PAnsiChar; cdecl; external CSfmlGraphicsLibrary name 'sfText_getString';
   function SfmlTextGetUnicodeString(const Text: PSfmlText): PUCS4Char; cdecl; external CSfmlGraphicsLibrary name 'sfText_getUnicodeString';
   function SfmlTextGetFont(const Text: PSfmlText): PSfmlFont; cdecl; external CSfmlGraphicsLibrary name 'sfText_getFont';
   function SfmlTextGetCharacterSize(const Text: PSfmlText): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfText_getCharacterSize';
   function SfmlTextGetStyle(const Text: PSfmlText): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfText_getStyle';
-  function SfmlTextGetColor(const Text: PSfmlText): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfText_getColor';
+  function SfmlTextGetColor(const Text: PSfmlText): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfText_getColor'; deprecated 'Use sfText_getFillColor instead';
+  function SfmlTextGetFillColor(const Text: PSfmlText): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfText_getFillColor';
+  function SfmlTextGetOutlineColor(const Text: PSfmlText): TSfmlColor; cdecl; external CSfmlGraphicsLibrary name 'sfText_getOutlineColor';
+  function SfmlTextGetOutlineThickness(const Text: PSfmlText): Single; cdecl; external CSfmlGraphicsLibrary name 'sfText_getOutlineThickness';
   function SfmlTextGetLocalBounds(const Text: PSfmlText): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfText_getLocalBounds';
   function SfmlTextGetGlobalBounds(const Text: PSfmlText): TSfmlFloatRect; cdecl; external CSfmlGraphicsLibrary name 'sfText_getGlobalBounds';
 {$IFNDEF INT64RETURNWORKAROUND}
@@ -1463,8 +1619,12 @@ const
   procedure SfmlTextureUpdateFromRenderWindow(Texture: PSfmlTexture; const RenderWindow: PSfmlRenderWindow; X, Y: Cardinal); cdecl; external CSfmlGraphicsLibrary name 'sfTexture_updateFromRenderWindow';
   procedure SfmlTextureSetSmooth(Texture: PSfmlTexture; Smooth: LongBool); cdecl; external CSfmlGraphicsLibrary name 'sfTexture_setSmooth';
   function SfmlTextureIsSmooth(const Texture: PSfmlTexture): LongBool; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_isSmooth';
+  procedure SfmlTextureSetSrgb(const Texture: PSfmlTexture; sRgb: LongBool); cdecl; external CSfmlGraphicsLibrary name 'sfTexture_setSrgb';
+  function SfmlTextureIsSrgb(const Texture: PSfmlTexture): LongBool; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_isSrgb';
+
   procedure SfmlTextureSetRepeated(Texture: PSfmlTexture; Repeated: LongBool); cdecl; external CSfmlGraphicsLibrary name 'sfTexture_setRepeated';
   function SfmlTextureIsRepeated(const Texture: PSfmlTexture): LongBool; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_isRepeated';
+  function SfmlTextureGenerateMipmap(const Texture: PSfmlTexture): LongBool; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_generateMipmap';
   function SfmlTextureGetNativeHandle(const Texture: PSfmlTexture): Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_getNativeHandle';
   procedure SfmlTextureBind(const Texture: PSfmlTexture); cdecl; external CSfmlGraphicsLibrary name 'sfTexture_bind';
   function sfmlTextureGetMaximumSize: Cardinal; cdecl; external CSfmlGraphicsLibrary name 'sfTexture_getMaximumSize';
@@ -1813,8 +1973,10 @@ type
     function GetRepeated: Boolean;
     function GetSmooth: Boolean;
     function GetSize: TSfmlVector2u;
+    function IsSrgb: Boolean;
     procedure SetRepeated(Repeated: Boolean);
     procedure SetSmooth(Smooth: Boolean);
+    procedure SetSrgb(Smooth: Boolean);
   public
     constructor Create(Width, Height: Cardinal); overload;
     constructor Create(const FileName: AnsiString; const Area: PSfmlIntRect = nil); overload;
@@ -1833,9 +1995,12 @@ type
     procedure UpdateFromRenderWindow(const RenderWindow: PSfmlRenderWindow; X, Y: Cardinal);
     procedure UpdateFromWindow(const Window: PSfmlWindow; X, Y: Cardinal);
 
+    procedure GenerateMipmap;
+
     property Handle: PSfmlTexture read FHandle;
     property Repeated: Boolean read GetRepeated write SetRepeated;
     property Smooth: Boolean read GetSmooth write SetSmooth;
+    property Srgb: Boolean read IsSrgb write SetSrgb;
     property Size: TSfmlVector2u read GetSize;
     property NativeHandle: Cardinal read GetNativeHandle;
   end;
@@ -1925,7 +2090,10 @@ type
 
     constructor Create(Handle: PSfmlText); overload;
     function GetCharacterSize: Cardinal;
-    function GetColor: TSfmlColor;
+    function GetColor: TSfmlColor; deprecated;
+    function GetFillColor: TSfmlColor;
+    function GetOutlineColor: TSfmlColor;
+    function GetOutlineThickness: Single;
     function GetFont: PSfmlFont;
     function GetGlobalBounds: TSfmlFloatRect;
     function GetLocalBounds: TSfmlFloatRect;
@@ -1933,7 +2101,10 @@ type
     function GetStyle: Cardinal;
     function GetUnicodeString: UnicodeString;
     procedure SetCharacterSize(Size: Cardinal);
-    procedure SetColor(Color: TSfmlColor);
+    procedure SetColor(Color: TSfmlColor); deprecated;
+    procedure SetFillColor(Color: TSfmlColor);
+    procedure SetOutlineColor(Color: TSfmlColor);
+    procedure SetOutlineThickness(Thickness: Single);
     procedure SetFont(const Font: PSfmlFont);
     procedure SetString(const &String: AnsiString);
     procedure SetStyle(Style: Cardinal);
@@ -1967,12 +2138,15 @@ type
 
     property CharacterSize: Cardinal read GetCharacterSize write SetCharacterSize;
     property Color: TSfmlColor read GetColor write SetColor;
+    property FillColor: TSfmlColor read GetFillColor write SetFillColor;
     property Font: PSfmlFont read GetFont write SetFont;
     property GlobalBounds: TSfmlFloatRect read GetGlobalBounds;
     property Handle: PSfmlText read FHandle;
     property InverseTransform: TSfmlTransform read GetInverseTransform;
     property LocalBounds: TSfmlFloatRect read GetLocalBounds;
     property Origin: TSfmlVector2f read GetOrigin write SetOrigin;
+    property OutlineColor: TSfmlColor read GetOutlineColor write SetOutlineColor;
+    property OutlineThickness: Single read GetOutlineThickness write SetOutlineThickness;
     property Position: TSfmlVector2f read GetPosition write SetPosition;
     property Rotation: Single read GetRotation write SetRotation;
     property ScaleFactor: TSfmlVector2f read GetScale write SetScale;
@@ -2149,6 +2323,8 @@ type
     procedure PushGLStates; override;
     procedure ResetGLStates; override;
 
+    procedure GenerateMipmap;
+
     property Handle: PSfmlRenderTexture read FHandle;
     property Repeated: Boolean read GetRepeated write SetRepeated;
     property Smooth: Boolean read GetSmooth write SetSmooth;
@@ -2221,6 +2397,7 @@ type
     procedure SetJoystickThreshold(Threshold: Single);
     procedure SetKeyRepeatEnabled(Enabled: Boolean);
     procedure SetMouseCursorVisible(Show: Boolean);
+    procedure SetMouseCursorGrabbed(Grabbed: Boolean);
     procedure SetSize(Size: TSfmlVector2u);
     procedure SetTitle(const Title: AnsiString); overload;
     procedure SetTitle(const Title: UnicodeString); overload;
@@ -2237,10 +2414,35 @@ type
     FHandle: PSfmlShader;
     function GetNativeHandle: Cardinal;
   public
-    constructor Create(const VertexShader: AnsiString; const FragmentShader: AnsiString); overload;
-    constructor Create(VertexShaderStream: PSfmlInputStream; FragmentShaderStream: PSfmlInputStream); overload;
-    constructor CreateFromFile(const VertexShaderFilename: AnsiString; const FragmentShaderFilename: AnsiString);
+    constructor Create(const VertexShader, GeometryShader, FragmentShader: AnsiString); overload;
+    constructor Create(VertexShaderStream, GeometryShaderStream, FragmentShaderStream: PSfmlInputStream); overload;
+    constructor CreateFromFile(const VertexShaderFilename, GeometryShaderFilename, FragmentShaderFilename: AnsiString);
     destructor Destroy; override;
+
+    procedure SetFloatUniform(const Name: AnsiString; X: Single);
+    procedure SetVec2Uniform(const Name: AnsiString; Vector: TSfmlGlslVec2);
+    procedure SetVec3Uniform(const Name: AnsiString; Vector: TSfmlGlslVec3);
+    procedure SetVec4Uniform(const Name: AnsiString; Vector: TSfmlGlslVec4);
+    procedure SetColorUniform(const Name: AnsiString; Color: TSfmlColor);
+    procedure SetIntUniform(const Name: AnsiString; X: Integer);
+    procedure SetIvec2Uniform(const Name: AnsiString; Vector: TSfmlGlslIvec2);
+    procedure SetIvec3Uniform(const Name: AnsiString; Vector: TSfmlGlslIvec3);
+    procedure SetIvec4Uniform(const Name: AnsiString; Vector: TSfmlGlslIvec4);
+    procedure SetIntColorUniform(const Name: AnsiString; Color: TSfmlColor);
+    procedure SetBoolUniform(const Name: AnsiString; X: LongBool);
+    procedure SetBvec2Uniform(const Name: AnsiString; Vector: TSfmlGlslBvec2);
+    procedure SetBvec3Uniform(const Name: AnsiString; Vector: TSfmlGlslBvec3);
+    procedure SetBvec4Uniform(const Name: AnsiString; Vector: TSfmlGlslBvec4);
+    procedure SetMat3Uniform(const Name: AnsiString; const Matrix: TSfmlGlslMat3);
+    procedure SetMat4Uniform(const Name: AnsiString; const Matrix: TSfmlGlslMat4);
+    procedure SetTextureUniform(const Name: AnsiString; const Texture: PSfmlTexture);
+    procedure SetCurrentTextureUniform(const Name: AnsiString);
+    procedure SetFloatUniformArray(const Name: AnsiString; const ScalarArray: array of Single);
+    procedure SetVec2UniformArray(const Name: AnsiString; const VectorArray: array of TSfmlGlslVec2);
+    procedure SetVec3UniformArray(const Name: AnsiString; const VectorArray: array of TSfmlGlslVec3);
+    procedure SetVec4UniformArray(const Name: AnsiString; const VectorArray: array of TSfmlGlslVec4);
+    procedure SetMat3UniformArray(const Name: AnsiString; const MatrixArray: array of TSfmlGlslMat3);
+    procedure SetMat4UniformArray(const Name: AnsiString; const MatrixArray: array of TSfmlGlslMat4);
 
     procedure SetParameter(const Name: AnsiString; X: Single); overload;
     procedure SetParameter(const Name: AnsiString; X, Y: Single); overload;
@@ -3178,6 +3380,11 @@ begin
   SfmlRenderTextureDrawVertexArray(FHandle, &Object, States);
 end;
 
+procedure TSfmlRenderTexture.GenerateMipmap;
+begin
+  SfmlRenderTextureGenerateMipmap(FHandle);
+end;
+
 function TSfmlRenderTexture.GetDefaultView: TSfmlView;
 var
   DefaultViewHandle: PSfmlView;
@@ -3624,6 +3831,11 @@ begin
   SfmlRenderWindowSetKeyRepeatEnabled(FHandle, Enabled);
 end;
 
+procedure TSfmlRenderWindow.SetMouseCursorGrabbed(Grabbed: Boolean);
+begin
+  SfmlRenderWindowSetMouseCursorGrabbed(FHandle, Grabbed);
+end;
+
 procedure TSfmlRenderWindow.SetMouseCursorVisible(Show: Boolean);
 begin
   SfmlRenderWindowSetMouseCursorVisible(FHandle, Show);
@@ -3679,31 +3891,35 @@ end;
 
 { TSfmlShader }
 
-constructor TSfmlShader.Create(const VertexShader, FragmentShader: AnsiString);
+constructor TSfmlShader.Create(const VertexShader, GeometryShader, FragmentShader: AnsiString);
 begin
   FHandle := SfmlShaderCreateFromMemory(PAnsiChar(VertexShader),
-    PAnsiChar(FragmentShader));
+    PAnsiChar(GeometryShader), PAnsiChar(FragmentShader));
 end;
 
-constructor TSfmlShader.Create(VertexShaderStream, FragmentShaderStream: PSfmlInputStream);
+constructor TSfmlShader.Create(VertexShaderStream, GeometryShaderStream, FragmentShaderStream: PSfmlInputStream);
 begin
-  FHandle := SfmlShaderCreateFromStream(VertexShaderStream, FragmentShaderStream);
+  FHandle := SfmlShaderCreateFromStream(VertexShaderStream, GeometryShaderStream, FragmentShaderStream);
 end;
 
-constructor TSfmlShader.CreateFromFile(const VertexShaderFilename, FragmentShaderFilename: AnsiString);
+constructor TSfmlShader.CreateFromFile(const VertexShaderFilename, GeometryShaderFilename, FragmentShaderFilename: AnsiString);
 var
-  FileNames: array [0..1] of PAnsiChar;
+  FileNames: array [0..2] of PAnsiChar;
 begin
   FileNames[0] := nil;
   FileNames[1] := nil;
+  FileNames[2] := nil;
 
   if VertexShaderFilename <> '' then
     FileNames[0] := PAnsiChar(VertexShaderFilename);
 
-  if FragmentShaderFilename <> '' then
-    FileNames[1] := PAnsiChar(FragmentShaderFilename);
+  if GeometryShaderFilename <> '' then
+    FileNames[1] := PAnsiChar(GeometryShaderFilename);
 
-  FHandle := SfmlShaderCreateFromFile(FileNames[0], FileNames[1]);
+  if FragmentShaderFilename <> '' then
+    FileNames[2] := PAnsiChar(FragmentShaderFilename);
+
+  FHandle := SfmlShaderCreateFromFile(FileNames[0], FileNames[1], FileNames[2]);
 end;
 
 destructor TSfmlShader.Destroy;
@@ -3728,9 +3944,107 @@ begin
   SfmlShaderSetColorParameter(FHandle, PAnsiChar(Name), Color);
 end;
 
+procedure TSfmlShader.SetBoolUniform(const Name: AnsiString; X: LongBool);
+begin
+  SfmlShaderSetBoolUniform(FHandle, PAnsiChar(Name), X);
+end;
+
+procedure TSfmlShader.SetBvec2Uniform(const Name: AnsiString;
+  Vector: TSfmlGlslBvec2);
+begin
+  SfmlShaderSetBvec2Uniform(FHandle, PAnsiChar(Name), Vector);
+end;
+
+procedure TSfmlShader.SetBvec3Uniform(const Name: AnsiString;
+  Vector: TSfmlGlslBvec3);
+begin
+  SfmlShaderSetBvec3Uniform(FHandle, PAnsiChar(Name), Vector);
+end;
+
+procedure TSfmlShader.SetBvec4Uniform(const Name: AnsiString;
+  Vector: TSfmlGlslBvec4);
+begin
+  SfmlShaderSetBvec4Uniform(FHandle, PAnsiChar(Name), Vector);
+end;
+
+procedure TSfmlShader.SetColorUniform(const Name: AnsiString;
+  Color: TSfmlColor);
+begin
+  SfmlShaderSetColorUniform(FHandle, PAnsiChar(Name), Color);
+end;
+
 procedure TSfmlShader.SetCurrentTextureParameter(const Name: AnsiString);
 begin
   SfmlShaderSetCurrentTextureParameter(FHandle, PAnsiChar(Name));
+end;
+
+procedure TSfmlShader.SetCurrentTextureUniform(const Name: AnsiString);
+begin
+  SfmlShaderSetCurrentTextureUniform(FHandle, PAnsiChar(Name));
+end;
+
+procedure TSfmlShader.SetFloatUniform(const Name: AnsiString; X: Single);
+begin
+  SfmlShaderSetFloatUniform(FHandle, PAnsiChar(Name), X);
+end;
+
+procedure TSfmlShader.SetFloatUniformArray(const Name: AnsiString;
+  const ScalarArray: array of Single);
+begin
+  SfmlShaderSetFloatUniformArray(FHandle, PAnsiChar(Name), @ScalarArray[0], Length(ScalarArray));
+end;
+
+procedure TSfmlShader.SetIntColorUniform(const Name: AnsiString;
+  Color: TSfmlColor);
+begin
+  SfmlShaderSetIntColorUniform(FHandle, PAnsiChar(Name), Color);
+end;
+
+procedure TSfmlShader.SetIntUniform(const Name: AnsiString; X: Integer);
+begin
+  SfmlShaderSetIntUniform(FHandle, PAnsiChar(Name), X);
+end;
+
+procedure TSfmlShader.SetIvec2Uniform(const Name: AnsiString;
+  Vector: TSfmlGlslIvec2);
+begin
+  SfmlShaderSetIvec2Uniform(FHandle, PAnsiChar(Name), Vector);
+end;
+
+procedure TSfmlShader.SetIvec3Uniform(const Name: AnsiString;
+  Vector: TSfmlGlslIvec3);
+begin
+  SfmlShaderSetIvec3Uniform(FHandle, PAnsiChar(Name), Vector);
+end;
+
+procedure TSfmlShader.SetIvec4Uniform(const Name: AnsiString;
+  Vector: TSfmlGlslIvec4);
+begin
+  SfmlShaderSetIvec4Uniform(FHandle, PAnsiChar(Name), Vector);
+end;
+
+procedure TSfmlShader.SetMat3Uniform(const Name: AnsiString;
+  const Matrix: TSfmlGlslMat3);
+begin
+  SfmlShaderSetMat3Uniform(FHandle, PAnsiChar(Name), @Matrix);
+end;
+
+procedure TSfmlShader.SetMat3UniformArray(const Name: AnsiString;
+  const MatrixArray: array of TSfmlGlslMat3);
+begin
+  SfmlShaderSetMat3UniformArray(FHandle, PAnsiChar(Name), @MatrixArray[0], Length(MatrixArray));
+end;
+
+procedure TSfmlShader.SetMat4Uniform(const Name: AnsiString;
+  const Matrix: TSfmlGlslMat4);
+begin
+  SfmlShaderSetMat4Uniform(FHandle, PAnsiChar(Name), @Matrix);
+end;
+
+procedure TSfmlShader.SetMat4UniformArray(const Name: AnsiString;
+  const MatrixArray: array of TSfmlGlslMat4);
+begin
+  SfmlShaderSetMat4UniformArray(FHandle, PAnsiChar(Name), @MatrixArray[0], Length(MatrixArray));
 end;
 
 procedure TSfmlShader.SetParameter(const Name: AnsiString; X, Y: Single);
@@ -3761,10 +4075,52 @@ begin
   SfmlShaderSetTextureParameter(FHandle, PAnsiChar(Name), Texture);
 end;
 
+procedure TSfmlShader.SetTextureUniform(const Name: AnsiString;
+  const Texture: PSfmlTexture);
+begin
+  SfmlShaderSetTextureUniform(FHandle, PAnsiChar(Name), Texture);
+end;
+
 procedure TSfmlShader.SetTransformParameter(const Name: AnsiString;
   Transform: TSfmlTransform);
 begin
   SfmlShaderSetTransformParameter(FHandle, PAnsiChar(Name), Transform);
+end;
+
+procedure TSfmlShader.SetVec2Uniform(const Name: AnsiString;
+  Vector: TSfmlGlslVec2);
+begin
+  SfmlShaderSetVec2Uniform(FHandle, PAnsiChar(Name), Vector);
+end;
+
+procedure TSfmlShader.SetVec2UniformArray(const Name: AnsiString;
+  const VectorArray: array of TSfmlGlslVec2);
+begin
+  SfmlShaderSetVec2UniformArray(FHandle, PAnsiChar(Name), @VectorArray, Length(VectorArray));
+end;
+
+procedure TSfmlShader.SetVec3Uniform(const Name: AnsiString;
+  Vector: TSfmlGlslVec3);
+begin
+  SfmlShaderSetVec3Uniform(FHandle, PAnsiChar(Name), Vector);
+end;
+
+procedure TSfmlShader.SetVec3UniformArray(const Name: AnsiString;
+  const VectorArray: array of TSfmlGlslVec3);
+begin
+  SfmlShaderSetVec3UniformArray(FHandle, PAnsiChar(Name), @VectorArray, Length(VectorArray));
+end;
+
+procedure TSfmlShader.SetVec4Uniform(const Name: AnsiString;
+  Vector: TSfmlGlslVec4);
+begin
+  SfmlShaderSetVec4Uniform(FHandle, PAnsiChar(Name), Vector);
+end;
+
+procedure TSfmlShader.SetVec4UniformArray(const Name: AnsiString;
+  const VectorArray: array of TSfmlGlslVec4);
+begin
+  SfmlShaderSetVec4UniformArray(FHandle, PAnsiChar(Name), @VectorArray, Length(VectorArray));
 end;
 
 procedure TSfmlShader.SetParameter(const Name: AnsiString;
@@ -4161,6 +4517,11 @@ begin
   Result := SfmlTextGetColor(FHandle);
 end;
 
+function TSfmlText.GetFillColor: TSfmlColor;
+begin
+  Result := SfmlTextGetFillColor(FHandle);
+end;
+
 function TSfmlText.GetFont: PSfmlFont;
 begin
   Result := SfmlTextGetFont(FHandle);
@@ -4184,6 +4545,16 @@ end;
 function TSfmlText.GetOrigin: TSfmlVector2f;
 begin
   Result := SfmlTextGetOrigin(FHandle);
+end;
+
+function TSfmlText.GetOutlineColor: TSfmlColor;
+begin
+  Result := SfmlTextGetOutlineColor(FHandle);
+end;
+
+function TSfmlText.GetOutlineThickness: Single;
+begin
+  Result := SfmlTextGetOutlineThickness(FHandle);
 end;
 
 function TSfmlText.GetPosition: TSfmlVector2f;
@@ -4247,6 +4618,11 @@ begin
   SfmlTextSetColor(FHandle, Color);
 end;
 
+procedure TSfmlText.SetFillColor(Color: TSfmlColor);
+begin
+  SfmlTextSetFillColor(FHandle, Color);
+end;
+
 procedure TSfmlText.SetFont(const Font: PSfmlFont);
 begin
   SfmlTextSetFont(FHandle, Font);
@@ -4255,6 +4631,16 @@ end;
 procedure TSfmlText.SetOrigin(Origin: TSfmlVector2f);
 begin
   SfmlTextSetOrigin(FHandle, Origin);
+end;
+
+procedure TSfmlText.SetOutlineColor(Color: TSfmlColor);
+begin
+  SfmlTextSetOutlineColor(FHandle, Color);
+end;
+
+procedure TSfmlText.SetOutlineThickness(Thickness: Single);
+begin
+  SfmlTextSetOutlineThickness(FHandle, Thickness);
 end;
 
 procedure TSfmlText.SetPosition(Position: TSfmlVector2f);
@@ -4350,6 +4736,11 @@ begin
   Result := SfmlTextureGetSize(FHandle);
 end;
 
+procedure TSfmlTexture.GenerateMipmap;
+begin
+  SfmlTextureGenerateMipmap(FHandle);
+end;
+
 function TSfmlTexture.GetNativeHandle: Cardinal;
 begin
   Result := SfmlTextureGetNativeHandle(FHandle);
@@ -4365,6 +4756,11 @@ begin
   Result := SfmlTextureIsSmooth(FHandle);
 end;
 
+function TSfmlTexture.IsSrgb: Boolean;
+begin
+  Result := SfmlTextureIsSrgb(FHandle);
+end;
+
 procedure TSfmlTexture.SetRepeated(Repeated: Boolean);
 begin
   SfmlTextureSetRepeated(FHandle, Repeated);
@@ -4373,6 +4769,11 @@ end;
 procedure TSfmlTexture.SetSmooth(Smooth: Boolean);
 begin
   SfmlTextureSetSmooth(FHandle, Smooth);
+end;
+
+procedure TSfmlTexture.SetSrgb(Smooth: Boolean);
+begin
+  SfmlTextureSetSrgb(FHandle, Smooth);
 end;
 
 procedure TSfmlTexture.UpdateFromImage(const Image: PSfmlImage; X, Y: Cardinal);
@@ -4885,6 +5286,7 @@ begin
       SfmlRenderTextureIsSmooth := BindFunction('sfRenderTexture_isSmooth');
       SfmlRenderTextureSetRepeated := BindFunction('sfRenderTexture_setRepeated');
       SfmlRenderTextureIsRepeated := BindFunction('sfRenderTexture_isRepeated');
+      SfmlRenderTextureGenerateMipmap := BindFunction('sfRenderTexture_generateMipmap');
       SfmlRenderWindowCreate := BindFunction('sfRenderWindow_create');
       SfmlRenderWindowCreateUnicode := BindFunction('sfRenderWindow_createUnicode');
       SfmlRenderWindowCreateFromHandle := BindFunction('sfRenderWindow_createFromHandle');
@@ -4901,15 +5303,15 @@ begin
       SfmlRenderWindowSetUnicodeTitle := BindFunction('sfRenderWindow_setUnicodeTitle');
       SfmlRenderWindowSetIcon := BindFunction('sfRenderWindow_setIcon');
       SfmlRenderWindowSetVisible := BindFunction('sfRenderWindow_setVisible');
-      SfmlRenderWindowSetMouseCursorVisible := BindFunction('sfRenderWindow_setMouseCursorVisible');
       SfmlRenderWindowSetVerticalSyncEnabled := BindFunction('sfRenderWindow_setVerticalSyncEnabled');
+      SfmlRenderWindowSetMouseCursorGrabbed := BindFunction('sfRenderWindow_setMouseCursorGrabbed');
       SfmlRenderWindowSetKeyRepeatEnabled := BindFunction('sfRenderWindow_setKeyRepeatEnabled');
+      SfmlRenderWindowSetFramerateLimit := BindFunction('sfRenderWindow_setFramerateLimit');
+      SfmlRenderWindowSetJoystickThreshold := BindFunction('sfRenderWindow_setJoystickThreshold');
       SfmlRenderWindowSetActive := BindFunction('sfRenderWindow_setActive');
       SfmlRenderWindowRequestFocus := BindFunction('sfRenderWindow_requestFocus');
       SfmlRenderWindowHasFocus := BindFunction('sfRenderWindow_hasFocus');
       SfmlRenderWindowDisplay := BindFunction('sfRenderWindow_display');
-      SfmlRenderWindowSetFramerateLimit := BindFunction('sfRenderWindow_setFramerateLimit');
-      SfmlRenderWindowSetJoystickThreshold := BindFunction('sfRenderWindow_setJoystickThreshold');
       SfmlRenderWindowGetSystemHandle := BindFunction('sfRenderWindow_getSystemHandle');
       SfmlRenderWindowClear := BindFunction('sfRenderWindow_clear');
       SfmlRenderWindowSetView := BindFunction('sfRenderWindow_setView');
@@ -4933,6 +5335,30 @@ begin
       SfmlShaderCreateFromMemory := BindFunction('sfShader_createFromMemory');
       SfmlShaderCreateFromStream := BindFunction('sfShader_createFromStream');
       SfmlShaderDestroy := BindFunction('sfShader_destroy');
+      SfmlShaderSetFloatUniform := BindFunction('sfShader_setFloatUniform');
+      SfmlShaderSetVec2Uniform := BindFunction('sfShader_setVec2Uniform');
+      SfmlShaderSetVec3Uniform := BindFunction('sfShader_setVec3Uniform');
+      SfmlShaderSetVec4Uniform := BindFunction('sfShader_setVec4Uniform');
+      SfmlShaderSetColorUniform := BindFunction('sfShader_setColorUniform');
+      SfmlShaderSetIntUniform := BindFunction('sfShader_setIntUniform');
+      SfmlShaderSetIvec2Uniform := BindFunction('sfShader_setIvec2Uniform');
+      SfmlShaderSetIvec3Uniform := BindFunction('sfShader_setIvec3Uniform');
+      SfmlShaderSetIvec4Uniform := BindFunction('sfShader_setIvec4Uniform');
+      SfmlShaderSetIntColorUniform := BindFunction('sfShader_setIntColorUniform');
+      SfmlShaderSetBoolUniform := BindFunction('sfShader_setBoolUniform');
+      SfmlShaderSetBvec2Uniform := BindFunction('sfShader_setBvec2Uniform');
+      SfmlShaderSetBvec3Uniform := BindFunction('sfShader_setBvec3Uniform');
+      SfmlShaderSetBvec4Uniform := BindFunction('sfShader_setBvec4Uniform');
+      SfmlShaderSetMat3Uniform := BindFunction('sfShader_setMat3Uniform');
+      SfmlShaderSetMat4Uniform := BindFunction('sfShader_setMat4Uniform');
+      SfmlShaderSetTextureUniform := BindFunction('sfShader_setTextureUniform');
+      SfmlShaderSetCurrentTextureUniform := BindFunction('sfShader_setCurrentTextureUniform');
+      SfmlShaderSetFloatUniformArray := BindFunction('sfShader_setFloatUniformArray');
+      SfmlShaderSetVec2UniformArray := BindFunction('sfShader_setVec2UniformArray');
+      SfmlShaderSetVec3UniformArray := BindFunction('sfShader_setVec3UniformArray');
+      SfmlShaderSetVec4UniformArray := BindFunction('sfShader_setVec4UniformArray');
+      SfmlShaderSetMat3UniformArray := BindFunction('sfShader_setMat3UniformArray');
+      SfmlShaderSetMat4UniformArray := BindFunction('sfShader_setMat4UniformArray');
       SfmlShadersetFloatParameter := BindFunction('sfShader_setFloatParameter');
       SfmlShaderSetFloat2Parameter := BindFunction('sfShader_setFloat2Parameter');
       SfmlShaderSetFloat3Parameter := BindFunction('sfShader_setFloat3Parameter');
@@ -4946,6 +5372,7 @@ begin
       SfmlShaderGetNativeHandle := BindFunction('sfShader_getNativeHandle');
       SfmlShaderBind := BindFunction('sfShader_bind');
       SfmlShaderIsAvailable := BindFunction('sfShader_isAvailable');
+      SfmlShaderIsGeometryAvailable := BindFunction('sfShader_isGeometryAvailable');
       SfmlShapeCreate := BindFunction('sfShape_create');
       SfmlShapeDestroy := BindFunction('sfShape_destroy');
       SfmlShapeSetPosition := BindFunction('sfShape_setPosition');
@@ -5012,6 +5439,8 @@ begin
       SfmlTextSetCharacterSize := BindFunction('sfText_setCharacterSize');
       SfmlTextSetStyle := BindFunction('sfText_setStyle');
       SfmlTextSetColor := BindFunction('sfText_setColor');
+      SfmlTextSetFillColor := BindFunction('sfText_setFillColor');
+      SfmlTextSetOutlineColor := BindFunction('sfText_setOutlineColor');
       SfmlTextGetString := BindFunction('sfText_getString');
       SfmlTextGetUnicodeString := BindFunction('sfText_getUnicodeString');
       SfmlTextGetFont := BindFunction('sfText_getFont');
@@ -5034,8 +5463,11 @@ begin
       SfmlTextureUpdateFromRenderWindow := BindFunction('sfTexture_updateFromRenderWindow');
       SfmlTextureSetSmooth := BindFunction('sfTexture_setSmooth');
       SfmlTextureIsSmooth := BindFunction('sfTexture_isSmooth');
+      SfmlTextureSetSrgb := BindFunction('sfTexture_setSrgb');
+      SfmlTextureIsSrgb := BindFunction('sfTexture_isSrgb');
       SfmlTextureSetRepeated := BindFunction('sfTexture_setRepeated');
       SfmlTextureIsRepeated := BindFunction('sfTexture_isRepeated');
+      SfmlTextureGenerateMipmap := BindFunction('sfTexture_generateMipmap');
       SfmlTextureGetNativeHandle := BindFunction('sfTexture_getNativeHandle');
       SfmlTextureBind := BindFunction('sfTexture_bind');
       SfmlTextureGetMaximumSize := BindFunction('sfTexture_getMaximumSize');

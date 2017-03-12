@@ -84,7 +84,7 @@ begin
 
   // Load the Shader
   Assert(FileExists('../Resources/Pixelate.frag'));
-  FShader := TSfmlShader.CreateFromFile('', '../Resources/Pixelate.frag');
+  FShader := TSfmlShader.CreateFromFile('', '', '../Resources/Pixelate.frag');
   FShader.SetCurrentTextureParameter('texture');
   Result := Assigned(FShader);
 end;
@@ -139,7 +139,7 @@ begin
   // Load the Shader
   Assert(FileExists('../Resources/Wave.vert'));
   Assert(FileExists('../Resources/Blur.frag'));
-  FShader := TSfmlShader.CreateFromFile('../Resources/Wave.vert', '../Resources/Blur.frag');
+  FShader := TSfmlShader.CreateFromFile('../Resources/Wave.vert', '', '../Resources/Blur.frag');
   Result := Assigned(FShader);
 end;
 
@@ -187,7 +187,7 @@ begin
   // Load the Shader
   Assert(FileExists('../Resources/Storm.vert'));
   Assert(FileExists('../Resources/Blink.frag'));
-  FShader := TSfmlShader.CreateFromFile('../Resources/Storm.vert', '../Resources/Blink.frag');
+  FShader := TSfmlShader.CreateFromFile('../Resources/Storm.vert', '', '../Resources/Blink.frag');
   Result := Assigned(FShader);
 end;
 
@@ -255,7 +255,7 @@ begin
 
   // Load the Shader
   Assert(FileExists('../Resources/Edge.frag'));
-  FShader := TSfmlShader.CreateFromFile('', '../Resources/Edge.frag');
+  FShader := TSfmlShader.CreateFromFile('', '', '../Resources/Edge.frag');
   FShader.SetCurrentTextureParameter('texture');
 
   Result := Assigned(FShader);
